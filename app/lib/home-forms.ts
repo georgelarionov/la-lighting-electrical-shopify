@@ -1,0 +1,73 @@
+/**
+ * Validation + result types for the marketing forms. Pure, Web-standard
+ * (FormData) — safe on the workerd runtime.
+ *
+ * - Request a Quote posts to the homepage `_index` action.
+ * - Newsletter (global footer) and the referral offer post to the
+ *   `/api/subscribe` resource route, so they work from any page.
+ *
+ * NOTE: these currently validate and acknowledge only. Wire the validated
+ * payloads to email / a CRM / Klaviyo where the TODOs indicate before launch.
+ */
+
+export type QuoteErrors = Partial<
+  Record<'name' | 'email' | 'phone' | 'message' | 'consent', string>
+>;
+
+export type HomeActionData = {
+  intent: 'quote';
+  ok: boolean;
+  errors?: QuoteErrors;
+};
+
+export type SubscribeIntent = 'newsletter' | 'referral';
+export type SubscribeResult = {
+  ok: boolean;
+  intent: SubscribeIntent;
+  error?: string;
+};
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function str(value: FormDataEntryValue | null): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+export function validateQuote(formData: FormData): {
+  ok: boolean;
+  errors?: QuoteErrors;
+  values: {name: string; email: string; phone: string; message: string};
+} {
+  const name = str(formData.get('name'));
+  const email = str(formData.get('email'));
+  const phone = str(formData.get('phone'));
+  const message = str(formData.get('message'));
+  const consent = formData.get('consent');
+
+  const errors: QuoteErrors = {};
+  if (!name) errors.name = 'Please enter your name.';
+  if (!email) errors.email = 'Please enter your email.';
+  else if (!EMAIL_RE.test(email)) errors.email = 'Please enter a valid email.';
+  if (!message) errors.message = 'Tell us a little about the project.';
+  if (!consent) errors.consent = 'Please accept the Privacy Policy to continue.';
+
+  const ok = Object.keys(errors).length === 0;
+  return {
+    ok,
+    errors: ok ? undefined : errors,
+    values: {name, email, phone, message},
+  };
+}
+
+/** Single-field email validation, shared by newsletter + referral. */
+export function validateEmail(formData: FormData): {
+  ok: boolean;
+  email: string;
+  error?: string;
+} {
+  const email = str(formData.get('email'));
+  if (!email) return {ok: false, email, error: 'Please enter your email.'};
+  if (!EMAIL_RE.test(email))
+    return {ok: false, email, error: 'Please enter a valid email.'};
+  return {ok: true, email};
+}

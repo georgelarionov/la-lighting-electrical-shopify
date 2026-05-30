@@ -1,133 +1,85 @@
-import {Await, useLoaderData, Link} from 'react-router';
+import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
-import {Suspense} from 'react';
-import {Image} from '@shopify/hydrogen';
-import type {
-  FeaturedCollectionFragment,
-  RecommendedProductsQuery,
-} from 'storefrontapi.generated';
-import {ProductItem} from '~/components/ProductItem';
-import {MockShopNotice} from '~/components/MockShopNotice';
+import {Hero} from '~/components/sections/Hero';
+import {TrustStrip} from '~/components/sections/TrustStrip';
+import {CatalogSlider} from '~/components/sections/CatalogSlider';
+import {Services} from '~/components/sections/Services';
+import {TwoUp} from '~/components/sections/TwoUp';
+import {Projects} from '~/components/sections/Projects';
+import {PromiseSection} from '~/components/sections/Promise';
+import {QuoteCta} from '~/components/sections/QuoteCta';
+import {BlogPosts} from '~/components/sections/BlogPosts';
+import {Offer} from '~/components/sections/Offer';
+import {validateQuote, type HomeActionData} from '~/lib/home-forms';
+import {COMPANY_NAME} from '~/lib/site';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [
+    {
+      title: `${COMPANY_NAME} | Commercial & Industrial Electrical Services`,
+    },
+    {
+      name: 'description',
+      content:
+        'Licensed, insured, and certified electrical services in Los Angeles — installation, maintenance, and lighting design for commercial and industrial facilities.',
+    },
+  ];
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
-  return {...deferredData, ...criticalData};
+  return {...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
-    // Add other queries here, so that they are loaded in parallel
+  const [{collections}, articlesResult] = await Promise.all([
+    context.storefront.query(HOME_COLLECTIONS_QUERY),
+    context.storefront.query(HOME_ARTICLES_QUERY).catch((error: Error) => {
+      console.error(error);
+      return null;
+    }),
   ]);
 
   return {
-    isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
-    featuredCollection: collections.nodes[0],
+    collections: collections.nodes,
+    articles: articlesResult?.articles?.nodes ?? [],
   };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
-function loadDeferredData({context}: Route.LoaderArgs) {
-  const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
-    .catch((error: Error) => {
-      // Log query errors, but don't throw them so the page can still render
-      console.error(error);
-      return null;
-    });
-
-  return {
-    recommendedProducts,
-  };
+export async function action({
+  request,
+}: Route.ActionArgs): Promise<HomeActionData> {
+  const formData = await request.formData();
+  // The homepage handles the Request a Quote form; newsletter + referral post
+  // to the /api/subscribe resource route.
+  const {ok, errors} = validateQuote(formData);
+  // TODO: forward `values` to email / CRM on success.
+  return {intent: 'quote', ok, errors};
 }
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home">
-      {data.isShopLinked ? null : <MockShopNotice />}
-      <FeaturedCollection collection={data.featuredCollection} />
-      <RecommendedProducts products={data.recommendedProducts} />
-    </div>
+    <>
+      <Hero />
+      <TrustStrip />
+      <CatalogSlider collections={data.collections} />
+      <Services />
+      <TwoUp />
+      <Projects />
+      <PromiseSection />
+      <QuoteCta />
+      <BlogPosts articles={data.articles} />
+      <Offer />
+    </>
   );
 }
 
-function FeaturedCollection({
-  collection,
-}: {
-  collection: FeaturedCollectionFragment;
-}) {
-  if (!collection) return null;
-  const image = collection?.image;
-  return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image
-            data={image}
-            sizes="100vw"
-            alt={image.altText || collection.title}
-          />
-        </div>
-      )}
-      <h1>{collection.title}</h1>
-    </Link>
-  );
-}
-
-function RecommendedProducts({
-  products,
-}: {
-  products: Promise<RecommendedProductsQuery | null>;
-}) {
-  return (
-    <section
-      className="recommended-products"
-      aria-labelledby="recommended-products"
-    >
-      <h2 id="recommended-products">Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={products}>
-          {(response) => (
-            <div className="recommended-products-grid">
-              {response
-                ? response.products.nodes.map((product) => (
-                    <ProductItem key={product.id} product={product} />
-                  ))
-                : null}
-            </div>
-          )}
-        </Await>
-      </Suspense>
-      <br />
-    </section>
-  );
-}
-
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
+const HOME_COLLECTIONS_QUERY = `#graphql
+  fragment HomeCollection on Collection {
     id
     title
+    handle
     image {
       id
       url
@@ -135,42 +87,43 @@ const FEATURED_COLLECTION_QUERY = `#graphql
       width
       height
     }
-    handle
   }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+  query HomeCollections($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
+    collections(first: 12, sortKey: UPDATED_AT, reverse: true) {
       nodes {
-        ...FeaturedCollection
+        ...HomeCollection
       }
     }
   }
 ` as const;
 
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
+const HOME_ARTICLES_QUERY = `#graphql
+  fragment HomeArticle on Article {
     id
     title
     handle
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    featuredImage {
+    excerpt
+    publishedAt
+    image {
       id
       url
       altText
       width
       height
     }
+    author: authorV2 {
+      name
+    }
+    blog {
+      handle
+    }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+  query HomeArticles($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    articles(first: 3, sortKey: PUBLISHED_AT, reverse: true) {
       nodes {
-        ...RecommendedProduct
+        ...HomeArticle
       }
     }
   }

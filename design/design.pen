@@ -1,0 +1,4956 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Xqxzw",
+      "x": 0,
+      "y": 0,
+      "name": "Home / Desktop",
+      "clip": true,
+      "width": 1440,
+      "fill": "$canvas",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "gG6Ji",
+          "name": "Utility Bar",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "#000000",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mvddZ",
+              "name": "Utility Content",
+              "width": 1200,
+              "height": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MieHR",
+                  "name": "Left",
+                  "gap": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oXmDf",
+                      "name": "Phone",
+                      "fill": "$on-dark",
+                      "content": "(818) 474-6009",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZkH59",
+                      "name": "Hours",
+                      "fill": "$on-dark-muted",
+                      "content": "Mon – Fri, 8AM – 6PM",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pUnYA",
+                      "name": "Address",
+                      "fill": "$on-dark-muted",
+                      "content": "13157 Mindanao Way #642, Marina Del Rey, CA",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cVaVZ",
+                  "name": "Right",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Gpn0o",
+                      "name": "Tagline",
+                      "fill": "$on-dark",
+                      "content": "Licensed C-10 electrical contractor",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "XlC52",
+          "name": "Global Nav",
+          "width": "fill_container",
+          "height": 64,
+          "fill": "$canvas",
+          "stroke": "$hairline-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "strokeAlignment": "inner",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "B6jga",
+              "name": "Nav Content",
+              "width": 1200,
+              "height": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "RzAHJ",
+                  "name": "Nav Left",
+                  "width": "fill_container",
+                  "gap": 28,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LXklE",
+                      "name": "Catalog",
+                      "fill": "$ink",
+                      "content": "Catalog",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "s8qyI",
+                      "name": "Projects",
+                      "fill": "$ink",
+                      "content": "Projects",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "x5DPi",
+                      "name": "Services",
+                      "fill": "$ink",
+                      "content": "Services",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HSSBQ",
+                      "name": "About",
+                      "fill": "$ink",
+                      "content": "About",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GNPJq",
+                  "name": "Nav Center",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vkyaA",
+                      "name": "Wordmark",
+                      "fill": "$ink",
+                      "content": "LALE",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 23,
+                      "fontWeight": "800",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "nqmoa",
+                      "name": "Divider",
+                      "fill": "$hairline",
+                      "width": 1,
+                      "height": 26
+                    },
+                    {
+                      "type": "text",
+                      "id": "s3vf2z",
+                      "name": "Logo Text",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": 118,
+                      "content": "Los Angeles Lighting & Electrical",
+                      "lineHeight": 1.15,
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pMqhp",
+                  "name": "Nav Right",
+                  "width": "fill_container",
+                  "gap": 18,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "L3Ysas",
+                      "name": "Contacts",
+                      "fill": "$ink",
+                      "content": "Contacts",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bill3",
+                      "name": "Quote Button",
+                      "fill": "$primary-blue",
+                      "cornerRadius": "$radius",
+                      "padding": [
+                        10,
+                        18
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "d0KT1",
+                          "name": "Label",
+                          "fill": "$on-dark",
+                          "content": "Request a Quote",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "GlYfG",
+                      "name": "Search",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "search",
+                      "library": "lucide",
+                      "fill": "$ink"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "B0PRxz",
+                      "name": "Bag",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "shopping-bag",
+                      "library": "lucide",
+                      "fill": "$ink"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "T3jqOv",
+          "name": "Hero",
+          "width": "fill_container",
+          "fill": "$canvas",
+          "layout": "vertical",
+          "gap": 52,
+          "padding": [
+            80,
+            0,
+            0,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Mi9La",
+              "name": "Hero Text",
+              "width": 880,
+              "layout": "vertical",
+              "gap": 22,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k0GHgB",
+                  "name": "Headline",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": 880,
+                  "content": "Light is the detail people remember.",
+                  "lineHeight": 1.06,
+                  "textAlign": "center",
+                  "fontFamily": "$font",
+                  "fontSize": 58,
+                  "fontWeight": "600",
+                  "letterSpacing": -1.5
+                },
+                {
+                  "type": "text",
+                  "id": "LPDFP",
+                  "name": "Tagline",
+                  "fill": "$ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 640,
+                  "content": "Spec-grade architectural lighting and licensed electrical work, designed and installed in Los Angeles.",
+                  "lineHeight": 1.4,
+                  "textAlign": "center",
+                  "fontFamily": "$font",
+                  "fontSize": 21,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "PtVig",
+                  "name": "Hero Links",
+                  "gap": 30,
+                  "padding": [
+                    10,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "r2hPpZ",
+                      "name": "Explore the catalog",
+                      "gap": 3,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cBtDq",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "Explore the catalog",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 18,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "l5s0f",
+                          "name": "Chevron",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xNjd1",
+                      "name": "Request a quote",
+                      "gap": 3,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "V9TnL",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "Request a quote",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 18,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "WCp4V",
+                          "name": "Chevron",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "O6MVK",
+              "name": "Hero Image",
+              "metadata": {
+                "type": "unsplash",
+                "username": "francotheshooter",
+                "link": "https://unsplash.com/@francotheshooter",
+                "author": "Franco Debartolo"
+              },
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1776313756958-4fa8e6ed1b49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDN8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              },
+              "width": "fill_container",
+              "height": 620
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "A4TwfX",
+          "name": "Catalog Section",
+          "width": "fill_container",
+          "fill": "$parchment",
+          "layout": "vertical",
+          "padding": [
+            88,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "w2IBV",
+              "name": "Catalog Content",
+              "width": 1200,
+              "layout": "vertical",
+              "gap": 44,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tzwQ4",
+                  "name": "Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kSRwo",
+                      "name": "Heading",
+                      "width": 680,
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Q7vsM",
+                          "name": "Title",
+                          "fill": "$ink",
+                          "content": "Shop the catalog",
+                          "lineHeight": 1.05,
+                          "fontFamily": "$font",
+                          "fontSize": 38,
+                          "fontWeight": "600",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "SWOb2",
+                          "name": "Sub",
+                          "fill": "$ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": 520,
+                          "content": "Fixtures specified by architects, in stock and ready to ship.",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 18
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bp8KK",
+                      "name": "View All",
+                      "gap": 3,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NNgR3",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "View all",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "MwMFq",
+                          "name": "Chevron",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BMGJJ",
+                  "name": "Category Row",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "u0dbN",
+                      "name": "Recessed",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "FK9xn",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "tsuyoshikozu",
+                            "link": "https://unsplash.com/@tsuyoshikozu",
+                            "author": "Tsuyoshi Kozu"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1763718476503-8d0b81eb1746?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDR8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 228,
+                          "stroke": "$hairline-soft",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qV9rU",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "Recessed",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "yW3bs",
+                          "name": "Count",
+                          "fill": "$ink-subtle",
+                          "content": "64 products",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Hicpx",
+                      "name": "Linear systems",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "dNnfH",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "tashakostyuk",
+                            "link": "https://unsplash.com/@tashakostyuk",
+                            "author": "Tasha Kostyuk"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1771554753169-2bb81db0707c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDV8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 228,
+                          "stroke": "$hairline-soft",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "TC63q",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "Linear systems",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "k6EIhL",
+                          "name": "Count",
+                          "fill": "$ink-subtle",
+                          "content": "48 products",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YSLVr",
+                      "name": "Pendants",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "U6XRd",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "ovidiugruescu",
+                            "link": "https://unsplash.com/@ovidiugruescu",
+                            "author": "Gruescu Ovidiu"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1760172551278-2c0ccd819a43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDV8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 228,
+                          "stroke": "$hairline-soft",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "YsHOu",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "Pendants",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "scu1K",
+                          "name": "Count",
+                          "fill": "$ink-subtle",
+                          "content": "37 products",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pAvDW",
+                      "name": "Wall & sconces",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "e9URp",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "lugaru",
+                            "link": "https://unsplash.com/@lugaru",
+                            "author": "Uliya Kurilova"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1662401921112-beb95bb02f50?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 228,
+                          "stroke": "$hairline-soft",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "mGadI",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "Wall & sconces",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fWDEI",
+                          "name": "Count",
+                          "fill": "$ink-subtle",
+                          "content": "52 products",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wqnrk",
+                      "name": "Outdoor",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "zExPD",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "arnold_zhou",
+                            "link": "https://unsplash.com/@arnold_zhou",
+                            "author": "Arnold Zhou"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1767954566909-989d8e8a30ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDd8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 228,
+                          "stroke": "$hairline-soft",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qSXJn",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "Outdoor",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "FaxU3",
+                          "name": "Count",
+                          "fill": "$ink-subtle",
+                          "content": "29 products",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yg41L",
+                      "name": "Controls",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "faWpQ",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "huumsauna",
+                            "link": "https://unsplash.com/@huumsauna",
+                            "author": "HUUM"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1655194828703-2ff18a2a9759?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDh8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 228,
+                          "stroke": "$hairline-soft",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uDJpA",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "Controls",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Pa9My",
+                          "name": "Count",
+                          "fill": "$ink-subtle",
+                          "content": "18 products",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QjiVe",
+          "name": "Services Section",
+          "width": "fill_container",
+          "fill": "$tile",
+          "layout": "vertical",
+          "gap": 46,
+          "padding": [
+            100,
+            0,
+            0,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "IX9Sk",
+              "name": "Services Text",
+              "width": 780,
+              "layout": "vertical",
+              "gap": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "I4XqZc",
+                  "name": "Headline",
+                  "fill": "$on-dark",
+                  "textGrowth": "fixed-width",
+                  "width": 780,
+                  "content": "Lighting design, handled end to end.",
+                  "lineHeight": 1.08,
+                  "textAlign": "center",
+                  "fontFamily": "$font",
+                  "fontSize": 44,
+                  "fontWeight": "600",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "y0Tvh1",
+                  "name": "Tagline",
+                  "fill": "$on-dark-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 620,
+                  "content": "Photometric layouts, Title 24 compliance, and a licensed crew that installs what we draw.",
+                  "lineHeight": 1.45,
+                  "textAlign": "center",
+                  "fontFamily": "$font",
+                  "fontSize": 20
+                },
+                {
+                  "type": "frame",
+                  "id": "RPrqx",
+                  "name": "Link",
+                  "gap": 3,
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "o57Z3q",
+                      "name": "Label",
+                      "fill": "$sky",
+                      "content": "See our services",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 18,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "P4W6bD",
+                      "name": "Chevron",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$sky"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "YlHId",
+              "name": "Services Image",
+              "metadata": {
+                "type": "unsplash",
+                "username": "rick_rothenberg",
+                "link": "https://unsplash.com/@rick_rothenberg",
+                "author": "Rick Rothenberg"
+              },
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1687261045977-033a304fa129?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MTd8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              },
+              "width": "fill_container",
+              "height": 480
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oVcUY",
+          "name": "Two Up",
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "frame",
+              "id": "LxBKr",
+              "name": "Custom fabrication",
+              "width": "fill_container",
+              "fill": "$parchment",
+              "layout": "vertical",
+              "gap": 30,
+              "padding": [
+                76,
+                40,
+                0,
+                40
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "k9vC5r",
+                  "name": "Text",
+                  "width": 460,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "o6RqyE",
+                      "name": "Title",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": 460,
+                      "content": "Custom fabrication",
+                      "lineHeight": 1.1,
+                      "textAlign": "center",
+                      "fontFamily": "$font",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "g8YK03",
+                      "name": "Text",
+                      "fill": "$ink-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 400,
+                      "content": "Shapes, lengths, and finishes built to your drawing.",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$font",
+                      "fontSize": 17
+                    },
+                    {
+                      "type": "frame",
+                      "id": "iQLWh",
+                      "name": "Link",
+                      "gap": 3,
+                      "padding": [
+                        6,
+                        0,
+                        0,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WmagY",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "Start a custom build",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "FdBNd",
+                          "name": "Chevron",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "bFqBA",
+                  "name": "Image",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "dariuscotoi",
+                    "link": "https://unsplash.com/@dariuscotoi",
+                    "author": "Darius Cotoi"
+                  },
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1699905527162-8b932a8e9206?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MTd8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "width": "fill_container",
+                  "height": 300,
+                  "stroke": "$hairline-soft",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "aOhfe",
+              "name": "Trade & spec accounts",
+              "width": "fill_container",
+              "fill": "$canvas",
+              "layout": "vertical",
+              "gap": 30,
+              "padding": [
+                76,
+                40,
+                0,
+                40
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "BMzoi",
+                  "name": "Text",
+                  "width": 460,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DNWgR",
+                      "name": "Title",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": 460,
+                      "content": "Trade & spec accounts",
+                      "lineHeight": 1.1,
+                      "textAlign": "center",
+                      "fontFamily": "$font",
+                      "fontSize": 30,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "e52fgu",
+                      "name": "Text",
+                      "fill": "$ink-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 400,
+                      "content": "Pricing, lead times, and submittal packages for the trade.",
+                      "lineHeight": 1.45,
+                      "textAlign": "center",
+                      "fontFamily": "$font",
+                      "fontSize": 17
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l56l8j",
+                      "name": "Link",
+                      "gap": 3,
+                      "padding": [
+                        6,
+                        0,
+                        0,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "R4rR3",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "Open an account",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "kjE3R",
+                          "name": "Chevron",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "I8kkC8",
+                  "name": "Image",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "brettwharton",
+                    "link": "https://unsplash.com/@brettwharton",
+                    "author": "Brett Wharton"
+                  },
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1745817120877-336df03d9279?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MTh8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "width": "fill_container",
+                  "height": 300,
+                  "stroke": "$hairline-soft",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "strokeAlignment": "inner"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cpoEp",
+          "name": "Projects Section",
+          "width": "fill_container",
+          "fill": "$canvas",
+          "layout": "vertical",
+          "padding": [
+            96,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "A2vLK",
+              "name": "Projects Content",
+              "width": 1200,
+              "layout": "vertical",
+              "gap": 44,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KQ6h8",
+                  "name": "Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "cjcBf",
+                      "name": "Heading",
+                      "width": 700,
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kMYtR",
+                          "name": "Title",
+                          "fill": "$ink",
+                          "content": "Recent work",
+                          "lineHeight": 1.05,
+                          "fontFamily": "$font",
+                          "fontSize": 38,
+                          "fontWeight": "600",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "W4Iso",
+                          "name": "Sub",
+                          "fill": "$ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": 540,
+                          "content": "A few rooms we relit across Los Angeles, from private homes to storefronts.",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 18
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lHuux",
+                      "name": "View All",
+                      "gap": 3,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FLBpR",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "View all projects",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "HGUiZ",
+                          "name": "Chevron",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "v1d31P",
+                  "name": "Project Row",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "UepV3",
+                      "name": "Ambient lighting for compact interiors",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "D7MwhE",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "jhc",
+                            "link": "https://unsplash.com/@jhc",
+                            "author": "James Coleman"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1776476269609-c41ae855bb8e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MTl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 232
+                        },
+                        {
+                          "type": "frame",
+                          "id": "vTxIV",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "padding": 24,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "m8hGwi",
+                              "name": "Tags",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "q4V9Br",
+                                  "name": "Los Angeles",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "HHvA3",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "Los Angeles",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "xAfnA",
+                                  "name": "Private Residence",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "nv9Ys",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "Private Residence",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ivtXT",
+                                  "name": "2024",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "OHYJ2",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "2024",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "kGmvs",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Ambient lighting for compact interiors",
+                              "lineHeight": 1.18,
+                              "fontFamily": "$font",
+                              "fontSize": 22,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.4
+                            },
+                            {
+                              "type": "frame",
+                              "id": "jN3s2",
+                              "name": "Link",
+                              "gap": 3,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "EROXY",
+                                  "name": "Label",
+                                  "fill": "$primary-blue",
+                                  "content": "View project",
+                                  "lineHeight": 1,
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "eYOvI",
+                                  "name": "Chevron",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "chevron-right",
+                                  "library": "lucide",
+                                  "fill": "$primary-blue"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yZwyF",
+                      "name": "Storefront relight on a tight footprint",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "l1MPP",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "rawkkim",
+                            "link": "https://unsplash.com/@rawkkim",
+                            "author": "rawkkim"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1759496434659-156333b25142?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MTl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 232
+                        },
+                        {
+                          "type": "frame",
+                          "id": "t626CC",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "padding": 24,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "A2F5mO",
+                              "name": "Tags",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "a61SM6",
+                                  "name": "Santa Monica",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "EjBIT",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "Santa Monica",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Iz8q1",
+                                  "name": "Retail",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "QpcLg",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "Retail",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "G7yW1",
+                                  "name": "2023",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "imMjO",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "2023",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "FEFjf",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Storefront relight on a tight footprint",
+                              "lineHeight": 1.18,
+                              "fontFamily": "$font",
+                              "fontSize": 22,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.4
+                            },
+                            {
+                              "type": "frame",
+                              "id": "wg8QN",
+                              "name": "Link",
+                              "gap": 3,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Z1RgW",
+                                  "name": "Label",
+                                  "fill": "$primary-blue",
+                                  "content": "View project",
+                                  "lineHeight": 1,
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "m3RmfV",
+                                  "name": "Chevron",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "chevron-right",
+                                  "library": "lucide",
+                                  "fill": "$primary-blue"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "R57fx",
+                      "name": "Layered lighting for an evening room",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "hgjH4",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "rm_reins",
+                            "link": "https://unsplash.com/@rm_reins",
+                            "author": "Roman"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1765959679068-89bcc0d88e64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MjB8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 232
+                        },
+                        {
+                          "type": "frame",
+                          "id": "S1WNRO",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 18,
+                          "padding": 24,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "xKCIl",
+                              "name": "Tags",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ngyDK",
+                                  "name": "Beverly Hills",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "uCSuq",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "Beverly Hills",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "VzNEx",
+                                  "name": "Hospitality",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "sfFTd",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "Hospitality",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "X8vcd2",
+                                  "name": "2023",
+                                  "fill": "$parchment",
+                                  "cornerRadius": "$radius",
+                                  "padding": [
+                                    5,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "rV003",
+                                      "name": "T",
+                                      "fill": "$ink-muted",
+                                      "content": "2023",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "jUhn4",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Layered lighting for an evening room",
+                              "lineHeight": 1.18,
+                              "fontFamily": "$font",
+                              "fontSize": 22,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.4
+                            },
+                            {
+                              "type": "frame",
+                              "id": "uKOcL",
+                              "name": "Link",
+                              "gap": 3,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ziXHI",
+                                  "name": "Label",
+                                  "fill": "$primary-blue",
+                                  "content": "View project",
+                                  "lineHeight": 1,
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "KHkw5",
+                                  "name": "Chevron",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "chevron-right",
+                                  "library": "lucide",
+                                  "fill": "$primary-blue"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Zwvn6",
+          "name": "Quote Section",
+          "width": "fill_container",
+          "fill": "$tile",
+          "layout": "vertical",
+          "padding": [
+            100,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Hf3Is",
+              "name": "Quote Content",
+              "width": 1080,
+              "gap": 72,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qQAae",
+                  "name": "Copy",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 22,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sQzUY",
+                      "name": "Headline",
+                      "fill": "$on-dark",
+                      "textGrowth": "fixed-width",
+                      "width": 480,
+                      "content": "Tell us about your space.",
+                      "lineHeight": 1.08,
+                      "fontFamily": "$font",
+                      "fontSize": 40,
+                      "fontWeight": "600",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "kPASk",
+                      "name": "Tagline",
+                      "fill": "$on-dark-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 440,
+                      "content": "Send the details and get a clear, no-obligation estimate, usually within one business day.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 19
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kycB1",
+                      "name": "Contact",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": [
+                        16,
+                        0,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Pw80V",
+                          "name": "Call",
+                          "gap": 14,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KsPKO",
+                              "name": "K",
+                              "fill": "#8a8a8f",
+                              "textGrowth": "fixed-width",
+                              "width": 48,
+                              "content": "Call",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16
+                            },
+                            {
+                              "type": "text",
+                              "id": "pHscp",
+                              "name": "V",
+                              "fill": "$sky",
+                              "content": "(818) 474-6009",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "gI4ev",
+                          "name": "Email",
+                          "gap": 14,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "zmSWT",
+                              "name": "K",
+                              "fill": "#8a8a8f",
+                              "textGrowth": "fixed-width",
+                              "width": 48,
+                              "content": "Email",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16
+                            },
+                            {
+                              "type": "text",
+                              "id": "yBIr1",
+                              "name": "V",
+                              "fill": "$sky",
+                              "content": "sales@losangeleslightingelectrical.com",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ymIfW",
+                  "name": "Form Card",
+                  "width": 480,
+                  "fill": "$canvas",
+                  "cornerRadius": "$radius",
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "moL8k",
+                      "name": "Full name",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sFbeE",
+                          "name": "Label",
+                          "fill": "$ink",
+                          "content": "Full name",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "v8BLLv",
+                          "name": "Input",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "padding": [
+                            0,
+                            14
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "M9t5dc",
+                              "name": "Placeholder",
+                              "fill": "$ink-subtle",
+                              "content": "Jane Smith",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "i9UAw",
+                      "name": "Email",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "loCiQ",
+                          "name": "Label",
+                          "fill": "$ink",
+                          "content": "Email",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "o8Olzy",
+                          "name": "Input",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "padding": [
+                            0,
+                            14
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "d1QauT",
+                              "name": "Placeholder",
+                              "fill": "$ink-subtle",
+                              "content": "jane@company.com",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "W47PvA",
+                      "name": "Phone (optional)",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "aPhWE",
+                          "name": "Label",
+                          "fill": "$ink",
+                          "content": "Phone (optional)",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AB1gW",
+                          "name": "Input",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "padding": [
+                            0,
+                            14
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "rHIog",
+                              "name": "Placeholder",
+                              "fill": "$ink-subtle",
+                              "content": "(818) 474-6009",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "OTHXm",
+                      "name": "Project details",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yq3BJ",
+                          "name": "Label",
+                          "fill": "$ink",
+                          "content": "Project details",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wnR0b",
+                          "name": "Input",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "padding": [
+                            12,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "b1ypg",
+                              "name": "Placeholder",
+                              "fill": "$ink-subtle",
+                              "content": "Tell us about the space, scope, and timeline",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "x6NpiL",
+                      "name": "Consent",
+                      "width": "fill_container",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "lqZi5",
+                          "name": "Box",
+                          "fill": "$canvas",
+                          "width": 18,
+                          "height": 18,
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Z0qh6J",
+                          "name": "L",
+                          "fill": "$ink-muted",
+                          "content": "I agree to the Privacy Policy.",
+                          "lineHeight": 1.2,
+                          "fontFamily": "$font",
+                          "fontSize": 14
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PKJ9H",
+                      "name": "Submit",
+                      "width": "fill_container",
+                      "height": 50,
+                      "fill": "$primary-blue",
+                      "cornerRadius": "$radius",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "q94oQ",
+                          "name": "Label",
+                          "fill": "$on-dark",
+                          "content": "Request a quote",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Z17APt",
+          "name": "Blog Section",
+          "width": "fill_container",
+          "fill": "$canvas",
+          "layout": "vertical",
+          "padding": [
+            96,
+            0,
+            52,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "lJeSk",
+              "name": "Blog Content",
+              "width": 1200,
+              "layout": "vertical",
+              "gap": 44,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ITBG1",
+                  "name": "Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Z8SIm5",
+                      "name": "Heading",
+                      "width": 700,
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ko013",
+                          "name": "Title",
+                          "fill": "$ink",
+                          "content": "From the journal",
+                          "lineHeight": 1.05,
+                          "fontFamily": "$font",
+                          "fontSize": 38,
+                          "fontWeight": "600",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "K1ZpPY",
+                          "name": "Sub",
+                          "fill": "$ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": 540,
+                          "content": "Notes on lighting, energy, and getting a room to feel right.",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 18
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ltqzG",
+                      "name": "Read",
+                      "gap": 3,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "a8dqt5",
+                          "name": "Label",
+                          "fill": "$primary-blue",
+                          "content": "Read the blog",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "haE7F",
+                          "name": "Chevron",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$primary-blue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u6gkQ",
+                  "name": "Article Row",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "N2Ig4",
+                      "name": "Choosing color temperature for a workspace",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "VTR5V",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "ziontech",
+                            "link": "https://unsplash.com/@ziontech",
+                            "author": "I'M ZION"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1591088520983-5afbf1efdde2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MjF8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 208
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ZO59N",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": 24,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "N0Ml0",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Choosing color temperature for a workspace",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 21,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.4
+                            },
+                            {
+                              "type": "text",
+                              "id": "oRa1P",
+                              "name": "Excerpt",
+                              "fill": "$ink-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "How warm or cool light changes focus, comfort, and how a room reads.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CXz7J",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                6,
+                                0,
+                                0,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Ppj9f",
+                                  "name": "Avatar",
+                                  "width": 38,
+                                  "height": 38,
+                                  "fill": "$parchment",
+                                  "cornerRadius": 19,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "nyPEH",
+                                      "name": "In",
+                                      "fill": "$ink-muted",
+                                      "content": "LA",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 13,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Q33hmB",
+                                  "name": "Name",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "hHeDx",
+                                      "name": "N",
+                                      "fill": "$ink",
+                                      "content": "LA Lighting Team",
+                                      "lineHeight": 1.1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "j0Xfh",
+                                      "name": "R",
+                                      "fill": "$ink-subtle",
+                                      "content": "Editorial",
+                                      "lineHeight": 1.1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GWpdi",
+                      "name": "LED retrofits that pay for themselves",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "u2slY",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "madeline_sd",
+                            "link": "https://unsplash.com/@madeline_sd",
+                            "author": "Madeline Liu"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1685270387120-9c130ad59d87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MjJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 208
+                        },
+                        {
+                          "type": "frame",
+                          "id": "H6w7k",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": 24,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "pEEjZ",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "LED retrofits that pay for themselves",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 21,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.4
+                            },
+                            {
+                              "type": "text",
+                              "id": "d5BZJ",
+                              "name": "Excerpt",
+                              "fill": "$ink-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Where the savings come from, and how fast a commercial retrofit returns.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Y52UQZ",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                6,
+                                0,
+                                0,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "uSEN2",
+                                  "name": "Avatar",
+                                  "width": 38,
+                                  "height": 38,
+                                  "fill": "$parchment",
+                                  "cornerRadius": 19,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "CAZJp",
+                                      "name": "In",
+                                      "fill": "$ink-muted",
+                                      "content": "LA",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 13,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "sxKE0",
+                                  "name": "Name",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "UOzCS",
+                                      "name": "N",
+                                      "fill": "$ink",
+                                      "content": "LA Lighting Team",
+                                      "lineHeight": 1.1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "G8UNIU",
+                                      "name": "R",
+                                      "fill": "$ink-subtle",
+                                      "content": "Editorial",
+                                      "lineHeight": 1.1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Vn4eG",
+                      "name": "What Title 24 means for your remodel",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "id": "aRH6I",
+                          "name": "Image",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "olek_bznv_photo",
+                            "link": "https://unsplash.com/@olek_bznv_photo",
+                            "author": "Olek Buzunov"
+                          },
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1768321904126-e5e5872e0c20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MjN8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "width": "fill_container",
+                          "height": 208
+                        },
+                        {
+                          "type": "frame",
+                          "id": "QWgTq",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "padding": 24,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "f9a9F1",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "What Title 24 means for your remodel",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 21,
+                              "fontWeight": "600",
+                              "letterSpacing": -0.4
+                            },
+                            {
+                              "type": "text",
+                              "id": "v3MJk",
+                              "name": "Excerpt",
+                              "fill": "$ink-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "A plain-language look at California’s lighting rules for remodels.",
+                              "lineHeight": 1.45,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            },
+                            {
+                              "type": "frame",
+                              "id": "NxM8H",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 10,
+                              "padding": [
+                                6,
+                                0,
+                                0,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ZMaWv",
+                                  "name": "Avatar",
+                                  "width": 38,
+                                  "height": 38,
+                                  "fill": "$parchment",
+                                  "cornerRadius": 19,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "RfyI3",
+                                      "name": "In",
+                                      "fill": "$ink-muted",
+                                      "content": "LA",
+                                      "lineHeight": 1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 13,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "jNDFt",
+                                  "name": "Name",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "D21D6",
+                                      "name": "N",
+                                      "fill": "$ink",
+                                      "content": "LA Lighting Team",
+                                      "lineHeight": 1.1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "W3M2O",
+                                      "name": "R",
+                                      "fill": "$ink-subtle",
+                                      "content": "Editorial",
+                                      "lineHeight": 1.1,
+                                      "fontFamily": "$font",
+                                      "fontSize": 12
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "o0had7",
+          "name": "Newsletter Section",
+          "width": "fill_container",
+          "fill": "$canvas",
+          "layout": "vertical",
+          "padding": [
+            52,
+            0,
+            96,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "sDpea",
+              "name": "Newsletter Band",
+              "clip": true,
+              "width": 1200,
+              "height": 392,
+              "fill": "$parchment",
+              "cornerRadius": "$radius",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MQ1dk",
+                  "name": "NL Form",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": [
+                    60,
+                    56
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "gIxW9",
+                      "name": "Icon",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$canvas",
+                      "cornerRadius": "$radius",
+                      "stroke": "$hairline-soft",
+                      "strokeWidth": 1,
+                      "strokeAlignment": "inner",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "quhMP",
+                          "name": "Mail",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "mail-plus",
+                          "library": "lucide",
+                          "fill": "$ink"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "w6roJJ",
+                      "name": "Title",
+                      "fill": "$ink",
+                      "content": "Join the newsletter",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.6
+                    },
+                    {
+                      "type": "text",
+                      "id": "mzgHO",
+                      "name": "Sub",
+                      "fill": "$ink-muted",
+                      "textGrowth": "fixed-width",
+                      "width": 430,
+                      "content": "Lighting notes, new arrivals, and the occasional project story. No spam, unsubscribe any time.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 17
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pr9RF",
+                      "name": "Form Row",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "FWhhF",
+                          "name": "Email Input",
+                          "width": "fill_container",
+                          "height": 50,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "C3BwbB",
+                              "name": "Placeholder",
+                              "fill": "$ink-subtle",
+                              "content": "Your email address",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 15
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "x5hn0H",
+                          "name": "Subscribe",
+                          "height": 50,
+                          "fill": "$primary-blue",
+                          "cornerRadius": "$radius",
+                          "padding": [
+                            0,
+                            28
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "C6vFe",
+                              "name": "Label",
+                              "fill": "$on-dark",
+                              "content": "Subscribe",
+                              "lineHeight": 1,
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wSwjM",
+                      "name": "Consent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": "$radius",
+                          "id": "UA9f9",
+                          "name": "Box",
+                          "fill": "$canvas",
+                          "width": 18,
+                          "height": 18,
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ukryd",
+                          "name": "CL",
+                          "gap": 5,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "M0Rgp0",
+                              "name": "A",
+                              "fill": "$ink-muted",
+                              "content": "I agree to the",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 14
+                            },
+                            {
+                              "type": "text",
+                              "id": "AFt6p",
+                              "name": "P",
+                              "fill": "$primary-blue",
+                              "content": "Privacy Policy",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "T8mZS4",
+                  "name": "NL Image",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "___atmos",
+                    "link": "https://unsplash.com/@___atmos",
+                    "author": "Caroline Badran"
+                  },
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1771270759486-1f7703945072?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MjN8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "width": 520,
+                  "height": "fill_container"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vg3xE",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$canvas",
+          "stroke": "$hairline-soft",
+          "strokeWidth": {
+            "top": 1
+          },
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "padding": [
+            80,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "wLjf3",
+              "name": "Footer Content",
+              "width": 1200,
+              "layout": "vertical",
+              "gap": 48,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mzptp",
+                  "name": "Contact Cards",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "amjcj",
+                      "name": "Customer support",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        32,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "SDXfl",
+                          "name": "Icon",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "iXF9n",
+                              "name": "I",
+                              "width": 21,
+                              "height": 21,
+                              "icon": "headset",
+                              "library": "lucide",
+                              "fill": "$ink"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ur1MV",
+                          "name": "Meta",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            16,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "H3Xis",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "content": "Customer support",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "uYl6r",
+                              "name": "Blurb",
+                              "fill": "$ink-subtle",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Questions about an order or a fixture spec.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 14
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "dvS8s",
+                          "name": "Link",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "info@losangeleslightingelectrical.com",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "B5sOK5",
+                      "name": "Div",
+                      "fill": "$hairline-soft",
+                      "width": 1,
+                      "height": 150
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nv3PW",
+                      "name": "Sales",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        32
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "CPVWO",
+                          "name": "Icon",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "VaZ9W",
+                              "name": "I",
+                              "width": 21,
+                              "height": 21,
+                              "icon": "message-square",
+                              "library": "lucide",
+                              "fill": "$ink"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "i2uyF",
+                          "name": "Meta",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            16,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KAw97",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "content": "Sales",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "g5dvfN",
+                              "name": "Blurb",
+                              "fill": "$ink-subtle",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Project quotes, bulk orders, and trade pricing.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 14
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "JdE1A",
+                          "name": "Link",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "sales@losangeleslightingelectrical.com",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "zFjb3",
+                      "name": "Div",
+                      "fill": "$hairline-soft",
+                      "width": 1,
+                      "height": 150
+                    },
+                    {
+                      "type": "frame",
+                      "id": "muT2L",
+                      "name": "Visit us",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        32
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bdUJj",
+                          "name": "Icon",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "m2S1i9",
+                              "name": "I",
+                              "width": 21,
+                              "height": 21,
+                              "icon": "map-pin",
+                              "library": "lucide",
+                              "fill": "$ink"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "X9py1",
+                          "name": "Meta",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            16,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NRz5j",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "content": "Visit us",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "HSbBp",
+                              "name": "Blurb",
+                              "fill": "$ink-subtle",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Showroom and warehouse, by appointment.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 14
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "elCqT",
+                          "name": "Link",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "13157 Mindanao Way #642, Marina Del Rey, CA 90292",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "daVoP",
+                      "name": "Div",
+                      "fill": "$hairline-soft",
+                      "width": 1,
+                      "height": 150
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l52AYE",
+                      "name": "Call us",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": [
+                        0,
+                        0,
+                        0,
+                        32
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mZO2l",
+                          "name": "Icon",
+                          "width": 46,
+                          "height": 46,
+                          "fill": "$canvas",
+                          "cornerRadius": "$radius",
+                          "stroke": "$hairline",
+                          "strokeWidth": 1,
+                          "strokeAlignment": "inner",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "zEeRe",
+                              "name": "I",
+                              "width": 21,
+                              "height": 21,
+                              "icon": "phone",
+                              "library": "lucide",
+                              "fill": "$ink"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CrapH",
+                          "name": "Meta",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            16,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "z9UNJI",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "content": "Call us",
+                              "lineHeight": 1.2,
+                              "fontFamily": "$font",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "vYZik",
+                              "name": "Blurb",
+                              "fill": "$ink-subtle",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Monday to Friday, 8AM to 6PM Pacific.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 14
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "x9cKF",
+                          "name": "Link",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "(818) 474-6009",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Bn6hl",
+                  "name": "Footer Logo",
+                  "gap": 11,
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pZZGG",
+                      "name": "Wordmark",
+                      "fill": "$ink",
+                      "content": "LALE",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 26,
+                      "fontWeight": "800",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "VQVvc",
+                      "name": "Divider",
+                      "fill": "$hairline",
+                      "width": 1,
+                      "height": 30
+                    },
+                    {
+                      "type": "text",
+                      "id": "LY1IN",
+                      "name": "Logo Text",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": 140,
+                      "content": "Los Angeles Lighting & Electrical",
+                      "lineHeight": 1.15,
+                      "fontFamily": "$font",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "R9dbOe",
+                  "name": "Rule 1",
+                  "fill": "$hairline-soft",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "Ndn5j",
+                  "name": "Cols",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "v2txLK",
+                      "name": "Links",
+                      "gap": 72,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "uLUXq",
+                          "name": "Col",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "WSpmL",
+                              "name": "Catalog",
+                              "fill": "$ink",
+                              "content": "Catalog",
+                              "lineHeight": 1.1,
+                              "fontFamily": "$font",
+                              "fontSize": 17,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "rQqrA",
+                              "name": "Blog",
+                              "fill": "$ink",
+                              "content": "Blog",
+                              "lineHeight": 1.1,
+                              "fontFamily": "$font",
+                              "fontSize": 17,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rKda9",
+                          "name": "Col",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "f2CJU",
+                              "name": "Projects",
+                              "fill": "$ink",
+                              "content": "Projects",
+                              "lineHeight": 1.1,
+                              "fontFamily": "$font",
+                              "fontSize": 17,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "GnO8q",
+                              "name": "About",
+                              "fill": "$ink",
+                              "content": "About",
+                              "lineHeight": 1.1,
+                              "fontFamily": "$font",
+                              "fontSize": 17,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xTF3w",
+                          "name": "Col",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "OOs57",
+                              "name": "Services",
+                              "fill": "$ink",
+                              "content": "Services",
+                              "lineHeight": 1.1,
+                              "fontFamily": "$font",
+                              "fontSize": 17,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Z9pIv",
+                              "name": "Contacts",
+                              "fill": "$ink",
+                              "content": "Contacts",
+                              "lineHeight": 1.1,
+                              "fontFamily": "$font",
+                              "fontSize": 17,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PZeLI",
+                      "name": "Licensed Badge",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 300,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$brand-green",
+                            "position": 0
+                          },
+                          {
+                            "color": "$brand-green-dark",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": "$radius",
+                      "gap": 12,
+                      "padding": [
+                        14,
+                        20
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "BIxve",
+                          "name": "Shield",
+                          "width": 30,
+                          "height": 30,
+                          "icon": "shield-check",
+                          "library": "lucide",
+                          "fill": "$on-dark"
+                        },
+                        {
+                          "type": "text",
+                          "id": "S8peM4",
+                          "name": "Txt",
+                          "fill": "$on-dark",
+                          "textGrowth": "fixed-width",
+                          "width": 90,
+                          "content": "LICENSED & INSURED",
+                          "lineHeight": 1.15,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "700",
+                          "letterSpacing": 0.3
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "Hl1kx",
+                  "name": "Rule 2",
+                  "fill": "$hairline-soft",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "C79JTU",
+                  "name": "Legal",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "V5cFP0",
+                      "name": "Copy",
+                      "fill": "$ink-subtle",
+                      "content": "© 2026 Los Angeles Lighting & Electrical. All rights reserved.",
+                      "lineHeight": 1.2,
+                      "fontFamily": "$font",
+                      "fontSize": 13
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PCgPK",
+                      "name": "Legal Links",
+                      "gap": 28,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mA3z5",
+                          "name": "Privacy policy",
+                          "fill": "$ink",
+                          "content": "Privacy policy",
+                          "lineHeight": 1.2,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "oBTWV",
+                          "name": "Terms and Conditions",
+                          "fill": "$ink",
+                          "content": "Terms and Conditions",
+                          "lineHeight": 1.2,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "themes": {
+    "Mode": [
+      "Light",
+      "Dark"
+    ],
+    "Base": [
+      "Neutral",
+      "Gray",
+      "Stone",
+      "Zinc",
+      "Slate"
+    ],
+    "Accent": [
+      "Default",
+      "Red",
+      "Rose",
+      "Orange",
+      "Green",
+      "Blue",
+      "Yellow",
+      "Violet"
+    ]
+  },
+  "variables": {
+    "--sidebar": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#fafafa"
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#09090b"
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#18181b"
+        },
+        {
+          "value": "#1447e6",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-primary-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#fafafa"
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-border": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#e4e4e7"
+        },
+        {
+          "value": "#ffffff1a",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-accent": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#f4f4f4"
+        },
+        {
+          "value": "#2a2a30",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-accent-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#18181b"
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--sidebar-ring": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#71717a"
+        },
+        {
+          "value": "#71717a",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--background": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#fafafa"
+        },
+        {
+          "value": "#0a0a0a",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#030712",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#020617",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#0c0a09",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#09090b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#0a0a0a"
+        },
+        {
+          "value": "#030712",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#020617",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#0c0a09",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#09090b",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--card": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#fafafa"
+        },
+        {
+          "value": "#171717",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#111827",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#0f172a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#1c1917",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--card-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#0a0a0a"
+        },
+        {
+          "value": "#030712",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#020617",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#0c0a09",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#09090b",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--popover": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#fafafa"
+        },
+        {
+          "value": "#171717",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#111827",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#0f172a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#1c1917",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--popover-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#0a0a0a"
+        },
+        {
+          "value": "#030712",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#020617",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#0c0a09",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#09090b",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--primary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#171717"
+        },
+        {
+          "value": "#111827",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#0f172a",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#1c1917",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#e5e5e5",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#e5e7eb",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#e2e8f0",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#e5e5e5",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#e4e4e7",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#dc2626",
+          "theme": {
+            "Accent": "Red"
+          }
+        },
+        {
+          "value": "#e11d48",
+          "theme": {
+            "Accent": "Rose"
+          }
+        },
+        {
+          "value": "#ea580c",
+          "theme": {
+            "Accent": "Orange"
+          }
+        },
+        {
+          "value": "#65a30d",
+          "theme": {
+            "Accent": "Green"
+          }
+        },
+        {
+          "value": "#1d4ed8",
+          "theme": {
+            "Accent": "Blue"
+          }
+        },
+        {
+          "value": "#facc15",
+          "theme": {
+            "Accent": "Yellow"
+          }
+        },
+        {
+          "value": "#7c3aed",
+          "theme": {
+            "Accent": "Violet"
+          }
+        },
+        {
+          "value": "#ef4444",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Red"
+          }
+        },
+        {
+          "value": "#f43f5e",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Rose"
+          }
+        },
+        {
+          "value": "#f97316",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Orange"
+          }
+        },
+        {
+          "value": "#65a30d",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Green"
+          }
+        },
+        {
+          "value": "#1d4ed8",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Blue"
+          }
+        },
+        {
+          "value": "#eab308",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Yellow"
+          }
+        },
+        {
+          "value": "#8b5cf6",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Violet"
+          }
+        }
+      ]
+    },
+    "--primary-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#fafafa"
+        },
+        {
+          "value": "#171717",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#111827",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#0f172a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#1c1917",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#fef2f2",
+          "theme": {
+            "Accent": "Red"
+          }
+        },
+        {
+          "value": "#fff1f2",
+          "theme": {
+            "Accent": "Rose"
+          }
+        },
+        {
+          "value": "#fff7ed",
+          "theme": {
+            "Accent": "Orange"
+          }
+        },
+        {
+          "value": "#f7fee7",
+          "theme": {
+            "Accent": "Green"
+          }
+        },
+        {
+          "value": "#eff6ff",
+          "theme": {
+            "Accent": "Blue"
+          }
+        },
+        {
+          "value": "#713f12",
+          "theme": {
+            "Accent": "Yellow"
+          }
+        },
+        {
+          "value": "#f5f3ff",
+          "theme": {
+            "Accent": "Violet"
+          }
+        }
+      ]
+    },
+    "--secondary": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#f5f5f5"
+        },
+        {
+          "value": "#262626",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#1f2937",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#1e293b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#292524",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#27272a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--secondary-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#171717"
+        },
+        {
+          "value": "#111827",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#0f172a",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#1c1917",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--muted": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#f5f5f5"
+        },
+        {
+          "value": "#262626",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#1f2937",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#1e293b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#292524",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#27272a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--muted-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#737373"
+        },
+        {
+          "value": "#6b7280",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#64748b",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#78716c",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#71717a",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#a3a3a3",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#9ca3af",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#94a3b8",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#a8a29e",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#a1a1aa",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--accent": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#f5f5f5"
+        },
+        {
+          "value": "#262626",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#1f2937",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#1e293b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#292524",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#27272a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        }
+      ]
+    },
+    "--accent-foreground": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#171717"
+        },
+        {
+          "value": "#111827",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#0f172a",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#1c1917",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#18181b",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#fafafa",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--destructive": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#e7000b"
+        },
+        {
+          "value": "#ff666999",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--border": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#e5e5e5"
+        },
+        {
+          "value": "#e5e7eb",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#e2e8f0",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#e5e5e5",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#e4e4e7",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#ffffff1a",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--input": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#e5e5e5"
+        },
+        {
+          "value": "#e5e7eb",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#e2e8f0",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#e5e5e5",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#e4e4e7",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#ffffff1a",
+          "theme": {
+            "Mode": "Dark"
+          }
+        }
+      ]
+    },
+    "--ring": {
+      "type": "color",
+      "value": [
+        {
+          "value": "#a3a3a3"
+        },
+        {
+          "value": "#9ca3af",
+          "theme": {
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#94a3b8",
+          "theme": {
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#a8a29e",
+          "theme": {
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#a1a1aa",
+          "theme": {
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#737373",
+          "theme": {
+            "Mode": "Dark"
+          }
+        },
+        {
+          "value": "#6b7280",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Gray"
+          }
+        },
+        {
+          "value": "#64748b",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Slate"
+          }
+        },
+        {
+          "value": "#78716c",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Stone"
+          }
+        },
+        {
+          "value": "#71717a",
+          "theme": {
+            "Mode": "Dark",
+            "Base": "Zinc"
+          }
+        },
+        {
+          "value": "#7f1d1d",
+          "theme": {
+            "Accent": "Red"
+          }
+        },
+        {
+          "value": "#fb7185",
+          "theme": {
+            "Accent": "Rose"
+          }
+        },
+        {
+          "value": "#fb923c",
+          "theme": {
+            "Accent": "Orange"
+          }
+        },
+        {
+          "value": "#a3e635",
+          "theme": {
+            "Accent": "Green"
+          }
+        },
+        {
+          "value": "#3b82f6",
+          "theme": {
+            "Accent": "Blue"
+          }
+        },
+        {
+          "value": "#713f12",
+          "theme": {
+            "Accent": "Yellow"
+          }
+        },
+        {
+          "value": "#a78bfa",
+          "theme": {
+            "Accent": "Violet"
+          }
+        },
+        {
+          "value": "#dc2626",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Red"
+          }
+        },
+        {
+          "value": "#881337",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Rose"
+          }
+        },
+        {
+          "value": "#7c2d12",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Orange"
+          }
+        },
+        {
+          "value": "#365314",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Green"
+          }
+        },
+        {
+          "value": "#2563eb",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Blue"
+          }
+        },
+        {
+          "value": "#ca8a06",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Yellow"
+          }
+        },
+        {
+          "value": "#4c1d95",
+          "theme": {
+            "Mode": "Dark",
+            "Accent": "Violet"
+          }
+        }
+      ]
+    },
+    "--white": {
+      "type": "color",
+      "value": "#ffffffff"
+    },
+    "--black": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "brand-green": {
+      "type": "color",
+      "value": "#22c55e"
+    },
+    "brand-green-dark": {
+      "type": "color",
+      "value": "#16a34a"
+    },
+    "canvas": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "font": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "hairline": {
+      "type": "color",
+      "value": "#d2d2d7"
+    },
+    "hairline-soft": {
+      "type": "color",
+      "value": "#e8e8ed"
+    },
+    "ink": {
+      "type": "color",
+      "value": "#1d1d1f"
+    },
+    "ink-muted": {
+      "type": "color",
+      "value": "#424245"
+    },
+    "ink-subtle": {
+      "type": "color",
+      "value": "#6e6e73"
+    },
+    "on-dark": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "on-dark-muted": {
+      "type": "color",
+      "value": "#c7c7cc"
+    },
+    "parchment": {
+      "type": "color",
+      "value": "#f5f5f7"
+    },
+    "pearl": {
+      "type": "color",
+      "value": "#fafafc"
+    },
+    "primary-blue": {
+      "type": "color",
+      "value": "#0066cc"
+    },
+    "radius": {
+      "type": "number",
+      "value": 2
+    },
+    "sky": {
+      "type": "color",
+      "value": "#2997ff"
+    },
+    "tile": {
+      "type": "color",
+      "value": "#272729"
+    },
+    "tile-deep": {
+      "type": "color",
+      "value": "#1d1d1f"
+    }
+  }
+}

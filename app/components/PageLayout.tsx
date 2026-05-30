@@ -14,6 +14,7 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import {Logo} from '~/components/Logo';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -36,7 +37,7 @@ export function PageLayout({
     <Aside.Provider>
       <CartAside cart={cart} />
       <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      <MobileMenuAside />
       {header && (
         <Header
           header={header}
@@ -45,7 +46,7 @@ export function PageLayout({
           publicStoreDomain={publicStoreDomain}
         />
       )}
-      <main>{children}</main>
+      <main className="min-h-[60vh]">{children}</main>
       <Footer
         footer={footer}
         header={header}
@@ -57,12 +58,10 @@ export function PageLayout({
 
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
-    <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
+    <Aside type="cart" heading="Cart">
+      <Suspense fallback={<p className="type-body p-6 text-ink-subtle">Loading cart…</p>}>
         <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
+          {(cart) => <CartMain cart={cart} layout="aside" />}
         </Await>
       </Suspense>
     </Aside>
@@ -72,24 +71,28 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
 function SearchAside() {
   const queriesDatalistId = useId();
   return (
-    <Aside type="search" heading="SEARCH">
-      <div className="predictive-search">
-        <br />
+    <Aside type="search" heading="Search">
+      <div className="predictive-search flex flex-col gap-4">
         <SearchFormPredictive>
           {({fetchResults, goToSearch, inputRef}) => (
-            <>
+            <div className="flex items-center gap-2">
               <input
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder="Search products, collections…"
                 ref={inputRef}
                 type="search"
                 list={queriesDatalistId}
+                className="h-11 w-full rounded-[2px] border border-input bg-canvas px-4 type-body text-ink outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
               />
-              &nbsp;
-              <button onClick={goToSearch}>Search</button>
-            </>
+              <button
+                onClick={goToSearch}
+                className="h-11 shrink-0 rounded-[2px] bg-primary px-5 type-caption font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Search
+              </button>
+            </div>
           )}
         </SearchFormPredictive>
 
@@ -98,7 +101,7 @@ function SearchAside() {
             const {articles, collections, pages, products, queries} = items;
 
             if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
+              return <div className="type-caption text-ink-subtle">Loading…</div>;
             }
 
             if (!total) {
@@ -135,11 +138,9 @@ function SearchAside() {
                   <Link
                     onClick={closeSearch}
                     to={`${SEARCH_ENDPOINT}?q=${term.current}`}
+                    className="type-caption font-medium text-primary underline-offset-4 hover:underline"
                   >
-                    <p>
-                      View all results for <q>{term.current}</q>
-                      &nbsp; →
-                    </p>
+                    View all results for “{term.current}” →
                   </Link>
                 ) : null}
               </>
@@ -151,24 +152,10 @@ function SearchAside() {
   );
 }
 
-function MobileMenuAside({
-  header,
-  publicStoreDomain,
-}: {
-  header: PageLayoutProps['header'];
-  publicStoreDomain: PageLayoutProps['publicStoreDomain'];
-}) {
+function MobileMenuAside() {
   return (
-    header.menu &&
-    header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
-        <HeaderMenu
-          menu={header.menu}
-          viewport="mobile"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
-      </Aside>
-    )
+    <Aside type="mobile" heading={<Logo className="h-6" withLink={false} />}>
+      <HeaderMenu viewport="mobile" />
+    </Aside>
   );
 }

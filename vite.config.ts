@@ -2,9 +2,10 @@ import {defineConfig} from 'vite';
 import {hydrogen} from '@shopify/hydrogen/vite';
 import {oxygen} from '@shopify/mini-oxygen/vite';
 import {reactRouter} from '@react-router/dev/vite';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [hydrogen(), oxygen(), reactRouter()],
+  plugins: [tailwindcss(), hydrogen(), oxygen(), reactRouter()],
   resolve: {
     tsconfigPaths: true,
   },
@@ -26,6 +27,7 @@ export default defineConfig({
        * @see https://vitejs.dev/config/dep-optimization-options
        */
       include: [
+        'use-sync-external-store/shim',
         'react-router > set-cookie-parser',
         'react-router > cookie',
         'react-router',
