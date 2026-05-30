@@ -37,6 +37,8 @@ A change is "done" only when `codegen`, `typecheck`, and `build` all pass and `d
 
 **Session:** `app/lib/session.ts` — a cookie-based `AppSession` implementing `HydrogenSession`.
 
+**Homepage** (`app/routes/_index.tsx`) composes section components from `app/components/sections/*` — it is a 1:1 port of the Pencil design in `design/design.pen` (the source of truth; `HANDOFF.md` is the port plan). Catalog + Blog are data-driven from the `_index` loader; other sections are static. Marketing copy/nav/contact live in `app/lib/site.ts`; form validators in `app/lib/home-forms.ts` (the quote form posts to the `_index` action; newsletter + referral post to the `app/routes/api.subscribe.tsx` resource route). **Imagery is self-hosted** in `app/assets/*.jpg`, imported via `?url` and rendered with plain `<img>` (same-origin — no CSP change needed). Real Shopify product/collection/article images load from `cdn.shopify.com` via Hydrogen `<Image>`; arbitrary external image hosts are blocked by the CSP in `app/entry.server.tsx`.
+
 **Key config files (do not casually change):** `vite.config.ts` (the `hydrogen()`, `oxygen()`, `reactRouter()` plugins — removing/reordering them breaks the Oxygen target), `react-router.config.ts` (`hydrogenPreset()`).
 
 ## GraphQL — never guess fields
@@ -51,6 +53,14 @@ The Shopify MCP "AI Toolkit" tools (`validate_graphql_codeblocks`, `search_docs_
 ## Imports (Cursor rule, enforced)
 
 This is React Router 7, not Remix. Import routing primitives (`useLoaderData`, `Link`, `Form`, `useNavigation`, etc.) from **`react-router`**. Never import from `@remix-run/*`, and **never from `react-router-dom`**. Replace `@remix-run/dev` → `@react-router/dev`, `@remix-run/fs-routes` → `@react-router/fs-routes`, etc. Match the patterns already in the code.
+
+## Styling (Tailwind v4 + shadcn)
+
+Three stylesheets load via `?url` in the `app/root.tsx` `Layout` (order: `reset` → `app` → `tailwind`): `app/styles/reset.css` (minimal), `app/styles/app.css` (skeleton-route rules: cart/search/account), `app/styles/tailwind.css` (the design system).
+
+**Use the design system, don't inline raw values.** `tailwind.css` defines the brand tokens and type roles in `@theme`/`@layer components`: one action color **Action Blue `#0066cc`** (`text-primary`/`bg-primary`); `text-ink`/`ink-muted`/`ink-subtle`; surfaces `bg-canvas`/`bg-parchment`/`bg-tile`/`bg-tile-deep`; `border-hairline`; **radius 2px everywhere** (`rounded-sm/md/lg/xl` are all pinned to 2px); `brand-green` **only** for the Licensed badge. Type roles `.type-hero .type-display .type-display-sm .type-lead .type-body .type-caption …` and layout helpers `.container-page .container-narrow .section-y` — prefer these over ad-hoc font sizes. shadcn primitives live in `app/components/ui/`; merge classes with `cn()` from `app/lib/utils.ts`.
+
+**Cascade gotcha (this WILL bite you).** In Tailwind v4 an **unlayered** rule beats any `@layer` rule regardless of specificity. The design system is in `@layer components`, so a bare element selector like `h1 { font-size: 1.6rem }` in reset/app.css silently overrides `.type-hero` and collapses the whole layout. **Any global element CSS MUST go inside `@layer base`.** Tailwind's preflight already handles the modern reset, so reset.css is intentionally tiny — don't reintroduce unlayered `h1/h2/p/input/img` rules.
 
 ## Runtime constraints (workerd, not Node)
 
