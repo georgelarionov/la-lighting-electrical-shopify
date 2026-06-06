@@ -5,6 +5,7 @@ import {ArrowLink} from '~/components/ArrowLink';
 
 type Project = {
   id: string;
+  handle: string;
   img: string;
   tags: string[];
   title: string;
@@ -13,18 +14,21 @@ type Project = {
 const PROJECTS: Project[] = [
   {
     id: 'p1',
+    handle: 'marina-del-rey-residence',
     img: project1,
-    tags: ['Los Angeles', 'Private Residence', '2024'],
+    tags: ['Marina Del Rey', 'Private Residence', '2024'],
     title: 'Ambient lighting for compact interiors',
   },
   {
     id: 'p2',
+    handle: 'santa-monica-storefront',
     img: project2,
     tags: ['Santa Monica', 'Retail', '2023'],
     title: 'Storefront relight on a tight footprint',
   },
   {
     id: 'p3',
+    handle: 'beverly-hills-evening-room',
     img: project3,
     tags: ['Beverly Hills', 'Hospitality', '2023'],
     title: 'Layered lighting for an evening room',
@@ -43,7 +47,7 @@ export function Projects() {
               storefronts.
             </p>
           </div>
-          <ArrowLink to="/pages/projects" className="type-body shrink-0">
+          <ArrowLink to="/projects" className="type-body shrink-0">
             View all projects
           </ArrowLink>
         </div>
@@ -77,7 +81,7 @@ export function Projects() {
                   {project.title}
                 </h3>
                 <ArrowLink
-                  to="/pages/projects"
+                  to={`/projects/${project.handle}`}
                   className="type-caption mt-[18px]"
                 >
                   View project

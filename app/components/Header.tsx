@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, useEffect} from 'react';
 import {Await, Link, NavLink, useAsyncValue} from 'react-router';
 import {
   type CartViewPayload,
@@ -6,19 +6,11 @@ import {
   useOptimisticCart,
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
-import {
-  ArrowUpRight,
-  MapPin,
-  Menu as MenuIcon,
-  Phone,
-  Search,
-  ShoppingBag,
-  User,
-} from 'lucide-react';
+import {Menu as MenuIcon, ShoppingBag, X} from 'lucide-react';
 import {useAside} from '~/components/Aside';
 import {Logo} from '~/components/Logo';
 import {Button} from '~/components/ui/button';
-import {CONTACT, PRIMARY_NAV} from '~/lib/site';
+import {CONTACT, MOBILE_NAV, PRIMARY_NAV} from '~/lib/site';
 import {cn} from '~/lib/utils';
 
 interface HeaderProps {
@@ -28,90 +20,83 @@ interface HeaderProps {
   publicStoreDomain: string;
 }
 
-type Viewport = 'desktop' | 'mobile';
-
-export function Header({header, isLoggedIn, cart}: HeaderProps) {
+/**
+ * Pencil "Header / Desktop" (GPmqO) + "Header / Mobile" (lYup1): a slim black
+ * utility bar (desktop only) above a sticky white nav — logo left, primary nav
+ * centered, "Request a Quote" + cart on the right. On mobile it collapses to
+ * logo + cart + hamburger, which opens the full-screen MobileNav (VMWan).
+ */
+export function Header({cart}: HeaderProps) {
   return (
     <header className="relative z-50">
       <UtilityBar />
-      <div className="glass sticky top-0 z-50 border-b border-hairline">
-        <div className="container-page grid h-16 grid-cols-[auto_1fr_auto] items-center gap-4 md:grid-cols-3">
-          {/* Left: primary nav (desktop) / hamburger (mobile) */}
-          <div className="flex items-center">
-            <MobileMenuToggle />
-            <nav
-              className="hidden items-center gap-7 md:flex"
-              role="navigation"
-              aria-label="Primary"
-            >
-              {PRIMARY_NAV.map((item) => (
-                <HeaderNavLink key={item.to} to={item.to}>
-                  {item.label}
-                </HeaderNavLink>
-              ))}
-            </nav>
+      <div className="sticky top-0 z-50 border-b border-hairline bg-canvas">
+        <div className="container-page flex h-14 items-center justify-between gap-4 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
+          {/* Logo — left on every viewport */}
+          <div className="flex md:justify-start">
+            <Logo className="h-6 md:h-7" />
           </div>
 
-          {/* Center: logo */}
-          <div className="flex justify-center">
-            <Logo className="h-6 sm:h-7" />
-          </div>
+          {/* Primary nav — centered, desktop only */}
+          <nav
+            className="hidden items-center justify-center gap-7 md:flex"
+            role="navigation"
+            aria-label="Primary"
+          >
+            {PRIMARY_NAV.map((item) => (
+              <HeaderNavLink key={item.to} to={item.to}>
+                {item.label}
+              </HeaderNavLink>
+            ))}
+          </nav>
 
-          {/* Right: contacts, quote CTA, utility icons */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3">
-            <HeaderNavLink to="/#contact" className="hidden lg:inline-flex">
-              Contacts
-            </HeaderNavLink>
+          {/* Actions — right */}
+          <div className="flex items-center justify-end gap-3">
             <Button
               asChild
-              className="hidden h-9 px-5 type-caption font-normal sm:inline-flex"
+              className="hidden h-9 px-[18px] type-caption font-medium md:inline-flex"
             >
               <Link to="/#quote">Request a Quote</Link>
             </Button>
-            <IconLink to="/search" label="Search" Icon={Search} />
-            <AccountLink isLoggedIn={isLoggedIn} />
-            <CartToggle cart={cart} />
+            <CartToggle cart={cart} className="hidden md:inline-flex" pill />
+            <CartToggle
+              cart={cart}
+              className="text-ink hover:text-primary md:hidden"
+            />
+            <MobileMenuToggle />
           </div>
         </div>
       </div>
+      <MobileNav cart={cart} />
     </header>
   );
 }
 
-/** Slim near-black top bar carrying phone, hours, address, and the tagline. */
+/** Slim near-black bar (desktop only): phone, hours, address, C-10 credential. */
 function UtilityBar() {
   return (
-    <div className="bg-ink-black text-white">
-      <div className="container-page flex h-11 items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-4 type-fine sm:gap-6">
+    <div className="hidden bg-ink-black text-white md:block">
+      <div className="container-page flex h-10 items-center justify-between gap-6 type-fine">
+        <div className="flex min-w-0 items-center gap-6">
           <a
             href={CONTACT.phoneHref}
-            className="inline-flex items-center gap-2 whitespace-nowrap underline-offset-4 hover:underline"
+            className="whitespace-nowrap font-medium underline-offset-4 hover:underline"
           >
-            <Phone className="size-3.5" strokeWidth={2} />
             {CONTACT.phoneDisplay}
           </a>
-          <span className="hidden items-center gap-2 whitespace-nowrap text-white/70 sm:inline-flex">
-            <span className="size-2 rounded-full bg-brand-green" aria-hidden />
+          <span className="whitespace-nowrap text-body-muted">
             {CONTACT.hoursDisplay}
           </span>
           <a
             href={CONTACT.mapHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden min-w-0 items-center gap-2 underline-offset-4 hover:underline lg:inline-flex"
+            className="hidden min-w-0 truncate text-body-muted underline-offset-4 hover:text-white hover:underline lg:block"
           >
-            <MapPin className="size-3.5 shrink-0" strokeWidth={2} />
-            <span className="truncate">{CONTACT.addressFull}</span>
+            {CONTACT.addressFull}
           </a>
         </div>
-        <a
-          href="/#projects"
-          className="hidden items-center gap-1.5 whitespace-nowrap type-fine text-white/90 underline-offset-4 hover:underline md:inline-flex"
-        >
-          {CONTACT.tagline}
-          <ArrowUpRight className="size-3.5" strokeWidth={2} />
-        </a>
+        <span className="whitespace-nowrap">{CONTACT.licenseLine}</span>
       </div>
     </div>
   );
@@ -133,7 +118,9 @@ function HeaderNavLink({
       className={({isActive}) =>
         cn(
           'type-caption font-medium text-ink transition-colors hover:text-primary',
-          isActive && 'text-primary',
+          // Same-page hash links resolve to pathname "/", so NavLink reports
+          // them active on the homepage — only highlight real route targets.
+          isActive && !to.includes('#') && 'text-primary',
           className,
         )
       }
@@ -143,112 +130,159 @@ function HeaderNavLink({
   );
 }
 
-/** Vertical nav used inside the mobile slide-over (rendered by PageLayout). */
-export function HeaderMenu({viewport}: {viewport: Viewport}) {
-  const {close} = useAside();
-  const isMobile = viewport === 'mobile';
-  return (
-    <nav
-      className={cn('flex flex-col gap-1', !isMobile && 'md:flex-row')}
-      role="navigation"
-      aria-label="Primary"
-    >
-      {PRIMARY_NAV.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          prefetch="intent"
-          onClick={close}
-          className={({isActive}) =>
-            cn(
-              'type-display-sm py-2 text-ink transition-colors hover:text-primary',
-              isActive && 'text-primary',
-            )
-          }
-        >
-          {item.label}
-        </NavLink>
-      ))}
-      <NavLink
-        to="/#contact"
-        onClick={close}
-        className="type-display-sm py-2 text-ink hover:text-primary"
-      >
-        Contacts
-      </NavLink>
-    </nav>
-  );
-}
-
 function MobileMenuToggle() {
   const {open} = useAside();
   return (
     <button
       type="button"
-      className="-ml-2 inline-flex size-10 items-center justify-center text-ink md:hidden"
+      className="-mr-2 inline-flex size-10 items-center justify-center text-ink md:hidden"
       onClick={() => open('mobile')}
       aria-label="Open menu"
     >
-      <MenuIcon className="size-5" />
+      <MenuIcon className="size-6" strokeWidth={1.75} />
     </button>
   );
 }
 
-function IconLink({
-  to,
-  label,
-  Icon,
-}: {
-  to: string;
-  label: string;
-  Icon: typeof Search;
-}) {
+/**
+ * Full-screen dark mobile menu (Pencil "Header / Mobile — Menu Open" VMWan):
+ * white logo + cart + close on top, a large nav list, and a quote CTA with
+ * contact details pinned to the bottom. Driven by the shared `mobile` aside
+ * state so the hamburger / close / nav links all toggle it.
+ */
+function MobileNav({cart}: Pick<HeaderProps, 'cart'>) {
+  const {type, close} = useAside();
+  const expanded = type === 'mobile';
+
+  useEffect(() => {
+    if (!expanded) return;
+    const abortController = new AbortController();
+    document.addEventListener(
+      'keydown',
+      (event: KeyboardEvent) => {
+        if (event.key === 'Escape') close();
+      },
+      {signal: abortController.signal},
+    );
+    document.body.style.overflow = 'hidden';
+    return () => {
+      abortController.abort();
+      document.body.style.overflow = '';
+    };
+  }, [expanded, close]);
+
   return (
-    <Link
-      to={to}
-      prefetch="intent"
-      aria-label={label}
-      className="inline-flex size-10 items-center justify-center text-ink transition-colors hover:text-primary"
+    <div
+      role="dialog"
+      aria-modal
+      aria-label="Menu"
+      aria-hidden={!expanded}
+      className={cn(
+        'fixed inset-0 z-[100] flex flex-col bg-tile text-white transition-opacity duration-300 md:hidden',
+        expanded ? 'opacity-100' : 'pointer-events-none opacity-0',
+      )}
     >
-      <Icon className="size-5" strokeWidth={1.75} />
-    </Link>
+      <div className="flex h-14 shrink-0 items-center justify-between px-5">
+        <Link to="/" onClick={close} aria-label="Home" className="inline-flex">
+          <Logo className="h-6 brightness-0 invert" withLink={false} />
+        </Link>
+        <div className="flex items-center gap-5">
+          <CartToggle
+            cart={cart}
+            className="size-7 text-white hover:text-white/80"
+          />
+          <button
+            type="button"
+            onClick={close}
+            aria-label="Close menu"
+            className="-mr-1 inline-flex size-8 items-center justify-center text-white"
+          >
+            <X className="size-6" strokeWidth={1.75} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between px-7 pb-10 pt-7">
+        <nav className="flex flex-col" role="navigation" aria-label="Primary">
+          {MOBILE_NAV.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              prefetch="intent"
+              onClick={close}
+              className={({isActive}) =>
+                cn(
+                  'py-3.5 text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-white transition-colors hover:text-sky',
+                  isActive && !item.to.includes('#') && 'text-sky',
+                )
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="flex flex-col gap-5">
+          <Button asChild className="h-12 w-full text-base font-semibold">
+            <Link to="/#quote" onClick={close}>
+              Request a Quote
+            </Link>
+          </Button>
+          <div className="flex flex-col gap-3.5">
+            <a
+              href={CONTACT.phoneHref}
+              className="text-[1.375rem] font-semibold leading-tight text-white"
+            >
+              {CONTACT.phoneDisplay}
+            </a>
+            <div className="flex flex-col gap-1.5 type-caption text-body-muted">
+              <span>{CONTACT.hoursDisplay}</span>
+              <span>{CONTACT.addressFull}</span>
+              <a
+                href={`mailto:${CONTACT.emailSales}`}
+                className="break-all transition-colors hover:text-white"
+              >
+                {CONTACT.emailSales}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function AccountLink({isLoggedIn}: {isLoggedIn: Promise<boolean>}) {
+function CartToggle({
+  cart,
+  className,
+  pill,
+}: Pick<HeaderProps, 'cart'> & {className?: string; pill?: boolean}) {
   return (
-    <Link
-      to="/account"
-      prefetch="intent"
-      aria-label="Account"
-      className="inline-flex size-10 items-center justify-center text-ink transition-colors hover:text-primary"
-    >
-      <Suspense fallback={<User className="size-5" strokeWidth={1.75} />}>
-        <Await resolve={isLoggedIn} errorElement={<User className="size-5" />}>
-          {() => <User className="size-5" strokeWidth={1.75} />}
-        </Await>
-      </Suspense>
-    </Link>
-  );
-}
-
-function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
-  return (
-    <Suspense fallback={<CartBadge count={0} />}>
+    <Suspense fallback={<CartBadge count={0} className={className} pill={pill} />}>
       <Await resolve={cart}>
-        <CartBanner />
+        <CartBanner className={className} pill={pill} />
       </Await>
     </Suspense>
   );
 }
 
-function CartBanner() {
+function CartBanner({className, pill}: {className?: string; pill?: boolean}) {
   const originalCart = useAsyncValue() as CartApiQueryFragment | null;
   const cart = useOptimisticCart(originalCart);
-  return <CartBadge count={cart?.totalQuantity ?? 0} />;
+  return (
+    <CartBadge count={cart?.totalQuantity ?? 0} className={className} pill={pill} />
+  );
 }
 
-function CartBadge({count}: {count: number}) {
+function CartBadge({
+  count,
+  className,
+  pill,
+}: {
+  count: number;
+  className?: string;
+  pill?: boolean;
+}) {
   const {open} = useAside();
   const {publish, shop, cart, prevCart} = useAnalytics();
 
@@ -256,7 +290,13 @@ function CartBadge({count}: {count: number}) {
     <button
       type="button"
       aria-label={`Open cart, ${count} item${count === 1 ? '' : 's'}`}
-      className="relative inline-flex size-10 items-center justify-center text-ink transition-colors hover:text-primary"
+      className={cn(
+        'relative inline-flex items-center justify-center transition-colors',
+        pill
+          ? 'size-9 rounded-sm bg-parchment text-ink hover:bg-parchment/70'
+          : 'size-10',
+        className,
+      )}
       onClick={() => {
         open('cart');
         publish('cart_viewed', {

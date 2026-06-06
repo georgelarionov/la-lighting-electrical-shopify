@@ -86,10 +86,9 @@ export default function AccountProfile() {
   const customer = action?.customer ?? account?.customer;
 
   return (
-    <div className="account-profile">
+    <div className="account-profile max-w-2xl">
       <h2>My profile</h2>
-      <br />
-      <Form method="PUT">
+      <Form method="PUT" className="mt-6">
         <legend>Personal information</legend>
         <fieldset>
           <label htmlFor="firstName">First name</label>
@@ -116,16 +115,14 @@ export default function AccountProfile() {
           />
         </fieldset>
         {action?.error ? (
-          <p>
-            <mark>
-              <small>{action.error}</small>
-            </mark>
-          </p>
-        ) : (
-          <br />
-        )}
-        <button type="submit" disabled={state !== 'idle'}>
-          {state !== 'idle' ? 'Updating' : 'Update'}
+          <p className="mb-4 type-caption text-destructive">{action.error}</p>
+        ) : null}
+        <button
+          type="submit"
+          disabled={state !== 'idle'}
+          className="!border-primary !bg-primary !text-white hover:!bg-primary/90"
+        >
+          {state !== 'idle' ? 'Updating' : 'Update profile'}
         </button>
       </Form>
     </div>

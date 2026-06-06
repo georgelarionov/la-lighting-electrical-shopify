@@ -1,6 +1,7 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {PageHeader} from '~/components/PageHeader';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
@@ -58,11 +59,11 @@ export default function Page() {
   const {page} = useLoaderData<typeof loader>();
 
   return (
-    <div className="page">
-      <header>
-        <h1>{page.title}</h1>
-      </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+    <div className="bg-canvas">
+      <PageHeader title={page.title} />
+      <div className="container-narrow section-y">
+        <div className="rich-text" dangerouslySetInnerHTML={{__html: page.body}} />
+      </div>
     </div>
   );
 }

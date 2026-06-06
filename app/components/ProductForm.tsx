@@ -6,7 +6,11 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
+import {cn} from '~/lib/utils';
 import type {ProductFragment} from 'storefrontapi.generated';
+
+const optionItemClass =
+  'inline-flex min-h-10 items-center justify-center rounded-[2px] border px-3.5 py-1.5 type-caption text-ink transition-colors';
 
 export function ProductForm({
   productOptions,
@@ -18,15 +22,15 @@ export function ProductForm({
   const navigate = useNavigate();
   const {open} = useAside();
   return (
-    <div className="product-form">
+    <div className="flex flex-col gap-7">
       {productOptions.map((option) => {
         // If there is only a single value in the option values, don't display the option
         if (option.optionValues.length === 1) return null;
 
         return (
-          <div className="product-options" key={option.name}>
-            <h5>{option.name}</h5>
-            <div className="product-options-grid">
+          <div key={option.name}>
+            <h3 className="type-caption-strong text-ink">{option.name}</h3>
+            <div className="mt-3 flex flex-wrap gap-2.5">
               {option.optionValues.map((value) => {
                 const {
                   name,
@@ -39,6 +43,13 @@ export function ProductForm({
                   swatch,
                 } = value;
 
+                const stateClass = cn(
+                  selected
+                    ? 'border-ink bg-ink text-white'
+                    : 'border-hairline hover:border-ink',
+                  !available && 'opacity-40',
+                );
+
                 if (isDifferentProduct) {
                   // SEO
                   // When the variant is a combined listing child product
@@ -46,18 +57,12 @@ export function ProductForm({
                   // as an anchor tag
                   return (
                     <Link
-                      className="product-options-item"
+                      className={cn(optionItemClass, stateClass)}
                       key={option.name + name}
                       prefetch="intent"
                       preventScrollReset
                       replace
                       to={`/products/${handle}?${variantUriQuery}`}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                     >
                       <ProductOptionSwatch swatch={swatch} name={name} />
                     </Link>
@@ -71,16 +76,12 @@ export function ProductForm({
                   return (
                     <button
                       type="button"
-                      className={`product-options-item${
-                        exists && !selected ? ' link' : ''
-                      }`}
+                      className={cn(
+                        optionItemClass,
+                        stateClass,
+                        !exists && 'cursor-not-allowed',
+                      )}
                       key={option.name + name}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                       disabled={!exists}
                       onClick={() => {
                         if (!selected) {
@@ -97,7 +98,6 @@ export function ProductForm({
                 }
               })}
             </div>
-            <br />
           </div>
         );
       })}
@@ -137,14 +137,16 @@ function ProductOptionSwatch({
   if (!image && !color) return name;
 
   return (
-    <div
+    <span
       aria-label={name}
-      className="product-option-label-swatch"
+      className="block size-5 overflow-hidden rounded-[2px]"
       style={{
         backgroundColor: color || 'transparent',
       }}
     >
-      {!!image && <img src={image} alt={name} />}
-    </div>
+      {!!image && (
+        <img src={image} alt={name} className="h-full w-full object-cover" />
+      )}
+    </span>
   );
 }

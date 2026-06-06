@@ -3,6 +3,9 @@ import type {Route} from './+types/blogs.$blogHandle._index';
 import {Image, getPaginationVariables} from '@shopify/hydrogen';
 import type {ArticleItemFragment} from 'storefrontapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {PageHeader} from '~/components/PageHeader';
+import {EmptyState} from '~/components/EmptyState';
+import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -65,18 +68,32 @@ export default function Blog() {
   const {articles} = blog;
 
   return (
-    <div className="blog">
-      <h1>{blog.title}</h1>
-      <div className="blog-grid">
-        <PaginatedResourceSection<ArticleItemFragment> connection={articles}>
-          {({node: article, index}) => (
-            <ArticleItem
-              article={article}
-              key={article.id}
-              loading={index < 2 ? 'eager' : 'lazy'}
-            />
-          )}
-        </PaginatedResourceSection>
+    <div className="bg-canvas">
+      <PageHeader
+        back={{to: '/blogs', label: 'Journal'}}
+        title={blog.title}
+      />
+      <div className="container-page section-y">
+        {articles.nodes.length === 0 ? (
+          <EmptyState
+            title="No posts yet"
+            description="We haven’t published anything here yet. Check back soon."
+            action={{to: '/blogs', label: 'Back to the journal'}}
+          />
+        ) : (
+          <PaginatedResourceSection<ArticleItemFragment>
+            connection={articles}
+            resourcesClassName="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {({node: article, index}) => (
+              <ArticleItem
+                article={article}
+                key={article.id}
+                loading={index < 3 ? 'eager' : 'lazy'}
+              />
+            )}
+          </PaginatedResourceSection>
+        )}
       </div>
     </div>
   );
@@ -95,23 +112,30 @@ function ArticleItem({
     day: 'numeric',
   }).format(new Date(article.publishedAt!));
   return (
-    <div className="blog-article" key={article.id}>
-      <Link to={`/blogs/${article.blog.handle}/${article.handle}`}>
-        {article.image && (
-          <div className="blog-article-image">
-            <Image
-              alt={article.image.altText || article.title}
-              aspectRatio="3/2"
-              data={article.image}
-              loading={loading}
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
-          </div>
+    <Link
+      className="group flex flex-col"
+      to={`/blogs/${article.blog.handle}/${article.handle}`}
+      prefetch="intent"
+    >
+      <div className="overflow-hidden rounded-[2px] border border-hairline bg-parchment">
+        {article.image ? (
+          <Image
+            alt={article.image.altText || article.title}
+            aspectRatio="3/2"
+            data={article.image}
+            loading={loading}
+            sizes="(min-width: 1024px) 384px, (min-width: 640px) 50vw, 100vw"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <PlaceholderImage aspect="aspect-[3/2]" label="Article" />
         )}
-        <h3>{article.title}</h3>
-        <small>{publishedAt}</small>
-      </Link>
-    </div>
+      </div>
+      <p className="type-caption mt-4 text-ink-subtle">{publishedAt}</p>
+      <h2 className="type-body-strong mt-1.5 text-ink transition-colors group-hover:text-primary">
+        {article.title}
+      </h2>
+    </Link>
   );
 }
 

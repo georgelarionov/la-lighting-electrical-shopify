@@ -35,20 +35,9 @@ export function CartLineItem({
   const childrenLabelId = `cart-line-children-${id}`;
 
   return (
-    <li key={id} className="cart-line">
-      <div className="cart-line-inner">
+    <li key={id} className="border-b border-hairline py-5 first:pt-0">
+      <div className="flex gap-4">
         {image && (
-          <Image
-            alt={title}
-            aspectRatio="1/1"
-            data={image}
-            height={100}
-            loading="lazy"
-            width={100}
-          />
-        )}
-
-        <div>
           <Link
             prefetch="intent"
             to={lineItemUrl}
@@ -57,21 +46,43 @@ export function CartLineItem({
                 close();
               }
             }}
+            className="size-20 shrink-0 overflow-hidden rounded-[2px] border border-hairline bg-parchment"
           >
-            <p>
-              <strong>{product.title}</strong>
-            </p>
+            <Image
+              alt={title}
+              aspectRatio="1/1"
+              data={image}
+              height={100}
+              loading="lazy"
+              width={100}
+              className="h-full w-full object-cover"
+            />
           </Link>
-          <ProductPrice price={line?.cost?.totalAmount} />
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.name}>
-                <small>
-                  {option.name}: {option.value}
-                </small>
-              </li>
-            ))}
-          </ul>
+        )}
+
+        <div className="min-w-0 flex-1">
+          <Link
+            prefetch="intent"
+            to={lineItemUrl}
+            onClick={() => {
+              if (layout === 'aside') {
+                close();
+              }
+            }}
+            className="type-body-strong text-ink transition-colors hover:text-primary"
+          >
+            {product.title}
+          </Link>
+          {selectedOptions.length ? (
+            <p className="type-caption mt-0.5 text-ink-subtle">
+              {selectedOptions
+                .map((option) => `${option.name}: ${option.value}`)
+                .join(' · ')}
+            </p>
+          ) : null}
+          <div className="mt-2">
+            <ProductPrice price={line?.cost?.totalAmount} />
+          </div>
           <CartLineQuantity line={line} />
         </div>
       </div>
@@ -81,7 +92,7 @@ export function CartLineItem({
           <p id={childrenLabelId} className="sr-only">
             Line items with {product.title}
           </p>
-          <ul aria-labelledby={childrenLabelId} className="cart-line-children">
+          <ul aria-labelledby={childrenLabelId} className="mt-4 pl-8">
             {lineItemChildren.map((childLine) => (
               <CartLineItem
                 childrenMap={childrenMap}
@@ -109,30 +120,34 @@ function CartLineQuantity({line}: {line: CartLine}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
+    <div className="mt-3 flex items-center gap-4">
+      <div className="inline-flex items-center rounded-[2px] border border-hairline">
+        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+          <button
+            aria-label="Decrease quantity"
+            disabled={quantity <= 1 || !!isOptimistic}
+            name="decrease-quantity"
+            value={prevQuantity}
+            className="inline-flex size-8 items-center justify-center text-ink transition-colors hover:bg-parchment disabled:opacity-30"
+          >
+            <span aria-hidden>&#8722;</span>
+          </button>
+        </CartLineUpdateButton>
+        <span className="min-w-8 text-center type-caption-strong text-ink">
+          {quantity}
+        </span>
+        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+          <button
+            aria-label="Increase quantity"
+            name="increase-quantity"
+            value={nextQuantity}
+            disabled={!!isOptimistic}
+            className="inline-flex size-8 items-center justify-center text-ink transition-colors hover:bg-parchment disabled:opacity-30"
+          >
+            <span aria-hidden>&#43;</span>
+          </button>
+        </CartLineUpdateButton>
+      </div>
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
@@ -157,7 +172,11 @@ function CartLineRemoveButton({
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
+      <button
+        disabled={disabled}
+        type="submit"
+        className="type-caption text-ink-subtle underline-offset-4 transition-colors hover:text-ink hover:underline disabled:opacity-40"
+      >
         Remove
       </button>
     </CartForm>

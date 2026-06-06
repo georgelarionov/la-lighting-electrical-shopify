@@ -13,6 +13,11 @@ type SearchResultsProps = RegularSearchReturn & {
   children: (args: SearchItems & {term: string}) => React.ReactNode;
 };
 
+const sectionHeadingClass =
+  'type-body-strong border-b border-hairline pb-3 text-ink';
+const linkRowClass =
+  'block border-b border-hairline py-3 type-body text-ink transition-colors hover:text-primary';
+
 export function SearchResults({
   term,
   result,
@@ -39,9 +44,9 @@ function SearchResultsArticles({
   }
 
   return (
-    <div className="search-result">
-      <h2>Articles</h2>
-      <div>
+    <div>
+      <h2 className={sectionHeadingClass}>Articles</h2>
+      <div className="mt-1">
         {articles?.nodes?.map((article) => {
           const articleUrl = urlWithTrackingParams({
             baseUrl: `/blogs/${article.handle}`,
@@ -50,15 +55,17 @@ function SearchResultsArticles({
           });
 
           return (
-            <div className="search-results-item" key={article.id}>
-              <Link prefetch="intent" to={articleUrl}>
-                {article.title}
-              </Link>
-            </div>
+            <Link
+              className={linkRowClass}
+              prefetch="intent"
+              to={articleUrl}
+              key={article.id}
+            >
+              {article.title}
+            </Link>
           );
         })}
       </div>
-      <br />
     </div>
   );
 }
@@ -69,9 +76,9 @@ function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
   }
 
   return (
-    <div className="search-result">
-      <h2>Pages</h2>
-      <div>
+    <div>
+      <h2 className={sectionHeadingClass}>Pages</h2>
+      <div className="mt-1">
         {pages?.nodes?.map((page) => {
           const pageUrl = urlWithTrackingParams({
             baseUrl: `/pages/${page.handle}`,
@@ -80,15 +87,17 @@ function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
           });
 
           return (
-            <div className="search-results-item" key={page.id}>
-              <Link prefetch="intent" to={pageUrl}>
-                {page.title}
-              </Link>
-            </div>
+            <Link
+              className={linkRowClass}
+              prefetch="intent"
+              to={pageUrl}
+              key={page.id}
+            >
+              {page.title}
+            </Link>
           );
         })}
       </div>
-      <br />
     </div>
   );
 }
@@ -102,8 +111,8 @@ function SearchResultsProducts({
   }
 
   return (
-    <div className="search-result">
-      <h2>Products</h2>
+    <div>
+      <h2 className={sectionHeadingClass}>Products</h2>
       <Pagination connection={products}>
         {({nodes, isLoading, NextLink, PreviousLink}) => {
           const ItemsMarkup = nodes.map((product) => {
@@ -117,45 +126,62 @@ function SearchResultsProducts({
             const image = product?.selectedOrFirstAvailableVariant?.image;
 
             return (
-              <div className="search-results-item" key={product.id}>
-                <Link prefetch="intent" to={productUrl}>
+              <Link
+                className="group flex items-center gap-4 border-b border-hairline py-4"
+                prefetch="intent"
+                to={productUrl}
+                key={product.id}
+              >
+                <div className="size-16 shrink-0 overflow-hidden rounded-[2px] border border-hairline bg-parchment">
                   {image && (
-                    <Image data={image} alt={product.title} width={50} />
+                    <Image
+                      data={image}
+                      alt={product.title}
+                      aspectRatio="1/1"
+                      sizes="64px"
+                      className="h-full w-full object-cover"
+                    />
                   )}
-                  <div>
-                    <p>{product.title}</p>
-                    <small>{price && <Money data={price} />}</small>
-                  </div>
-                </Link>
-              </div>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="type-body-strong truncate text-ink transition-colors group-hover:text-primary">
+                    {product.title}
+                  </p>
+                  {price && (
+                    <span className="type-caption text-ink-subtle">
+                      <Money data={price} />
+                    </span>
+                  )}
+                </div>
+              </Link>
             );
           });
 
           return (
             <div>
-              <div>
-                <PreviousLink>
-                  {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
+              <div className="mb-4 flex justify-center empty:mb-0">
+                <PreviousLink className="type-caption-strong text-primary">
+                  {isLoading ? 'Loading…' : <span>↑ Load previous</span>}
                 </PreviousLink>
               </div>
-              <div>
-                {ItemsMarkup}
-                <br />
-              </div>
-              <div>
-                <NextLink>
-                  {isLoading ? 'Loading...' : <span>Load more ↓</span>}
+              <div className="mt-1">{ItemsMarkup}</div>
+              <div className="mt-6 flex justify-center empty:mt-0">
+                <NextLink className="type-caption-strong text-primary">
+                  {isLoading ? 'Loading…' : <span>Load more ↓</span>}
                 </NextLink>
               </div>
             </div>
           );
         }}
       </Pagination>
-      <br />
     </div>
   );
 }
 
 function SearchResultsEmpty() {
-  return <p>No results, try a different search.</p>;
+  return (
+    <p className="type-body text-ink-muted">
+      No results. Try a different search.
+    </p>
+  );
 }

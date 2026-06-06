@@ -263,23 +263,23 @@ export default function Addresses() {
   return (
     <div className="account-addresses">
       <h2>Addresses</h2>
-      <br />
-      <div>
+      <div className="mt-6 flex flex-col gap-10">
         <div>
           <legend>Create address</legend>
           <NewAddressForm key={addresses.nodes.length} />
         </div>
-        <br />
-        <hr />
-        <br />
-        {!addresses.nodes.length ? (
-          <p>You have no addresses saved.</p>
-        ) : (
-          <ExistingAddresses
-            addresses={addresses}
-            defaultAddress={defaultAddress}
-          />
-        )}
+        <div>
+          {!addresses.nodes.length ? (
+            <p className="type-body text-ink-muted">
+              You have no addresses saved.
+            </p>
+          ) : (
+            <ExistingAddresses
+              addresses={addresses}
+              defaultAddress={defaultAddress}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -307,13 +307,14 @@ function NewAddressForm() {
       defaultAddress={null}
     >
       {({stateForMethod}) => (
-        <div>
+        <div className="flex gap-3">
           <button
             disabled={stateForMethod('POST') !== 'idle'}
             formMethod="POST"
             type="submit"
+            className="!border-primary !bg-primary !text-white hover:!bg-primary/90"
           >
-            {stateForMethod('POST') !== 'idle' ? 'Creating' : 'Create'}
+            {stateForMethod('POST') !== 'idle' ? 'Creating' : 'Create address'}
           </button>
         </div>
       )}
@@ -336,11 +337,12 @@ function ExistingAddresses({
           defaultAddress={defaultAddress}
         >
           {({stateForMethod}) => (
-            <div>
+            <div className="flex gap-3">
               <button
                 disabled={stateForMethod('PUT') !== 'idle'}
                 formMethod="PUT"
                 type="submit"
+                className="!border-primary !bg-primary !text-white hover:!bg-primary/90"
               >
                 {stateForMethod('PUT') !== 'idle' ? 'Saving' : 'Save'}
               </button>
@@ -489,24 +491,21 @@ export function AddressForm({
           pattern="^\+?[1-9]\d{3,14}$"
           type="tel"
         />
-        <div>
+        <div className="mb-4 flex items-center gap-2">
           <input
             defaultChecked={isDefaultAddress}
             id="defaultAddress"
             name="defaultAddress"
             type="checkbox"
+            className="size-4 accent-[var(--primary)]"
           />
-          <label htmlFor="defaultAddress">Set as default address</label>
+          <label htmlFor="defaultAddress" className="!mb-0 inline">
+            Set as default address
+          </label>
         </div>
         {error ? (
-          <p>
-            <mark>
-              <small>{error}</small>
-            </mark>
-          </p>
-        ) : (
-          <br />
-        )}
+          <p className="mb-4 type-caption text-destructive">{error}</p>
+        ) : null}
         {children({
           stateForMethod: (method) => (formMethod === method ? state : 'idle'),
         })}

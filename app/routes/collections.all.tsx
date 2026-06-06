@@ -1,7 +1,9 @@
 import type {Route} from './+types/collections.all';
 import {useLoaderData} from 'react-router';
-import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
+import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {PageHeader} from '~/components/PageHeader';
+import {EmptyState} from '~/components/EmptyState';
 import {ProductItem} from '~/components/ProductItem';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
 
@@ -51,20 +53,34 @@ export default function Collection() {
   const {products} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collection">
-      <h1>Products</h1>
-      <PaginatedResourceSection<CollectionItemFragment>
-        connection={products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
+    <div className="bg-canvas">
+      <PageHeader
+        back={{to: '/collections', label: 'Catalog'}}
+        title="All products"
+        description="Every fixture in the catalog, in one place."
+      />
+      <div className="container-page section-y">
+        {products.nodes.length === 0 ? (
+          <EmptyState
+            title="No products yet"
+            description="The catalog is being set up. Check back soon."
+            action={{to: '/', label: 'Back to home'}}
           />
+        ) : (
+          <PaginatedResourceSection<CollectionItemFragment>
+            connection={products}
+            resourcesClassName="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4"
+          >
+            {({node: product, index}) => (
+              <ProductItem
+                key={product.id}
+                product={product}
+                loading={index < 8 ? 'eager' : undefined}
+              />
+            )}
+          </PaginatedResourceSection>
         )}
-      </PaginatedResourceSection>
+      </div>
     </div>
   );
 }

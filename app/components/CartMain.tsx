@@ -42,46 +42,51 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const cart = useOptimisticCart(originalCart);
 
   const linesCount = Boolean(cart?.lines?.nodes?.length || 0);
-  const withDiscount =
-    cart &&
-    Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
-  const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
   const childrenMap = getLineItemChildrenMap(cart?.lines?.nodes ?? []);
 
+  const lines = (
+    <ul aria-labelledby="cart-lines" className="flex flex-col">
+      {(cart?.lines?.nodes ?? []).map((line) => {
+        // we do not render non-parent lines at the root of the cart
+        if ('parentRelationship' in line && line.parentRelationship?.parent) {
+          return null;
+        }
+        return (
+          <CartLineItem
+            key={line.id}
+            line={line}
+            layout={layout}
+            childrenMap={childrenMap}
+          />
+        );
+      })}
+    </ul>
+  );
+
   return (
-    <section
-      className={className}
-      aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
-    >
+    <section aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}>
       <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
-        <p id="cart-lines" className="sr-only">
+      {cartHasItems ? (
+        <div className="sr-only" id="cart-lines">
           Line items
-        </p>
-        <div>
-          <ul aria-labelledby="cart-lines">
-            {(cart?.lines?.nodes ?? []).map((line) => {
-              // we do not render non-parent lines at the root of the cart
-              if (
-                'parentRelationship' in line &&
-                line.parentRelationship?.parent
-              ) {
-                return null;
-              }
-              return (
-                <CartLineItem
-                  key={line.id}
-                  line={line}
-                  layout={layout}
-                  childrenMap={childrenMap}
-                />
-              );
-            })}
-          </ul>
         </div>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
-      </div>
+      ) : null}
+      {cartHasItems ? (
+        layout === 'page' ? (
+          <div className="grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-14">
+            <div>{lines}</div>
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <CartSummary cart={cart} layout={layout} />
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            {lines}
+            <CartSummary cart={cart} layout={layout} />
+          </div>
+        )
+      ) : null}
     </section>
   );
 }
@@ -94,15 +99,17 @@ function CartEmpty({
 }) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+    <div hidden={hidden} className="py-6">
+      <p className="type-body text-ink-muted">
+        Your cart is empty. Browse the catalog to get started.
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link
+        to="/collections"
+        onClick={close}
+        prefetch="viewport"
+        className="mt-5 inline-flex h-11 items-center justify-center rounded-[2px] bg-primary px-6 type-caption-strong text-white transition-colors hover:bg-primary/90"
+      >
+        Continue shopping
       </Link>
     </div>
   );

@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/account.orders.$id';
 import {Money, Image} from '@shopify/hydrogen';
 import type {
@@ -83,13 +83,20 @@ export default function OrderRoute() {
   } = useLoaderData<typeof loader>();
   return (
     <div className="account-order">
-      <h2>Order {order.name}</h2>
-      <p>Placed on {new Date(order.processedAt!).toDateString()}</p>
-      {order.confirmationNumber && (
-        <p>Confirmation: {order.confirmationNumber}</p>
-      )}
-      <br />
-      <div>
+      <Link
+        to="/account/orders"
+        className="type-caption !text-ink-subtle !no-underline hover:!text-ink"
+      >
+        ← Back to orders
+      </Link>
+      <h2 className="mt-4">Order {order.name}</h2>
+      <p className="type-caption mt-1 text-ink-subtle">
+        Placed on {new Date(order.processedAt!).toDateString()}
+        {order.confirmationNumber
+          ? ` · Confirmation ${order.confirmationNumber}`
+          : ''}
+      </p>
+      <div className="mt-6 overflow-x-auto">
         <table>
           <thead>
             <tr>
@@ -109,11 +116,8 @@ export default function OrderRoute() {
             {((discountValue && discountValue.amount) ||
               discountPercentage) && (
               <tr>
-                <th scope="row" colSpan={3}>
-                  <p>Discounts</p>
-                </th>
-                <th scope="row">
-                  <p>Discounts</p>
+                <th scope="row" colSpan={3} className="!text-right">
+                  Discounts
                 </th>
                 <td>
                   {discountPercentage ? (
@@ -125,33 +129,24 @@ export default function OrderRoute() {
               </tr>
             )}
             <tr>
-              <th scope="row" colSpan={3}>
-                <p>Subtotal</p>
-              </th>
-              <th scope="row">
-                <p>Subtotal</p>
+              <th scope="row" colSpan={3} className="!text-right">
+                Subtotal
               </th>
               <td>
                 <Money data={order.subtotal!} />
               </td>
             </tr>
             <tr>
-              <th scope="row" colSpan={3}>
+              <th scope="row" colSpan={3} className="!text-right">
                 Tax
-              </th>
-              <th scope="row">
-                <p>Tax</p>
               </th>
               <td>
                 <Money data={order.totalTax!} />
               </td>
             </tr>
             <tr>
-              <th scope="row" colSpan={3}>
+              <th scope="row" colSpan={3} className="!text-right">
                 Total
-              </th>
-              <th scope="row">
-                <p>Total</p>
               </th>
               <td>
                 <Money data={order.totalPrice!} />
@@ -179,15 +174,17 @@ export default function OrderRoute() {
             <p>No shipping address defined</p>
           )}
           <h3>Status</h3>
-          <div>
-            <p>{fulfillmentStatus}</p>
-          </div>
+          <p className="type-body text-ink-muted">{fulfillmentStatus}</p>
         </div>
       </div>
-      <br />
-      <p>
-        <a target="_blank" href={order.statusPageUrl} rel="noreferrer">
-          View Order Status →
+      <p className="mt-8">
+        <a
+          target="_blank"
+          href={order.statusPageUrl}
+          rel="noreferrer"
+          className="type-caption-strong"
+        >
+          View order status →
         </a>
       </p>
     </div>
@@ -198,15 +195,24 @@ function OrderLineRow({lineItem}: {lineItem: OrderLineItemFullFragment}) {
   return (
     <tr key={lineItem.id}>
       <td>
-        <div>
+        <div className="flex items-center gap-3">
           {lineItem?.image && (
-            <div>
-              <Image data={lineItem.image} width={96} height={96} />
+            <div className="size-14 shrink-0 overflow-hidden rounded-[2px] border border-hairline bg-parchment">
+              <Image
+                data={lineItem.image}
+                width={96}
+                height={96}
+                className="h-full w-full object-cover"
+              />
             </div>
           )}
           <div>
-            <p>{lineItem.title}</p>
-            <small>{lineItem.variantTitle}</small>
+            <p className="type-caption-strong text-ink">{lineItem.title}</p>
+            {lineItem.variantTitle && (
+              <small className="type-fine text-ink-subtle">
+                {lineItem.variantTitle}
+              </small>
+            )}
           </div>
         </div>
       </td>

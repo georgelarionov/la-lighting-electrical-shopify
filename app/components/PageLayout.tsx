@@ -7,14 +7,13 @@ import type {
 } from 'storefrontapi.generated';
 import {Aside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
-import {Header, HeaderMenu} from '~/components/Header';
+import {Header} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
-import {Logo} from '~/components/Logo';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -37,7 +36,6 @@ export function PageLayout({
     <Aside.Provider>
       <CartAside cart={cart} />
       <SearchAside />
-      <MobileMenuAside />
       {header && (
         <Header
           header={header}
@@ -148,14 +146,6 @@ function SearchAside() {
           }}
         </SearchResultsPredictive>
       </div>
-    </Aside>
-  );
-}
-
-function MobileMenuAside() {
-  return (
-    <Aside type="mobile" heading={<Logo className="h-6" withLink={false} />}>
-      <HeaderMenu viewport="mobile" />
     </Aside>
   );
 }

@@ -3,6 +3,13 @@ import type {Route} from './+types/collections._index';
 import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {PageHeader} from '~/components/PageHeader';
+import {EmptyState} from '~/components/EmptyState';
+import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
+
+export const meta: Route.MetaFunction = () => {
+  return [{title: 'Catalog | Los Angeles Lighting & Electrical'}];
+};
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -46,20 +53,33 @@ export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="collections-grid"
-      >
-        {({node: collection, index}) => (
-          <CollectionItem
-            key={collection.id}
-            collection={collection}
-            index={index}
+    <div className="bg-canvas">
+      <PageHeader
+        title="Catalog"
+        description="Architectural lighting organized by category — fixtures specified by architects, in stock and ready to ship."
+      />
+      <div className="container-page section-y">
+        {collections.nodes.length === 0 ? (
+          <EmptyState
+            title="No categories yet"
+            description="The catalog is being set up. Check back soon."
+            action={{to: '/', label: 'Back to home'}}
           />
+        ) : (
+          <PaginatedResourceSection<CollectionFragment>
+            connection={collections}
+            resourcesClassName="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4"
+          >
+            {({node: collection, index}) => (
+              <CollectionItem
+                key={collection.id}
+                collection={collection}
+                index={index}
+              />
+            )}
+          </PaginatedResourceSection>
         )}
-      </PaginatedResourceSection>
+      </div>
     </div>
   );
 }
@@ -73,21 +93,28 @@ function CollectionItem({
 }) {
   return (
     <Link
-      className="collection-item"
+      className="group flex flex-col"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"
     >
-      {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h5>{collection.title}</h5>
+      <div className="overflow-hidden rounded-[2px] border border-hairline bg-parchment">
+        {collection?.image ? (
+          <Image
+            alt={collection.image.altText || collection.title}
+            aspectRatio="4/5"
+            data={collection.image}
+            loading={index < 4 ? 'eager' : undefined}
+            sizes="(min-width: 1024px) 300px, (min-width: 640px) 33vw, 50vw"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <PlaceholderImage aspect="aspect-[4/5]" label="Category" />
+        )}
+      </div>
+      <h2 className="type-body-strong mt-4 text-ink transition-colors group-hover:text-primary">
+        {collection.title}
+      </h2>
     </Link>
   );
 }

@@ -1,6 +1,7 @@
-import {useLoaderData} from 'react-router';
+import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/blogs.$blogHandle.$articleHandle';
 import {Image} from '@shopify/hydrogen';
+import {ChevronLeft} from 'lucide-react';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -53,7 +54,7 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
 
   const article = blog.articleByHandle;
 
-  return {article};
+  return {article, blogHandle: blog.handle};
 }
 
 /**
@@ -66,7 +67,7 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Article() {
-  const {article} = useLoaderData<typeof loader>();
+  const {article, blogHandle} = useLoaderData<typeof loader>();
   const {title, image, contentHtml, author} = article;
 
   const publishedDate = new Intl.DateTimeFormat('en-US', {
@@ -76,21 +77,48 @@ export default function Article() {
   }).format(new Date(article.publishedAt));
 
   return (
-    <div className="article">
-      <h1>
-        {title}
-        <div>
-          <time dateTime={article.publishedAt}>{publishedDate}</time> &middot;{' '}
-          <address>{author?.name}</address>
+    <article className="bg-canvas">
+      <div className="container-narrow pt-9 pb-10 md:pt-14">
+        <Link
+          to={`/blogs/${blogHandle}`}
+          prefetch="intent"
+          className="type-caption inline-flex items-center gap-1 text-ink-subtle transition-colors hover:text-ink"
+        >
+          <ChevronLeft className="size-4" />
+          Back to the journal
+        </Link>
+        <h1 className="type-display mt-6 text-balance text-ink">{title}</h1>
+        <div className="type-caption mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-ink-subtle">
+          <time dateTime={article.publishedAt}>{publishedDate}</time>
+          {author?.name ? (
+            <>
+              <span aria-hidden>·</span>
+              <address className="not-italic">{author.name}</address>
+            </>
+          ) : null}
         </div>
-      </h1>
+      </div>
 
-      {image && <Image data={image} sizes="90vw" loading="eager" />}
-      <div
-        dangerouslySetInnerHTML={{__html: contentHtml}}
-        className="article"
-      />
-    </div>
+      {image && (
+        <div className="container-page">
+          <div className="overflow-hidden rounded-[2px] border border-hairline bg-parchment">
+            <Image
+              data={image}
+              sizes="(min-width: 1440px) 1392px, 100vw"
+              loading="eager"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="container-narrow section-y">
+        <div
+          dangerouslySetInnerHTML={{__html: contentHtml}}
+          className="rich-text"
+        />
+      </div>
+    </article>
   );
 }
 

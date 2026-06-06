@@ -3,6 +3,7 @@ import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm} from '@shopify/hydrogen';
 import {CartMain} from '~/components/CartMain';
+import {PageHeader} from '~/components/PageHeader';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: `Hydrogen | Cart`}];
@@ -105,9 +106,11 @@ export default function Cart() {
   const cart = useLoaderData<typeof loader>();
 
   return (
-    <div className="cart">
-      <h1>Cart</h1>
-      <CartMain layout="page" cart={cart} />
+    <div className="bg-canvas">
+      <PageHeader title="Cart" />
+      <div className="container-page section-y">
+        <CartMain layout="page" cart={cart} />
+      </div>
     </div>
   );
 }

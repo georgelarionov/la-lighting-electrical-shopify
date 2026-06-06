@@ -1,6 +1,7 @@
 import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
 import {
   Outlet,
+  Link,
   useRouteError,
   isRouteErrorResponse,
   type ShouldRevalidateFunction,
@@ -197,15 +198,40 @@ export function ErrorBoundary() {
     errorMessage = error.message;
   }
 
+  const isNotFound = errorStatus === 404;
+
   return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
+    <div className="bg-canvas">
+      <div className="container-narrow flex min-h-[60vh] flex-col items-start justify-center py-20">
+        <p className="type-tagline text-primary">{errorStatus}</p>
+        <h1 className="type-display mt-3 text-balance text-ink">
+          {isNotFound ? 'This page moved or never existed.' : 'Something went wrong.'}
+        </h1>
+        <p className="type-body mt-4 max-w-xl text-ink-muted">
+          {isNotFound
+            ? 'The link may be broken or the page may have been removed. Head back to the catalog or start from the homepage.'
+            : 'An unexpected error occurred while loading this page. Please try again, or head back to the homepage.'}
+        </p>
+        {!isNotFound && errorMessage ? (
+          <pre className="mt-6 max-w-full overflow-x-auto rounded-[2px] border border-hairline bg-parchment p-4 type-caption text-ink-muted">
+            {errorMessage}
+          </pre>
+        ) : null}
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            to="/"
+            className="inline-flex h-12 items-center justify-center rounded-[2px] bg-primary px-7 type-body-strong text-white transition-colors hover:bg-primary/90"
+          >
+            Back to home
+          </Link>
+          <Link
+            to="/collections"
+            className="inline-flex h-12 items-center justify-center rounded-[2px] border border-hairline px-7 type-body-strong text-ink transition-colors hover:border-ink"
+          >
+            Browse the catalog
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

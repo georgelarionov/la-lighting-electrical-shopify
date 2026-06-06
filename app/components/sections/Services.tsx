@@ -17,7 +17,7 @@ export function Services() {
             Photometric layouts, Title 24 compliance, and a licensed crew that
             installs what we draw.
           </p>
-          <ArrowLink to="/#services" className="type-body mt-6 text-sky">
+          <ArrowLink to="/services" className="type-body mt-6 text-sky">
             See our services
           </ArrowLink>
         </div>

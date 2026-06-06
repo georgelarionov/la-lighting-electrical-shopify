@@ -41,37 +41,46 @@ export default function SearchPage() {
   if (type === 'predictive') return null;
 
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
-        )}
-      </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!term || !result?.total ? (
-        <SearchResults.Empty />
-      ) : (
-        <SearchResults result={result} term={term}>
-          {({articles, pages, products, term}) => (
-            <div>
-              <SearchResults.Products products={products} term={term} />
-              <SearchResults.Pages pages={pages} term={term} />
-              <SearchResults.Articles articles={articles} term={term} />
+    <div className="bg-canvas">
+      <div className="container-narrow pt-9 pb-8 md:pt-14">
+        <h1 className="type-display text-ink">Search</h1>
+        <SearchForm>
+          {({inputRef}) => (
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <input
+                defaultValue={term}
+                name="q"
+                placeholder="Search products, articles, and pages…"
+                ref={inputRef}
+                type="search"
+                className="field-input sm:flex-1"
+              />
+              <button
+                type="submit"
+                className="inline-flex h-11 shrink-0 items-center justify-center rounded-[2px] bg-primary px-7 type-caption-strong text-white transition-colors hover:bg-primary/90"
+              >
+                Search
+              </button>
             </div>
           )}
-        </SearchResults>
-      )}
+        </SearchForm>
+        {error && <p className="type-caption mt-4 text-destructive">{error}</p>}
+      </div>
+      <div className="container-narrow pb-16 md:pb-24">
+        {!term || !result?.total ? (
+          <SearchResults.Empty />
+        ) : (
+          <SearchResults result={result} term={term}>
+            {({articles, pages, products, term}) => (
+              <div className="flex flex-col gap-12">
+                <SearchResults.Products products={products} term={term} />
+                <SearchResults.Pages pages={pages} term={term} />
+                <SearchResults.Articles articles={articles} term={term} />
+              </div>
+            )}
+          </SearchResults>
+        )}
+      </div>
       <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
     </div>
   );

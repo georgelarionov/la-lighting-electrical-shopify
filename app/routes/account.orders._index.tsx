@@ -202,21 +202,42 @@ function OrderSearchForm({
 function OrderItem({order}: {order: OrderItemFragment}) {
   const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
   return (
-    <>
-      <fieldset>
-        <Link to={`/account/orders/${btoa(order.id)}`}>
-          <strong>#{order.number}</strong>
+    <fieldset className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <Link
+          to={`/account/orders/${btoa(order.id)}`}
+          className="type-body-strong !text-ink !no-underline hover:!text-primary"
+        >
+          Order #{order.number}
         </Link>
-        <p>{new Date(order.processedAt).toDateString()}</p>
-        {order.confirmationNumber && (
-          <p>Confirmation: {order.confirmationNumber}</p>
-        )}
-        <p>{order.financialStatus}</p>
-        {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
-        <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
-      </fieldset>
-      <br />
-    </>
+        <p className="type-caption mt-1 text-ink-subtle">
+          {new Date(order.processedAt).toDateString()}
+          {order.confirmationNumber
+            ? ` · Confirmation ${order.confirmationNumber}`
+            : ''}
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <span className="inline-flex items-center rounded-[2px] bg-parchment px-2 py-0.5 type-fine text-ink-muted">
+            {order.financialStatus}
+          </span>
+          {fulfillmentStatus && (
+            <span className="inline-flex items-center rounded-[2px] bg-parchment px-2 py-0.5 type-fine text-ink-muted">
+              {fulfillmentStatus}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-6 sm:flex-col sm:items-end">
+        <span className="type-body-strong text-ink">
+          <Money data={order.totalPrice} />
+        </span>
+        <Link
+          to={`/account/orders/${btoa(order.id)}`}
+          className="type-caption-strong"
+        >
+          View order →
+        </Link>
+      </div>
+    </fieldset>
   );
 }

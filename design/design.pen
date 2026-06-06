@@ -14,436 +14,6 @@
       "children": [
         {
           "type": "frame",
-          "id": "gG6Ji",
-          "name": "Utility Bar",
-          "width": "fill_container",
-          "height": 44,
-          "fill": "#000000",
-          "justifyContent": "center",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "mvddZ",
-              "name": "Utility Content",
-              "width": 1200,
-              "height": "fill_container",
-              "justifyContent": "space_between",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "MieHR",
-                  "name": "Left",
-                  "gap": 24,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "oXmDf",
-                      "name": "Phone",
-                      "fill": "$on-dark",
-                      "content": "(818) 474-6009",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 12,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "text",
-                      "id": "ZkH59",
-                      "name": "Hours",
-                      "fill": "$on-dark-muted",
-                      "content": "Mon – Fri, 8AM – 6PM",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    },
-                    {
-                      "type": "text",
-                      "id": "pUnYA",
-                      "name": "Address",
-                      "fill": "$on-dark-muted",
-                      "content": "13157 Mindanao Way #642, Marina Del Rey, CA",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "cVaVZ",
-                  "name": "Right",
-                  "gap": 8,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Gpn0o",
-                      "name": "Tagline",
-                      "fill": "$on-dark",
-                      "content": "Licensed C-10 electrical contractor",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "XlC52",
-          "name": "Global Nav",
-          "width": "fill_container",
-          "height": 64,
-          "fill": "$canvas",
-          "stroke": "$hairline-soft",
-          "strokeWidth": {
-            "bottom": 1
-          },
-          "strokeAlignment": "inner",
-          "justifyContent": "center",
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "B6jga",
-              "name": "Nav Content",
-              "width": 1200,
-              "height": "fill_container",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "RzAHJ",
-                  "name": "Nav Left",
-                  "width": "fill_container",
-                  "gap": 28,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "LXklE",
-                      "name": "Catalog",
-                      "fill": "$ink",
-                      "content": "Catalog",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "text",
-                      "id": "s8qyI",
-                      "name": "Projects",
-                      "fill": "$ink",
-                      "content": "Projects",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "text",
-                      "id": "x5DPi",
-                      "name": "Services",
-                      "fill": "$ink",
-                      "content": "Services",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "text",
-                      "id": "HSSBQ",
-                      "name": "About",
-                      "fill": "$ink",
-                      "content": "About",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "GNPJq",
-                  "name": "Nav Center",
-                  "width": "fill_container",
-                  "gap": 10,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "vkyaA",
-                      "name": "Wordmark",
-                      "fill": "$ink",
-                      "content": "LALE",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 23,
-                      "fontWeight": "800",
-                      "letterSpacing": -1
-                    },
-                    {
-                      "type": "rectangle",
-                      "id": "nqmoa",
-                      "name": "Divider",
-                      "fill": "$hairline",
-                      "width": 1,
-                      "height": 26
-                    },
-                    {
-                      "type": "text",
-                      "id": "s3vf2z",
-                      "name": "Logo Text",
-                      "fill": "$ink",
-                      "textGrowth": "fixed-width",
-                      "width": 118,
-                      "content": "Los Angeles Lighting & Electrical",
-                      "lineHeight": 1.15,
-                      "fontFamily": "$font",
-                      "fontSize": 11,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "pMqhp",
-                  "name": "Nav Right",
-                  "width": "fill_container",
-                  "gap": 18,
-                  "justifyContent": "end",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "L3Ysas",
-                      "name": "Contacts",
-                      "fill": "$ink",
-                      "content": "Contacts",
-                      "lineHeight": 1,
-                      "fontFamily": "$font",
-                      "fontSize": 14,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "bill3",
-                      "name": "Quote Button",
-                      "fill": "$primary-blue",
-                      "cornerRadius": "$radius",
-                      "padding": [
-                        10,
-                        18
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "d0KT1",
-                          "name": "Label",
-                          "fill": "$on-dark",
-                          "content": "Request a Quote",
-                          "lineHeight": 1,
-                          "fontFamily": "$font",
-                          "fontSize": 14,
-                          "fontWeight": "500"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "icon",
-                      "id": "GlYfG",
-                      "name": "Search",
-                      "width": 20,
-                      "height": 20,
-                      "icon": "search",
-                      "library": "lucide",
-                      "fill": "$ink"
-                    },
-                    {
-                      "type": "icon",
-                      "id": "B0PRxz",
-                      "name": "Bag",
-                      "width": 20,
-                      "height": 20,
-                      "icon": "shopping-bag",
-                      "library": "lucide",
-                      "fill": "$ink"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "T3jqOv",
-          "name": "Hero",
-          "width": "fill_container",
-          "fill": "$canvas",
-          "layout": "vertical",
-          "gap": 52,
-          "padding": [
-            80,
-            0,
-            0,
-            0
-          ],
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "Mi9La",
-              "name": "Hero Text",
-              "width": 880,
-              "layout": "vertical",
-              "gap": 22,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "k0GHgB",
-                  "name": "Headline",
-                  "fill": "$ink",
-                  "textGrowth": "fixed-width",
-                  "width": 880,
-                  "content": "Light is the detail people remember.",
-                  "lineHeight": 1.06,
-                  "textAlign": "center",
-                  "fontFamily": "$font",
-                  "fontSize": 58,
-                  "fontWeight": "600",
-                  "letterSpacing": -1.5
-                },
-                {
-                  "type": "text",
-                  "id": "LPDFP",
-                  "name": "Tagline",
-                  "fill": "$ink-muted",
-                  "textGrowth": "fixed-width",
-                  "width": 640,
-                  "content": "Spec-grade architectural lighting and licensed electrical work, designed and installed in Los Angeles.",
-                  "lineHeight": 1.4,
-                  "textAlign": "center",
-                  "fontFamily": "$font",
-                  "fontSize": 21,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "frame",
-                  "id": "PtVig",
-                  "name": "Hero Links",
-                  "gap": 30,
-                  "padding": [
-                    10,
-                    0,
-                    0,
-                    0
-                  ],
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "r2hPpZ",
-                      "name": "Explore the catalog",
-                      "gap": 3,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "cBtDq",
-                          "name": "Label",
-                          "fill": "$primary-blue",
-                          "content": "Explore the catalog",
-                          "lineHeight": 1,
-                          "fontFamily": "$font",
-                          "fontSize": 18,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "icon",
-                          "id": "l5s0f",
-                          "name": "Chevron",
-                          "width": 16,
-                          "height": 16,
-                          "icon": "chevron-right",
-                          "library": "lucide",
-                          "fill": "$primary-blue"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "xNjd1",
-                      "name": "Request a quote",
-                      "gap": 3,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "V9TnL",
-                          "name": "Label",
-                          "fill": "$primary-blue",
-                          "content": "Request a quote",
-                          "lineHeight": 1,
-                          "fontFamily": "$font",
-                          "fontSize": 18,
-                          "fontWeight": "500"
-                        },
-                        {
-                          "type": "icon",
-                          "id": "WCp4V",
-                          "name": "Chevron",
-                          "width": 16,
-                          "height": 16,
-                          "icon": "chevron-right",
-                          "library": "lucide",
-                          "fill": "$primary-blue"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "rectangle",
-              "id": "O6MVK",
-              "name": "Hero Image",
-              "metadata": {
-                "type": "unsplash",
-                "username": "francotheshooter",
-                "link": "https://unsplash.com/@francotheshooter",
-                "author": "Franco Debartolo"
-              },
-              "fill": {
-                "type": "image",
-                "enabled": true,
-                "url": "https://images.unsplash.com/photo-1776313756958-4fa8e6ed1b49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDN8&ixlib=rb-4.1.0&q=80&w=1080",
-                "mode": "fill"
-              },
-              "width": "fill_container",
-              "height": 620
-            }
-          ]
-        },
-        {
-          "type": "frame",
           "id": "A4TwfX",
           "name": "Catalog Section",
           "width": "fill_container",
@@ -501,7 +71,8 @@
                           "content": "Fixtures specified by architects, in stock and ready to ship.",
                           "lineHeight": 1.4,
                           "fontFamily": "$font",
-                          "fontSize": 18
+                          "fontSize": 18,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -594,7 +165,8 @@
                           "content": "64 products",
                           "lineHeight": 1,
                           "fontFamily": "$font",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -648,7 +220,8 @@
                           "content": "48 products",
                           "lineHeight": 1,
                           "fontFamily": "$font",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -702,7 +275,8 @@
                           "content": "37 products",
                           "lineHeight": 1,
                           "fontFamily": "$font",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -756,7 +330,8 @@
                           "content": "52 products",
                           "lineHeight": 1,
                           "fontFamily": "$font",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -810,7 +385,8 @@
                           "content": "29 products",
                           "lineHeight": 1,
                           "fontFamily": "$font",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -864,7 +440,8 @@
                           "content": "18 products",
                           "lineHeight": 1,
                           "fontFamily": "$font",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -925,7 +502,8 @@
                   "lineHeight": 1.45,
                   "textAlign": "center",
                   "fontFamily": "$font",
-                  "fontSize": 20
+                  "fontSize": 20,
+                  "fontWeight": "normal"
                 },
                 {
                   "type": "frame",
@@ -1043,7 +621,8 @@
                       "lineHeight": 1.45,
                       "textAlign": "center",
                       "fontFamily": "$font",
-                      "fontSize": 17
+                      "fontSize": 17,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
@@ -1160,7 +739,8 @@
                       "lineHeight": 1.45,
                       "textAlign": "center",
                       "fontFamily": "$font",
-                      "fontSize": 17
+                      "fontSize": 17,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
@@ -1287,7 +867,8 @@
                           "content": "A few rooms we relit across Los Angeles, from private homes to storefronts.",
                           "lineHeight": 1.4,
                           "fontFamily": "$font",
-                          "fontSize": 18
+                          "fontSize": 18,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -1898,7 +1479,8 @@
                       "content": "Send the details and get a clear, no-obligation estimate, usually within one business day.",
                       "lineHeight": 1.45,
                       "fontFamily": "$font",
-                      "fontSize": 19
+                      "fontSize": 19,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
@@ -1931,7 +1513,8 @@
                               "content": "Call",
                               "lineHeight": 1.2,
                               "fontFamily": "$font",
-                              "fontSize": 16
+                              "fontSize": 16,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "text",
@@ -1963,7 +1546,8 @@
                               "content": "Email",
                               "lineHeight": 1.2,
                               "fontFamily": "$font",
-                              "fontSize": 16
+                              "fontSize": 16,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "text",
@@ -2037,7 +1621,8 @@
                               "content": "Jane Smith",
                               "lineHeight": 1.3,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2087,7 +1672,8 @@
                               "content": "jane@company.com",
                               "lineHeight": 1.3,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2137,7 +1723,8 @@
                               "content": "(818) 474-6009",
                               "lineHeight": 1.3,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2186,7 +1773,8 @@
                               "content": "Tell us about the space, scope, and timeline",
                               "lineHeight": 1.3,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -2220,7 +1808,8 @@
                           "content": "I agree to the Privacy Policy.",
                           "lineHeight": 1.2,
                           "fontFamily": "$font",
-                          "fontSize": 14
+                          "fontSize": 14,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2315,7 +1904,8 @@
                           "content": "Notes on lighting, energy, and getting a room to feel right.",
                           "lineHeight": 1.4,
                           "fontFamily": "$font",
-                          "fontSize": 18
+                          "fontSize": 18,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2423,7 +2013,8 @@
                               "content": "How warm or cool light changes focus, comfort, and how a room reads.",
                               "lineHeight": 1.45,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "frame",
@@ -2489,7 +2080,8 @@
                                       "content": "Editorial",
                                       "lineHeight": 1.1,
                                       "fontFamily": "$font",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -2564,7 +2156,8 @@
                               "content": "Where the savings come from, and how fast a commercial retrofit returns.",
                               "lineHeight": 1.45,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "frame",
@@ -2630,7 +2223,8 @@
                                       "content": "Editorial",
                                       "lineHeight": 1.1,
                                       "fontFamily": "$font",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -2705,7 +2299,8 @@
                               "content": "A plain-language look at California’s lighting rules for remodels.",
                               "lineHeight": 1.45,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "frame",
@@ -2771,7 +2366,8 @@
                                       "content": "Editorial",
                                       "lineHeight": 1.1,
                                       "fontFamily": "$font",
-                                      "fontSize": 12
+                                      "fontSize": 12,
+                                      "fontWeight": "normal"
                                     }
                                   ]
                                 }
@@ -2872,7 +2468,8 @@
                       "content": "Lighting notes, new arrivals, and the occasional project story. No spam, unsubscribe any time.",
                       "lineHeight": 1.45,
                       "fontFamily": "$font",
-                      "fontSize": 17
+                      "fontSize": 17,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
@@ -2912,7 +2509,8 @@
                               "content": "Your email address",
                               "lineHeight": 1.2,
                               "fontFamily": "$font",
-                              "fontSize": 15
+                              "fontSize": 15,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -2979,7 +2577,8 @@
                               "content": "I agree to the",
                               "lineHeight": 1.2,
                               "fontFamily": "$font",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             },
                             {
                               "type": "text",
@@ -3128,7 +2727,8 @@
                               "content": "Questions about an order or a fixture spec.",
                               "lineHeight": 1.4,
                               "fontFamily": "$font",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -3228,7 +2828,8 @@
                               "content": "Project quotes, bulk orders, and trade pricing.",
                               "lineHeight": 1.4,
                               "fontFamily": "$font",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -3328,7 +2929,8 @@
                               "content": "Showroom and warehouse, by appointment.",
                               "lineHeight": 1.4,
                               "fontFamily": "$font",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -3430,7 +3032,8 @@
                               "content": "Monday to Friday, 8AM to 6PM Pacific.",
                               "lineHeight": 1.4,
                               "fontFamily": "$font",
-                              "fontSize": 14
+                              "fontSize": 14,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -3698,7 +3301,8 @@
                       "content": "© 2026 Los Angeles Lighting & Electrical. All rights reserved.",
                       "lineHeight": 1.2,
                       "fontFamily": "$font",
-                      "fontSize": 13
+                      "fontSize": 13,
+                      "fontWeight": "normal"
                     },
                     {
                       "type": "frame",
@@ -3736,6 +3340,984 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "D8ejxg",
+      "x": 1560,
+      "y": 0,
+      "name": "Logo",
+      "reusable": true,
+      "children": [
+        {
+          "type": "path",
+          "id": "Lponm",
+          "name": "Mark",
+          "geometry": "M0 63.4787v-63.4787h11.2448v52.2339h57.2215v11.2448h-68.4663z m117.351-63.4787h11.335v63.4787h-11.335v-47.609l-48.3346 47.609h-16.0511l64.3857-63.4787z m21.384 63.4787v-63.4787h11.244v52.2339h57.222v11.2448h-68.466z m136.517-52.1432h-42.077l11.517-11.3355h30.56v11.3355z m0 26.1169h-68.466l11.426-11.3354h57.04v11.3354z m0 14.7815v11.2448h-68.466v-11.2448h68.466z",
+          "viewBox": [
+            0,
+            0,
+            276,
+            64
+          ],
+          "fill": "$ink",
+          "width": 104,
+          "height": 24
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GPmqO",
+      "x": 1560,
+      "y": 64,
+      "name": "Header / Desktop",
+      "reusable": true,
+      "clip": true,
+      "width": 1440,
+      "fill": "$canvas",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GR402",
+          "name": "Utility Bar",
+          "width": "fill_container",
+          "height": 40,
+          "fill": "#000000",
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mofvF",
+              "name": "Left",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nUqxN",
+                  "name": "Phone",
+                  "fill": "$on-dark",
+                  "content": "(818) 474-6009",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "jvcv4",
+                  "name": "Hours",
+                  "fill": "$on-dark-muted",
+                  "content": "Mon – Fri, 8AM – 6PM",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "wxD6l",
+                  "name": "Address",
+                  "fill": "$on-dark-muted",
+                  "content": "13157 Mindanao Way #642, Marina Del Rey, CA",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FrntU",
+              "name": "Right",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "URkmM",
+                  "name": "Tagline",
+                  "fill": "$on-dark",
+                  "content": "Licensed C-10 electrical contractor",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BIB0u",
+          "name": "Main Nav",
+          "width": "fill_container",
+          "height": 64,
+          "fill": "$canvas",
+          "stroke": "$hairline-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "strokeAlignment": "inner",
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "y1X6J",
+              "name": "Nav Left",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "DTwbw",
+                  "type": "ref",
+                  "ref": "D8ejxg",
+                  "name": "Logo"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cD4mD",
+              "name": "Nav Items",
+              "width": "fill_container",
+              "gap": 30,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ba4yG",
+                  "name": "Catalog",
+                  "fill": "$ink",
+                  "content": "Catalog",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "uiq0v",
+                  "name": "Projects",
+                  "fill": "$ink",
+                  "content": "Projects",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "GWvTd",
+                  "name": "Services",
+                  "fill": "$ink",
+                  "content": "Services",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "xNGPM",
+                  "name": "About",
+                  "fill": "$ink",
+                  "content": "About",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Lai5s",
+                  "name": "Contacts",
+                  "fill": "$ink",
+                  "content": "Contacts",
+                  "lineHeight": 1,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OsFxp",
+              "name": "Nav Right",
+              "width": "fill_container",
+              "gap": 12,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EgUIy",
+                  "name": "Quote Button",
+                  "fill": "$primary-blue",
+                  "cornerRadius": "$radius",
+                  "padding": [
+                    10,
+                    18
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wv0vM",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "Request a Quote",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aC9dP",
+                  "name": "Bag Pill",
+                  "width": 36,
+                  "height": 34,
+                  "fill": "$parchment",
+                  "cornerRadius": "$radius",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "waPrU",
+                      "name": "Bag",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "shopping-bag",
+                      "library": "lucide",
+                      "fill": "$ink"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "lYup1",
+      "x": 1560,
+      "y": 240,
+      "name": "Header / Mobile",
+      "reusable": true,
+      "width": 390,
+      "height": 56,
+      "fill": "$canvas",
+      "stroke": "$hairline-soft",
+      "strokeWidth": {
+        "bottom": 1
+      },
+      "strokeAlignment": "inner",
+      "padding": [
+        0,
+        20
+      ],
+      "justifyContent": "space_between",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "J40BE",
+          "type": "ref",
+          "ref": "D8ejxg",
+          "name": "Logo"
+        },
+        {
+          "type": "frame",
+          "id": "loDEP",
+          "name": "Actions",
+          "gap": 22,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "AUWMO",
+              "name": "Bag",
+              "width": 22,
+              "height": 22,
+              "icon": "shopping-bag",
+              "library": "lucide",
+              "fill": "$ink"
+            },
+            {
+              "type": "icon",
+              "id": "QO1z2",
+              "name": "Menu",
+              "width": 24,
+              "height": 24,
+              "icon": "menu",
+              "library": "lucide",
+              "fill": "$ink"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "VMWan",
+      "x": 2060,
+      "y": 240,
+      "name": "Header / Mobile — Menu Open",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$tile",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "zVBX4",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "height": 56,
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "Zp14V",
+              "type": "ref",
+              "ref": "D8ejxg",
+              "name": "Logo",
+              "descendants": {
+                "Lponm": {
+                  "fill": "$on-dark"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "pLfFS",
+              "name": "Actions",
+              "gap": 22,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "i93nDq",
+                  "name": "Bag",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "shopping-bag",
+                  "library": "lucide",
+                  "fill": "$on-dark"
+                },
+                {
+                  "type": "icon",
+                  "id": "nfird",
+                  "name": "Close",
+                  "width": 26,
+                  "height": 26,
+                  "icon": "x",
+                  "library": "lucide",
+                  "fill": "$on-dark"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "B31Ad6",
+          "name": "Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            28,
+            28,
+            40,
+            28
+          ],
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "lElSP",
+              "name": "Nav List",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LicRK",
+                  "name": "Catalog",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "x2pJPV",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "Catalog",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "reTES",
+                  "name": "Projects",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zO3Ma",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "Projects",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "I7wma4",
+                  "name": "Services",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XEqO8",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "Services",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "L2E18",
+                  "name": "About",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "URysH",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "About",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JqC7Y",
+                  "name": "Contacts",
+                  "width": "fill_container",
+                  "padding": [
+                    14,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KH9fr",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "Contacts",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z8MDKF",
+              "name": "Footer",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dk4tE",
+                  "name": "Quote Button",
+                  "width": "fill_container",
+                  "fill": "$primary-blue",
+                  "cornerRadius": "$radius",
+                  "padding": [
+                    15,
+                    18
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jHOMR",
+                      "name": "Label",
+                      "fill": "$on-dark",
+                      "content": "Request a Quote",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Kgo5W",
+                  "name": "Contact",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "U28lyY",
+                      "name": "Phone",
+                      "fill": "$on-dark",
+                      "content": "(818) 474-6009",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 22,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "I7liBm",
+                      "name": "Details",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OxHZo",
+                          "name": "Hours",
+                          "fill": "$on-dark-muted",
+                          "content": "Mon – Fri, 8AM – 6PM",
+                          "lineHeight": 1.3,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lcMxD",
+                          "name": "Address",
+                          "fill": "$on-dark-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "13157 Mindanao Way #642, Marina Del Rey, CA",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rAqcY",
+                          "name": "Email",
+                          "fill": "$on-dark-muted",
+                          "content": "sales@losangeleslightingelectrical.com",
+                          "lineHeight": 1.2,
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "tGqEk",
+      "x": 4931,
+      "y": 24,
+      "name": "Hero / Mobile",
+      "clip": true,
+      "width": 390,
+      "fill": "$canvas",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "TBikC",
+          "type": "ref",
+          "ref": "lYup1",
+          "name": "Header",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "o4Sfj",
+          "name": "Hero Text",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            44,
+            24,
+            36,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "rJGdN",
+              "name": "Headline",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Spec-grade light, designed and installed in Los Angeles.",
+              "lineHeight": 1.08,
+              "textAlign": "center",
+              "fontFamily": "$font",
+              "fontSize": 33,
+              "fontWeight": "600",
+              "letterSpacing": -1
+            },
+            {
+              "type": "text",
+              "id": "cfSdy",
+              "name": "Tagline",
+              "fill": "$ink-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Licensed electrical work and a catalog of architectural fixtures — designed, supplied, and installed by one team.",
+              "lineHeight": 1.4,
+              "textAlign": "center",
+              "fontFamily": "$font",
+              "fontSize": 16,
+              "fontWeight": "500"
+            },
+            {
+              "type": "frame",
+              "id": "VpWsJ",
+              "name": "Hero Links",
+              "gap": 26,
+              "padding": [
+                8,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EefTy",
+                  "name": "Our Services",
+                  "gap": 3,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TIp3n",
+                      "name": "Label",
+                      "fill": "$primary-blue",
+                      "content": "Our Services",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "R9flwW",
+                      "name": "Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$primary-blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vW2vZ",
+                  "name": "Our Work",
+                  "gap": 3,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "A7Jde",
+                      "name": "Label",
+                      "fill": "$primary-blue",
+                      "content": "Our Work",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "t8b6gq",
+                      "name": "Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$primary-blue"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "VfLHD",
+          "name": "Hero Image",
+          "metadata": {
+            "type": "unsplash",
+            "username": "francotheshooter",
+            "link": "https://unsplash.com/@francotheshooter",
+            "author": "Franco Debartolo"
+          },
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "https://images.unsplash.com/photo-1776313756958-4fa8e6ed1b49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDN8&ixlib=rb-4.1.0&q=80&w=1080",
+            "mode": "fill"
+          },
+          "width": "fill_container",
+          "height": 380
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "T3jqOv",
+      "x": 3451,
+      "y": 24,
+      "name": "Hero",
+      "width": "fill_container(1440)",
+      "fill": "$canvas",
+      "layout": "vertical",
+      "gap": 52,
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "MMYgs",
+          "type": "ref",
+          "ref": "GPmqO",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "type": "frame",
+          "id": "Mi9La",
+          "name": "Hero Text",
+          "width": 880,
+          "layout": "vertical",
+          "gap": 22,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "k0GHgB",
+              "name": "Headline",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 880,
+              "content": "Spec-grade light, designed and installed in Los Angeles.",
+              "lineHeight": 1.06,
+              "textAlign": "center",
+              "fontFamily": "$font",
+              "fontSize": 58,
+              "fontWeight": "600",
+              "letterSpacing": -1.5
+            },
+            {
+              "type": "text",
+              "id": "LPDFP",
+              "name": "Tagline",
+              "fill": "$ink-muted",
+              "textGrowth": "fixed-width",
+              "width": 640,
+              "content": "Licensed electrical work and a catalog of architectural fixtures — designed, supplied, and installed by one team.",
+              "lineHeight": 1.4,
+              "textAlign": "center",
+              "fontFamily": "$font",
+              "fontSize": 21,
+              "fontWeight": "500"
+            },
+            {
+              "type": "frame",
+              "id": "PtVig",
+              "name": "Hero Links",
+              "gap": 30,
+              "padding": [
+                10,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "r2hPpZ",
+                  "name": "Explore the catalog",
+                  "gap": 3,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cBtDq",
+                      "name": "Label",
+                      "fill": "$primary-blue",
+                      "content": "Our Services",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 18,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "l5s0f",
+                      "name": "Chevron",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$primary-blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xNjd1",
+                  "name": "Request a quote",
+                  "gap": 3,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "V9TnL",
+                      "name": "Label",
+                      "fill": "$primary-blue",
+                      "content": "Our Work",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 18,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "WCp4V",
+                      "name": "Chevron",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$primary-blue"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "O6MVK",
+          "name": "Hero Image",
+          "metadata": {
+            "type": "unsplash",
+            "username": "francotheshooter",
+            "link": "https://unsplash.com/@francotheshooter",
+            "author": "Franco Debartolo"
+          },
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "https://images.unsplash.com/photo-1776313756958-4fa8e6ed1b49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODAxNTA3MDN8&ixlib=rb-4.1.0&q=80&w=1080",
+            "mode": "fill"
+          },
+          "width": "fill_container",
+          "height": 620
         }
       ]
     }

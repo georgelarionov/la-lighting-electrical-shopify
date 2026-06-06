@@ -21,21 +21,35 @@ export const CONTACT = {
   emailSupport: 'info@losangeleslightingelectrical.com',
   emailSales: 'sales@losangeleslightingelectrical.com',
   tagline: 'Ambient Lighting Design for Small Spaces',
+  /** Right-hand credential shown in the desktop utility bar. */
+  licenseLine: 'Licensed C-10 electrical contractor',
 } as const;
 
-/** Primary marketing navigation shown in the header (left cluster). */
+/** Primary marketing navigation shown in the centered desktop header bar. */
 export const PRIMARY_NAV: ReadonlyArray<{label: string; to: string}> = [
   {label: 'Catalog', to: '/collections'},
-  {label: 'Projects', to: '/#projects'},
-  {label: 'Services', to: '/#services'},
+  {label: 'Projects', to: '/projects'},
+  {label: 'Services', to: '/services'},
   {label: 'About', to: '/pages/about'},
+  {label: 'Contacts', to: '/#contact'},
+];
+
+/**
+ * Full-screen mobile menu navigation — the desktop bar plus Blog (which the
+ * tight centered desktop bar omits for space). Blog sits after Services, as in
+ * the footer.
+ */
+export const MOBILE_NAV: ReadonlyArray<{label: string; to: string}> = [
+  ...PRIMARY_NAV.slice(0, 3),
+  {label: 'Blog', to: '/blogs'},
+  ...PRIMARY_NAV.slice(3),
 ];
 
 /** Footer link columns. */
 export const FOOTER_NAV: ReadonlyArray<{label: string; to: string}> = [
   {label: 'Catalog', to: '/collections'},
-  {label: 'Projects', to: '/#projects'},
-  {label: 'Services', to: '/#services'},
+  {label: 'Projects', to: '/projects'},
+  {label: 'Services', to: '/services'},
   {label: 'Blog', to: '/blogs'},
   {label: 'About', to: '/pages/about'},
   {label: 'Contacts', to: '/#contact'},
@@ -94,8 +108,8 @@ export const FOOTER_COLUMNS: ReadonlyArray<{
     heading: 'Company',
     links: [
       {label: 'About', to: '/pages/about'},
-      {label: 'Projects', to: '/#projects'},
-      {label: 'Services', to: '/#services'},
+      {label: 'Projects', to: '/projects'},
+      {label: 'Services', to: '/services'},
       {label: 'Blog', to: '/blogs'},
       {label: 'Contacts', to: '/#contact'},
     ],

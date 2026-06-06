@@ -1,7 +1,9 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/blogs._index';
 import {getPaginationVariables} from '@shopify/hydrogen';
+import {ArrowRight} from 'lucide-react';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {PageHeader} from '~/components/PageHeader';
 import type {BlogsQuery} from 'storefrontapi.generated';
 
 type BlogNode = BlogsQuery['blogs']['nodes'][0];
@@ -54,18 +56,27 @@ export default function Blogs() {
   const {blogs} = useLoaderData<typeof loader>();
 
   return (
-    <div className="blogs">
-      <h1>Blogs</h1>
-      <div className="blogs-grid">
-        <PaginatedResourceSection<BlogNode> connection={blogs}>
+    <div className="bg-canvas">
+      <PageHeader
+        title="Journal"
+        description="Notes on lighting, energy, and getting a room to feel right."
+      />
+      <div className="container-page section-y">
+        <PaginatedResourceSection<BlogNode>
+          connection={blogs}
+          resourcesClassName="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {({node: blog}) => (
             <Link
-              className="blog"
+              className="group flex items-center justify-between gap-4 rounded-[2px] border border-hairline bg-canvas p-6 transition-colors hover:border-ink"
               key={blog.handle}
               prefetch="intent"
               to={`/blogs/${blog.handle}`}
             >
-              <h2>{blog.title}</h2>
+              <h2 className="type-body-strong text-ink transition-colors group-hover:text-primary">
+                {blog.title}
+              </h2>
+              <ArrowRight className="size-5 shrink-0 text-ink-subtle transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
             </Link>
           )}
         </PaginatedResourceSection>

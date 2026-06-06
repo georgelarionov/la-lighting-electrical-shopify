@@ -8,6 +8,8 @@ import {
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
+import {Link} from 'react-router';
+import {ChevronLeft} from 'lucide-react';
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
@@ -95,30 +97,53 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, vendor} = product;
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+    <div className="bg-canvas">
+      <div className="container-page py-8 md:py-12 lg:py-16">
+        <Link
+          to="/collections"
+          prefetch="intent"
+          className="type-caption mb-7 inline-flex items-center gap-1 text-ink-subtle transition-colors hover:text-ink"
+        >
+          <ChevronLeft className="size-4" />
+          Catalog
+        </Link>
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <ProductImage image={selectedVariant?.image} />
+          </div>
+          <div className="lg:py-1">
+            {vendor ? (
+              <p className="type-caption-strong mb-3 text-ink-subtle">
+                {vendor}
+              </p>
+            ) : null}
+            <h1 className="type-display-sm text-balance text-ink">{title}</h1>
+            <div className="mt-4">
+              <ProductPrice
+                price={selectedVariant?.price}
+                compareAtPrice={selectedVariant?.compareAtPrice}
+              />
+            </div>
+            <div className="mt-8">
+              <ProductForm
+                productOptions={productOptions}
+                selectedVariant={selectedVariant}
+              />
+            </div>
+            {descriptionHtml ? (
+              <div className="mt-10 border-t border-hairline pt-8">
+                <h2 className="type-body-strong text-ink">Details</h2>
+                <div
+                  className="rich-text mt-4"
+                  dangerouslySetInnerHTML={{__html: descriptionHtml}}
+                />
+              </div>
+            ) : null}
+          </div>
+        </div>
       </div>
       <Analytics.ProductView
         data={{
