@@ -5,6 +5,7 @@ import {PROJECTS, getProject} from '~/lib/projects';
 import {getService} from '~/lib/services';
 import {PageHeader} from '~/components/PageHeader';
 import {ProjectPhoto} from '~/components/ProjectPhoto';
+import {QuoteButton} from '~/components/QuoteButton';
 import {ArrowLink} from '~/components/ArrowLink';
 import {COMPANY_NAME} from '~/lib/site';
 
@@ -55,7 +56,7 @@ export default function ProjectDetail() {
       />
 
       <div className="container-page">
-        <div className="overflow-hidden rounded-[2px] border border-hairline bg-parchment">
+        <div className="img-zoom overflow-hidden rounded-lg border border-hairline bg-parchment">
           <ProjectPhoto
             image={project.image}
             alt={project.title}
@@ -106,7 +107,7 @@ export default function ProjectDetail() {
 
           {/* Sticky aside */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-[2px] border border-hairline bg-parchment p-7">
+            <div className="rounded-lg border border-hairline bg-parchment p-7">
               <h2 className="type-body-strong text-ink">
                 Planning something similar?
               </h2>
@@ -114,12 +115,9 @@ export default function ProjectDetail() {
                 Send your space and we’ll come back with a clear, no-obligation
                 estimate, usually within one business day.
               </p>
-              <Link
-                to="/#quote"
-                className="mt-5 inline-flex h-12 w-full items-center justify-center rounded-[2px] bg-primary px-6 type-body-strong text-white transition-colors hover:bg-primary/90"
-              >
+              <QuoteButton className="press mt-5 inline-flex h-12 w-full items-center justify-center rounded-sm bg-primary px-6 type-body-strong text-white transition-colors hover:bg-primary/90">
                 Request a quote
-              </Link>
+              </QuoteButton>
             </div>
 
             {services.length ? (
@@ -160,13 +158,13 @@ export default function ProjectDetail() {
                   key={other.handle}
                   to={`/projects/${other.handle}`}
                   prefetch="intent"
-                  className="group flex flex-col overflow-hidden rounded-[2px] border border-hairline bg-canvas transition-colors hover:border-ink"
+                  className="lift group flex flex-col overflow-hidden rounded-lg border border-hairline bg-canvas"
                 >
-                  <div className="overflow-hidden">
+                  <div className="img-zoom overflow-hidden">
                     <ProjectPhoto
                       image={other.image}
                       alt={other.title}
-                      className="aspect-[5/3] w-full transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                      className="aspect-[5/3] w-full"
                     />
                   </div>
                   <div className="p-5">

@@ -9,7 +9,7 @@ import {
 import {X} from 'lucide-react';
 import {cn} from '~/lib/utils';
 
-type AsideType = 'search' | 'cart' | 'mobile' | 'closed';
+type AsideType = 'search' | 'cart' | 'mobile' | 'quote' | 'closed';
 type AsideContextValue = {
   type: AsideType;
   open: (mode: AsideType) => void;

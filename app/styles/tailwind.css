@@ -3,6 +3,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Self-hosted Inter (variable, latin) — the redesign typeface. Same-origin,
+   so no CSP change and no external request. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../assets/fonts/inter-latin-variable.woff2') format('woff2');
+}
+
 /* =============================================================
    Los Angeles Lighting & Electrical — design tokens
    Derived from DESIGN.md (Apple-style museum-gallery system),
@@ -14,11 +24,16 @@
    ============================================================= */
 
 :root {
-  /* ---- Brand action ---- */
-  --primary: oklch(0.522 0.1771 255.83); /* #0066cc Action Blue */
+  /* ---- Brand action (Tesla redesign) ---- */
+  --primary: #3e6ae1; /* Tesla Blue — primary CTAs only */
   --primary-foreground: oklch(1 0 0);
-  --primary-focus: oklch(0.5629 0.1933 256.16); /* #0071e3 focus ring */
-  --primary-on-dark: oklch(0.669 0.1808 251.84); /* #2997ff sky link */
+  --primary-focus: #3e6ae1; /* focus ring */
+  --primary-on-dark: #6b8cff; /* lighter blue for links on dark */
+
+  /* ---- Tesla neutrals used by ported redesign markup ---- */
+  --onyx: #171a20; /* dark section fill / near-black */
+  --steel: #5c5e62; /* secondary link / icon */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
   /* ---- Ink / text ---- */
   --ink: oklch(0.2316 0.0038 286.1); /* #1d1d1f */
@@ -63,8 +78,8 @@
   --input: var(--hairline);
   --ring: var(--primary-focus);
 
-  /* ---- Radius — minimal 2px system ---- */
-  --radius: 2px;
+  /* ---- Radius — Tesla 4px controls / 8px cards ---- */
+  --radius: 8px;
 }
 
 /* Dark sections (wrap a section in `.dark` to flip shadcn primitives). */
@@ -75,7 +90,7 @@
   --card-foreground: oklch(1 0 0);
   --popover: var(--surface-tile-2);
   --popover-foreground: oklch(1 0 0);
-  --primary: oklch(0.669 0.1808 251.84); /* sky blue reads on dark */
+  --primary: #3e6ae1; /* Tesla Blue CTA reads on dark too */
   --primary-foreground: oklch(1 0 0);
   --secondary: var(--surface-tile-3);
   --secondary-foreground: oklch(1 0 0);
@@ -90,10 +105,10 @@
 }
 
 @theme inline {
-  /* Apple-first font stack: real SF on Apple devices, Inter elsewhere. */
+  /* Inter-first stack (Tesla redesign). Self-hosted Inter, then system. */
   --font-sans:
-    'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont,
-    system-ui, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    'Inter', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
 
   /* shadcn semantic colors → Tailwind utilities */
   --color-background: var(--background);
@@ -134,13 +149,15 @@
   --color-sky: var(--primary-on-dark);
   --color-brand-green: var(--brand-green);
   --color-brand-green-dark: var(--brand-green-dark);
+  --color-onyx: var(--onyx);
+  --color-steel: var(--steel);
 
-  /* Radius — every named step pinned to the minimal 2px */
-  --radius-sm: 2px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 2px;
-  --radius-2xl: 4px;
+  /* Radius — Tesla: 4px controls (sm/md), 8px cards (lg/xl) */
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
 }
 
 /* The single drop-shadow in the system — product/photography only. */
@@ -437,5 +454,172 @@
       @apply text-ink;
       font-weight: 600;
     }
+  }
+}
+
+/* =============================================================
+   Motion + helpers (ported from the redesign system).
+   Class-based custom utilities, intentionally UNLAYERED so they win
+   over Tailwind's transform/opacity utilities (see the cascade note in
+   CLAUDE.md — the gotcha is bare element selectors, not classes).
+   All honor prefers-reduced-motion.
+   ============================================================= */
+.font-heading,
+.font-body {
+  font-family: var(--font-sans);
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+  will-change: opacity, transform;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+.press {
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    opacity 200ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lift {
+    transition:
+      transform 350ms var(--ease-out),
+      box-shadow 350ms var(--ease-out);
+  }
+  .lift:hover {
+    transform: translateY(-4px);
+  }
+  .img-zoom img {
+    transition: transform 700ms var(--ease-out);
+  }
+  .img-zoom:hover img {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .img-zoom img {
+    transition: none !important;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ported MagicPath step/reveal animations (PDP gallery, calculator wizard). */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 520ms var(--ease-out) forwards;
+}
+@keyframes checkPop {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.check-pop {
+  animation: checkPop 320ms var(--ease-out);
+}
+@keyframes ringPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(62, 106, 225, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(62, 106, 225, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(62, 106, 225, 0);
+  }
+}
+.ring-pulse {
+  animation: ringPulse 1600ms var(--ease-out) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  .ring-pulse {
+    animation: none !important;
+  }
+}
+
+/* Ported legal pages (Privacy Policy, Terms). Class-scoped so it can't clobber
+   global element styles — see the cascade note in CLAUDE.md. */
+@layer components {
+  .legal-prose {
+    line-height: 1.7;
+  }
+  .legal-prose p {
+    margin-top: 1rem;
+  }
+  .legal-prose ul {
+    margin-top: 1rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+  .legal-prose li {
+    margin-top: 0.5rem;
+  }
+  .legal-prose strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .legal-prose a {
+    color: var(--primary);
+    text-underline-offset: 4px;
+  }
+  .legal-prose a:hover {
+    text-decoration: underline;
   }
 }

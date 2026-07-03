@@ -188,6 +188,7 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  const rootData = useRouteLoaderData<RootLoader>('root');
   let errorMessage = 'Unknown error';
   let errorStatus = 500;
 
@@ -200,7 +201,7 @@ export function ErrorBoundary() {
 
   const isNotFound = errorStatus === 404;
 
-  return (
+  const content = (
     <div className="bg-canvas">
       <div className="container-narrow flex min-h-[60vh] flex-col items-start justify-center py-20">
         <p className="type-tagline text-primary">{errorStatus}</p>
@@ -234,4 +235,21 @@ export function ErrorBoundary() {
       </div>
     </div>
   );
+
+  // Wrap in the global chrome (header + footer) when the root loader succeeded —
+  // i.e. for child-route 404s/errors. Analytics.Provider is required because the
+  // Header cart toggle calls useAnalytics(). If the root loader itself failed,
+  // rootData is undefined and we render the bare notice.
+  if (rootData) {
+    return (
+      <Analytics.Provider
+        cart={rootData.cart}
+        shop={rootData.shop}
+        consent={rootData.consent}
+      >
+        <PageLayout {...rootData}>{content}</PageLayout>
+      </Analytics.Provider>
+    );
+  }
+  return content;
 }

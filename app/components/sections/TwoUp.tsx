@@ -1,5 +1,5 @@
-import customImg from '~/assets/custom-fabrication.jpg?url';
-import tradeImg from '~/assets/trade-accounts.jpg?url';
+import customImg from '~/assets/mp/twoup-config.jpg?url';
+import tradeImg from '~/assets/mp/twoup-white.jpg?url';
 import {ArrowLink} from '~/components/ArrowLink';
 
 type Tile = {

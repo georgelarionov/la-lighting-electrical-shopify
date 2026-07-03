@@ -94,7 +94,7 @@ function CollectionCard({
 }) {
   const inner = (
     <>
-      <div className="overflow-hidden rounded-[2px] border border-hairline bg-parchment">
+      <div className="overflow-hidden rounded-lg border border-hairline bg-parchment">
         {collection?.image ? (
           <Image
             data={collection.image}

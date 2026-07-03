@@ -7,17 +7,17 @@ import {ArrowLink} from '~/components/ArrowLink';
  */
 export function Services() {
   return (
-    <section id="services" className="dark scroll-mt-24 bg-tile text-white">
+    <section id="services" className="dark scroll-mt-24 bg-onyx text-white">
       <div className="flex flex-col items-center gap-11 pt-20 md:pt-24">
         <div className="container-page flex flex-col items-center text-center">
           <h2 className="type-display max-w-[18ch] text-white text-balance">
             Lighting design, handled end to end.
           </h2>
-          <p className="type-lead mt-5 max-w-[42ch] text-body-muted">
+          <p className="type-lead mt-5 max-w-[42ch] text-white/70">
             Photometric layouts, Title 24 compliance, and a licensed crew that
             installs what we draw.
           </p>
-          <ArrowLink to="/services" className="type-body mt-6 text-sky">
+          <ArrowLink to="/services" className="type-body mt-6 text-white">
             See our services
           </ArrowLink>
         </div>

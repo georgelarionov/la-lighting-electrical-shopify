@@ -1,7 +1,10 @@
+import {Link} from 'react-router';
+import {ArrowRight} from 'lucide-react';
 import project1 from '~/assets/project-1.jpg?url';
 import project2 from '~/assets/project-2.jpg?url';
 import project3 from '~/assets/project-3.jpg?url';
 import {ArrowLink} from '~/components/ArrowLink';
+import {Reveal} from '~/components/Reveal';
 
 type Project = {
   id: string;
@@ -53,41 +56,44 @@ export function Projects() {
         </div>
 
         <div className="mt-11 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((project) => (
-            <article
-              key={project.id}
-              className="flex flex-col overflow-hidden rounded-[2px] border border-hairline bg-canvas"
-            >
-              <img
-                src={project.img}
-                alt={project.title}
-                width={1200}
-                height={720}
-                loading="lazy"
-                className="aspect-[5/3] w-full object-cover"
-              />
-              <div className="flex flex-1 flex-col p-6">
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-[2px] bg-parchment px-2.5 py-1 type-fine font-medium text-ink-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+          {PROJECTS.map((project, i) => (
+            <Reveal as="article" key={project.id} delay={(i % 3) * 70}>
+              <Link
+                to={`/projects/${project.handle}`}
+                prefetch="intent"
+                className="lift group flex h-full flex-col overflow-hidden rounded-lg border border-hairline bg-canvas"
+              >
+                <div className="img-zoom overflow-hidden">
+                  <img
+                    src={project.img}
+                    alt={project.title}
+                    width={1200}
+                    height={720}
+                    loading="lazy"
+                    className="aspect-[5/3] w-full object-cover"
+                  />
                 </div>
-                <h3 className="mt-[18px] text-xl font-semibold leading-snug tracking-tight text-ink">
-                  {project.title}
-                </h3>
-                <ArrowLink
-                  to={`/projects/${project.handle}`}
-                  className="type-caption mt-[18px]"
-                >
-                  View project
-                </ArrowLink>
-              </div>
-            </article>
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-sm bg-parchment px-2.5 py-1 type-fine font-medium text-ink-muted"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="mt-[18px] text-xl font-semibold leading-snug tracking-tight text-ink transition-colors group-hover:text-primary">
+                    {project.title}
+                  </h3>
+                  <span className="type-caption mt-[18px] inline-flex items-center gap-1.5 font-medium text-primary">
+                    View project
+                    <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
           ))}
         </div>
       </div>

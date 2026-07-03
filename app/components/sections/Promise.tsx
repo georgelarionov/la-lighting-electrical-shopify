@@ -3,7 +3,7 @@ import {PROMISE_ITEMS} from '~/lib/site';
 /** "Why specifiers work with us" — a ruled value-prop list (conversion). */
 export function PromiseSection() {
   return (
-    <section className="bg-canvas">
+    <section className="bg-parchment">
       <div className="container-page section-y grid gap-10 lg:grid-cols-[320px_1fr] lg:gap-20">
         <div>
           <h2 className="type-display-sm text-ink text-balance">

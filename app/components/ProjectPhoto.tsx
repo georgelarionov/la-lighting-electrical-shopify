@@ -1,6 +1,9 @@
 import project1 from '~/assets/project-1.jpg?url';
 import project2 from '~/assets/project-2.jpg?url';
 import project3 from '~/assets/project-3.jpg?url';
+import project4 from '~/assets/project-4.jpg?url';
+import project5 from '~/assets/project-5.jpg?url';
+import project6 from '~/assets/project-6.jpg?url';
 import type {ProjectImage} from '~/lib/projects';
 import {cn} from '~/lib/utils';
 
@@ -8,6 +11,9 @@ const SOURCES: Record<ProjectImage, string> = {
   '1': project1,
   '2': project2,
   '3': project3,
+  '4': project4,
+  '5': project5,
+  '6': project6,
 };
 
 /** Resolves a project's `image` key to its self-hosted asset (plain <img>,

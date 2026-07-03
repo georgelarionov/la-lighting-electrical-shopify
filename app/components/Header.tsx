@@ -27,6 +27,7 @@ interface HeaderProps {
  * logo + cart + hamburger, which opens the full-screen MobileNav (VMWan).
  */
 export function Header({cart}: HeaderProps) {
+  const {open} = useAside();
   return (
     <header className="relative z-50">
       <UtilityBar />
@@ -53,10 +54,10 @@ export function Header({cart}: HeaderProps) {
           {/* Actions — right */}
           <div className="flex items-center justify-end gap-3">
             <Button
-              asChild
+              onClick={() => open('quote')}
               className="hidden h-9 px-[18px] type-caption font-medium md:inline-flex"
             >
-              <Link to="/#quote">Request a Quote</Link>
+              Request a Quote
             </Button>
             <CartToggle cart={cart} className="hidden md:inline-flex" pill />
             <CartToggle
@@ -151,7 +152,7 @@ function MobileMenuToggle() {
  * state so the hamburger / close / nav links all toggle it.
  */
 function MobileNav({cart}: Pick<HeaderProps, 'cart'>) {
-  const {type, close} = useAside();
+  const {type, close, open} = useAside();
   const expanded = type === 'mobile';
 
   useEffect(() => {
@@ -223,10 +224,11 @@ function MobileNav({cart}: Pick<HeaderProps, 'cart'>) {
         </nav>
 
         <div className="flex flex-col gap-5">
-          <Button asChild className="h-12 w-full text-base font-semibold">
-            <Link to="/#quote" onClick={close}>
-              Request a Quote
-            </Link>
+          <Button
+            onClick={() => open('quote')}
+            className="h-12 w-full text-base font-semibold"
+          >
+            Request a Quote
           </Button>
           <div className="flex flex-col gap-3.5">
             <a

@@ -5,6 +5,7 @@ import {Input} from '~/components/ui/input';
 import {Textarea} from '~/components/ui/textarea';
 import {Label} from '~/components/ui/label';
 import {Checkbox} from '~/components/ui/checkbox';
+import {SmsConsent} from '~/components/SmsConsent';
 import type {HomeActionData} from '~/lib/home-forms';
 import {CONTACT} from '~/lib/site';
 
@@ -109,7 +110,7 @@ export function QuoteCta() {
                 <Checkbox id="q-consent" name="consent" className="mt-1" />
                 <Label htmlFor="q-consent" className="type-caption font-normal text-ink-muted">
                   I agree to the{' '}
-                  <Link to="/policies/privacy-policy" className="text-primary underline-offset-4 hover:underline">
+                  <Link to="/privacy-policy" className="text-primary underline-offset-4 hover:underline">
                     Privacy Policy
                   </Link>
                   .
@@ -118,6 +119,8 @@ export function QuoteCta() {
               {quote?.errors?.consent ? (
                 <ErrorText>{quote.errors.consent}</ErrorText>
               ) : null}
+
+              <SmsConsent id="q-sms" />
 
               <Button
                 type="submit"

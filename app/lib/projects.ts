@@ -6,7 +6,7 @@
  * `services` cross-links handles into `services.ts`.
  */
 
-export type ProjectImage = '1' | '2' | '3';
+export type ProjectImage = '1' | '2' | '3' | '4' | '5' | '6';
 
 export type Project = {
   handle: string;
@@ -107,7 +107,7 @@ export const PROJECTS: ReadonlyArray<Project> = [
       'Daylight and occupancy sensing',
       'Controls programming and handover',
     ],
-    image: '2',
+    image: '4',
     services: ['lighting-design', 'title-24-compliance', 'lighting-controls'],
   },
   {
@@ -128,7 +128,7 @@ export const PROJECTS: ReadonlyArray<Project> = [
       'Discreet ceiling layout',
       'Ongoing maintenance and re-aiming',
     ],
-    image: '1',
+    image: '5',
     services: ['lighting-design', 'electrical-installation', 'maintenance-service'],
   },
   {
@@ -149,7 +149,7 @@ export const PROJECTS: ReadonlyArray<Project> = [
       'Scene programming for service hours',
       'Licensed install and commissioning',
     ],
-    image: '3',
+    image: '6',
     services: ['lighting-controls', 'led-retrofits', 'electrical-installation'],
   },
 ];

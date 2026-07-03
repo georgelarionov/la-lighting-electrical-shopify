@@ -31,7 +31,7 @@ export const PRIMARY_NAV: ReadonlyArray<{label: string; to: string}> = [
   {label: 'Projects', to: '/projects'},
   {label: 'Services', to: '/services'},
   {label: 'About', to: '/pages/about'},
-  {label: 'Contacts', to: '/#contact'},
+  {label: 'Contacts', to: '/contact'},
 ];
 
 /**
@@ -52,12 +52,12 @@ export const FOOTER_NAV: ReadonlyArray<{label: string; to: string}> = [
   {label: 'Services', to: '/services'},
   {label: 'Blog', to: '/blogs'},
   {label: 'About', to: '/pages/about'},
-  {label: 'Contacts', to: '/#contact'},
+  {label: 'Contacts', to: '/contact'},
 ];
 
 export const LEGAL_NAV: ReadonlyArray<{label: string; to: string}> = [
-  {label: 'Privacy policy', to: '/policies/privacy-policy'},
-  {label: 'Terms and Conditions', to: '/policies/terms-of-service'},
+  {label: 'Privacy policy', to: '/privacy-policy'},
+  {label: 'Terms and Conditions', to: '/terms'},
 ];
 
 /** Slim credential strip shown directly under the hero. */
@@ -111,7 +111,7 @@ export const FOOTER_COLUMNS: ReadonlyArray<{
       {label: 'Projects', to: '/projects'},
       {label: 'Services', to: '/services'},
       {label: 'Blog', to: '/blogs'},
-      {label: 'Contacts', to: '/#contact'},
+      {label: 'Contacts', to: '/contact'},
     ],
   },
 ];

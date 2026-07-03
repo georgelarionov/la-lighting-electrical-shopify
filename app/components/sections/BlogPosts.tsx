@@ -112,7 +112,7 @@ function ArticleCard({
     .join('');
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[2px] border border-hairline bg-canvas">
+    <article className="lift img-zoom group flex flex-col overflow-hidden rounded-lg border border-hairline bg-canvas">
       <Link to={href} prefetch="intent" tabIndex={-1} aria-hidden>
         {post.image ? (
           <Image
