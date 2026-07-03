@@ -1,14 +1,14 @@
 import type {Route} from './+types/terms';
 import {LegalPage, LegalSection} from '~/components/LegalPage';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => [
-  {title: `Terms and Conditions | ${COMPANY_NAME}`},
-  {
-    name: 'description',
-    content: `The terms governing your use of the ${COMPANY_NAME} website and services.`,
-  },
-];
+export const meta: Route.MetaFunction = ({location}) =>
+  seo({
+    title: `Terms and Conditions | ${COMPANY_NAME}`,
+    description: `The terms governing your use of the ${COMPANY_NAME} website and services.`,
+    url: location.pathname,
+  });
 
 export default function Terms() {
   return (

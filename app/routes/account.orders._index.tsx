@@ -23,14 +23,15 @@ import type {
   OrderItemFragment,
 } from 'customer-accountapi.generated';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {seo} from '~/lib/seo';
 
 type OrdersLoaderData = {
   customer: CustomerOrdersFragment;
   filters: OrderFilterParams;
 };
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Orders'}];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({title: 'Orders', url: location.pathname, noindex: true});
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {

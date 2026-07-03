@@ -1,6 +1,7 @@
 import React, {useState, useMemo} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/collections._index';
+import {seo} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
 import {COMPANY_NAME} from '~/lib/site';
@@ -13,15 +14,13 @@ import connector from '~/assets/mp/connector.jpg?url';
 import heroLinear from '~/assets/mp/linear-hero.jpg?url';
 import serviceImg from '~/assets/mp/catalog-service.jpg?url';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Catalog | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'Architectural lighting — pendants, linear, panels and connectors. Every fixture available as a part, a plan, or a fully installed result.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Catalog | ${COMPANY_NAME}`,
+    description:
+      'Architectural lighting — pendants, linear, panels and connectors. Every fixture available as a part, a plan, or a fully installed result.',
+    url: location.pathname,
+  });
 };
 
 // Real Shopify prices merged onto the mockup catalog by handle.

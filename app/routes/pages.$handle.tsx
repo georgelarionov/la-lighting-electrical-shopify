@@ -2,9 +2,15 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/pages.$handle';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {PageHeader} from '~/components/PageHeader';
+import {COMPANY_NAME} from '~/lib/site';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
+export const meta: Route.MetaFunction = ({data, location}) => {
+  return seo({
+    title: `${data?.page.title ?? 'Page'} | ${COMPANY_NAME}`,
+    description: data?.page.seo?.description ?? undefined,
+    url: location.pathname,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

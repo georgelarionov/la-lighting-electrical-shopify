@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Form, Link, useActionData, useNavigation} from 'react-router';
 import type {Route} from './+types/contact';
+import {seo} from '~/lib/seo';
 import {
   ArrowRight,
   Phone,
@@ -17,15 +18,13 @@ import {SmsConsent} from '~/components/SmsConsent';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
 import {validateQuote, type QuoteErrors} from '~/lib/home-forms';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Contact | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'Tell us what you’re lighting and we’ll come back with a free plan and a clear, no-obligation estimate — usually within one business day.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Contact | ${COMPANY_NAME}`,
+    description:
+      'Tell us what you’re lighting and we’ll come back with a free plan and a clear, no-obligation estimate — usually within one business day.',
+    url: location.pathname,
+  });
 };
 
 type ContactActionData = {ok: boolean; errors?: QuoteErrors};

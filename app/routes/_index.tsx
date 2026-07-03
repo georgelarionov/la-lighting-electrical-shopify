@@ -1,5 +1,6 @@
 import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
+import {seo} from '~/lib/seo';
 import {Hero} from '~/components/sections/Hero';
 import {TrustStrip} from '~/components/sections/TrustStrip';
 import {CatalogSlider} from '~/components/sections/CatalogSlider';
@@ -13,17 +14,13 @@ import {Offer} from '~/components/sections/Offer';
 import {validateQuote, type HomeActionData} from '~/lib/home-forms';
 import {COMPANY_NAME} from '~/lib/site';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {
-      title: `${COMPANY_NAME} | Commercial & Industrial Electrical Services`,
-    },
-    {
-      name: 'description',
-      content:
-        'Licensed, insured, and certified electrical services in Los Angeles — installation, maintenance, and lighting design for commercial and industrial facilities.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `${COMPANY_NAME} | Commercial & Industrial Electrical Services`,
+    description:
+      'Licensed, insured, and certified electrical services in Los Angeles — installation, maintenance, and lighting design for commercial and industrial facilities.',
+    url: location.pathname,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

@@ -3,6 +3,7 @@ import {Link, useLoaderData} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {Clock} from 'lucide-react';
 import type {Route} from './+types/blogs._index';
+import {seo} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {COMPANY_NAME} from '~/lib/site';
 import {cn} from '~/lib/utils';
@@ -13,15 +14,13 @@ import blog4 from '~/assets/blog-4.jpg?url';
 import blog5 from '~/assets/blog-5.jpg?url';
 import blog6 from '~/assets/blog-6.jpg?url';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Journal | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'Practical notes on lighting, energy and code — from the team that designs and installs it across Los Angeles.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Journal | ${COMPANY_NAME}`,
+    description:
+      'Practical notes on lighting, energy and code — from the team that designs and installs it across Los Angeles.',
+    url: location.pathname,
+  });
 };
 
 export async function loader({context}: Route.LoaderArgs) {

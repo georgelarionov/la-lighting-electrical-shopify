@@ -3,9 +3,15 @@ import type {Route} from './+types/policies._index';
 import {ArrowRight} from 'lucide-react';
 import type {PoliciesQuery, PolicyItemFragment} from 'storefrontapi.generated';
 import {PageHeader} from '~/components/PageHeader';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: 'Policies | Los Angeles Lighting & Electrical'}];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: 'Policies | Los Angeles Lighting & Electrical',
+    description:
+      'Store policies for Los Angeles Lighting & Electrical — privacy, refund, shipping, and terms of service.',
+    url: location.pathname,
+  });
 };
 
 export async function loader({context}: Route.LoaderArgs) {

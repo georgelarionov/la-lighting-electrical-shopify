@@ -12,9 +12,15 @@ import type {
   RegularSearchQuery,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
+import {COMPANY_NAME} from '~/lib/site';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Search | ${COMPANY_NAME}`,
+    url: location.pathname,
+    noindex: true,
+  });
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {

@@ -7,12 +7,14 @@ import {EmptyState} from '~/components/EmptyState';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {ProductItem} from '~/components/ProductItem';
 import type {ProductItemFragment} from 'storefrontapi.generated';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [
-    {title: `${data?.collection.title ?? 'Catalog'} | Los Angeles Lighting & Electrical`},
-    {name: 'description', content: data?.collection.description ?? ''},
-  ];
+export const meta: Route.MetaFunction = ({data, location}) => {
+  return seo({
+    title: `${data?.collection.title ?? 'Catalog'} | Los Angeles Lighting & Electrical`,
+    description: data?.collection.description ?? '',
+    url: location.pathname,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

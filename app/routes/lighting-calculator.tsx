@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect, useMemo} from 'react';
 import {Link, useFetcher} from 'react-router';
 import type {Route} from './+types/lighting-calculator';
+import {seo} from '~/lib/seo';
 import {SmsConsent} from '~/components/SmsConsent';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
 import office from '~/assets/mp/svc-linear.jpg?url';
@@ -12,15 +13,13 @@ import pendant from '~/assets/mp/pendant-black.jpg?url';
 import panel from '~/assets/mp/led-panel.jpg?url';
 import heroImg from '~/assets/mp/svc-hero.jpg?url';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Lighting design calculator | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'Answer a few questions and get an instant estimate of fixtures, load and budget — plus a free photometric plan from our team.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Lighting design calculator | ${COMPANY_NAME}`,
+    description:
+      'Answer a few questions and get an instant estimate of fixtures, load and budget — plus a free photometric plan from our team.',
+    url: location.pathname,
+  });
 };
 
 export async function action({request}: Route.ActionArgs) {

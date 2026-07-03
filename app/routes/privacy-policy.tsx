@@ -1,14 +1,14 @@
 import type {Route} from './+types/privacy-policy';
 import {LegalPage, LegalSection, LegalSubheading} from '~/components/LegalPage';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => [
-  {title: `Privacy Policy | ${COMPANY_NAME}`},
-  {
-    name: 'description',
-    content: `How ${COMPANY_NAME} collects, uses, and protects your personal information.`,
-  },
-];
+export const meta: Route.MetaFunction = ({location}) =>
+  seo({
+    title: `Privacy Policy | ${COMPANY_NAME}`,
+    description: `How ${COMPANY_NAME} collects, uses, and protects your personal information.`,
+    url: location.pathname,
+  });
 
 export default function PrivacyPolicy() {
   return (

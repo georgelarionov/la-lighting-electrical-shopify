@@ -7,9 +7,15 @@ import {PageHeader} from '~/components/PageHeader';
 import {EmptyState} from '~/components/EmptyState';
 import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {COMPANY_NAME} from '~/lib/site';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.blog.title ?? ''} blog`}];
+export const meta: Route.MetaFunction = ({data, location}) => {
+  return seo({
+    title: `${data?.blog.title ?? 'Journal'} | ${COMPANY_NAME}`,
+    description: data?.blog.seo?.description ?? undefined,
+    url: location.pathname,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

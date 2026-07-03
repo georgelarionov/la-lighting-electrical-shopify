@@ -12,7 +12,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.svg';
+import {seo} from '~/lib/seo';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import tailwindStyles from '~/styles/tailwind.css?url';
 import resetStyles from '~/styles/reset.css?url';
@@ -63,9 +63,22 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico', sizes: '48x48'},
+    {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'},
+    {rel: 'icon', type: 'image/png', href: '/favicon-96x96.png', sizes: '96x96'},
+    {rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180'},
+    {rel: 'manifest', href: '/site.webmanifest'},
   ];
 }
+
+/**
+ * Sitewide metadata fallback: any route that doesn't export its own `meta`
+ * inherits these Open Graph / Twitter / canonical defaults. Routes override by
+ * returning `seo({...})` themselves.
+ */
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({url: location?.pathname});
+};
 
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -151,6 +164,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="theme-color" content="#171a20" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <link rel="stylesheet" href={tailwindStyles}></link>

@@ -28,30 +28,30 @@ const FALLBACK: Array<HomeArticle & {img: string}> = [
   {
     id: 'fb1',
     title: 'Choosing color temperature for a workspace',
-    handle: '#',
+    handle: 'choosing-color-temperature',
     excerpt:
       'How warm or cool light changes focus, comfort, and how a room reads.',
     author: {name: 'Guy Hawkins'},
-    blog: {handle: 'news'},
+    blog: {handle: 'journal'},
     img: blog1,
   },
   {
     id: 'fb2',
     title: 'LED retrofits that pay for themselves',
-    handle: '#',
+    handle: 'led-retrofits-that-pay',
     excerpt:
       'Where the savings come from, and how fast a commercial retrofit returns.',
     author: {name: 'Jane Cooper'},
-    blog: {handle: 'news'},
+    blog: {handle: 'journal'},
     img: blog2,
   },
   {
     id: 'fb3',
     title: 'What Title 24 means for your remodel',
-    handle: '#',
+    handle: 'what-title-24-means',
     excerpt: 'A plain-language look at California’s lighting rules for remodels.',
     author: {name: 'Devon Lane'},
-    blog: {handle: 'news'},
+    blog: {handle: 'journal'},
     img: blog3,
   },
 ];
@@ -103,7 +103,9 @@ function ArticleCard({
   isReal: boolean;
   eager: boolean;
 }) {
-  const href = isReal ? `/blogs/${post.blog.handle}/${post.handle}` : '/blogs';
+  // Both real Shopify articles and the fallback journal entries resolve to a
+  // designed article page (see blogs.$blogHandle.$articleHandle).
+  const href = `/blogs/${post.blog.handle}/${post.handle}`;
   const excerpt = post.excerpt || post.contentExcerpt || '';
   const initials = (post.author?.name ?? 'LA')
     .split(' ')

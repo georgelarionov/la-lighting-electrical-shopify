@@ -6,9 +6,16 @@ import {PageHeader} from '~/components/PageHeader';
 import {EmptyState} from '~/components/EmptyState';
 import {ProductItem} from '~/components/ProductItem';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
+import {COMPANY_NAME} from '~/lib/site';
+import {seo} from '~/lib/seo';
 
-export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Products`}];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `All Products | ${COMPANY_NAME}`,
+    description:
+      'Browse every fixture and part in the Los Angeles Lighting & Electrical catalog — buy standalone, add a lighting plan, or have it professionally installed.',
+    url: location.pathname,
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

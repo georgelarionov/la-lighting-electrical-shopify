@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
 import type {Route} from './+types/pages.about';
+import {seo} from '~/lib/seo';
 import {
   ArrowRight,
   Phone,
@@ -20,15 +21,13 @@ import {Button} from '~/components/ui/button';
 import {useAside} from '~/components/Aside';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `About | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'One licensed team for the whole job — we design the lighting, supply the fixtures, and install it to California code across Los Angeles.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `About | ${COMPANY_NAME}`,
+    description:
+      'One licensed team for the whole job — we design the lighting, supply the fixtures, and install it to California code across Los Angeles.',
+    url: location.pathname,
+  });
 };
 
 const STATS = [

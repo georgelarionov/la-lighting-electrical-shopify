@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect, useMemo} from 'react';
 import {useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/products.$handle';
+import {seo} from '~/lib/seo';
 import {getSelectedProductOptions, Analytics} from '@shopify/hydrogen';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
@@ -17,12 +18,15 @@ import serviceImg from '~/assets/mp/catalog-service.jpg?url';
 import panelImg from '~/assets/mp/led-panel.jpg?url';
 import connectorImg from '~/assets/mp/connector.jpg?url';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [
-    {title: `${data?.product.title ?? 'Product'} | ${COMPANY_NAME}`},
-    {rel: 'canonical', href: `/products/${data?.product.handle}`},
-    {name: 'description', content: data?.product.seo?.description ?? ''},
-  ];
+export const meta: Route.MetaFunction = ({data, location}) => {
+  // ponytail: canonical is now handled inside seo() via url — dropped the raw
+  // {rel:'canonical'} descriptor (which was also malformed: rel/href without tagName).
+  return seo({
+    title: `${data?.product.title ?? 'Product'} | ${COMPANY_NAME}`,
+    description: data?.product.seo?.description ?? '',
+    url: location.pathname,
+    type: 'product',
+  });
 };
 
 export async function loader(args: Route.LoaderArgs) {

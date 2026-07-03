@@ -2,14 +2,19 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/policies.$handle';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
 import {PageHeader} from '~/components/PageHeader';
+import {seo} from '~/lib/seo';
 
 type SelectedPolicies = keyof Pick<
   Shop,
   'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy'
 >;
 
-export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.policy.title ?? ''}`}];
+export const meta: Route.MetaFunction = ({data, location}) => {
+  return seo({
+    title: `${data?.policy.title ?? 'Policy'} | Los Angeles Lighting & Electrical`,
+    description: `Read the ${data?.policy.title ?? 'store policy'} for Los Angeles Lighting & Electrical.`,
+    url: location.pathname,
+  });
 };
 
 export async function loader({params, context}: Route.LoaderArgs) {

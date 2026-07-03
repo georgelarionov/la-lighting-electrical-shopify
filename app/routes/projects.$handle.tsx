@@ -1,5 +1,6 @@
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/projects.$handle';
+import {seo} from '~/lib/seo';
 import {Check} from 'lucide-react';
 import {PROJECTS, getProject} from '~/lib/projects';
 import {getService} from '~/lib/services';
@@ -9,14 +10,15 @@ import {QuoteButton} from '~/components/QuoteButton';
 import {ArrowLink} from '~/components/ArrowLink';
 import {COMPANY_NAME} from '~/lib/site';
 
-export const meta: Route.MetaFunction = ({data}) => {
+export const meta: Route.MetaFunction = ({data, location}) => {
   if (!data?.project) {
-    return [{title: `Projects | ${COMPANY_NAME}`}];
+    return seo({title: `Projects | ${COMPANY_NAME}`, url: location.pathname});
   }
-  return [
-    {title: `${data.project.title} | ${COMPANY_NAME}`},
-    {name: 'description', content: data.project.summary},
-  ];
+  return seo({
+    title: `${data.project.title} | ${COMPANY_NAME}`,
+    description: data.project.summary,
+    url: location.pathname,
+  });
 };
 
 export async function loader({params}: Route.LoaderArgs) {

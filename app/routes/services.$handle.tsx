@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/services.$handle';
+import {seo} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {getServiceEntry} from '~/lib/services-catalog';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
@@ -12,12 +13,14 @@ import install from '~/assets/mp/catalog-service.jpg?url';
 import insitu from '~/assets/mp/insitu.jpg?url';
 import designHero from '~/assets/mp/svc-design-hero.jpg?url';
 
-export const meta: Route.MetaFunction = ({data}) => {
-  if (!data?.service) return [{title: `Services | ${COMPANY_NAME}`}];
-  return [
-    {title: `${data.service.name} | ${COMPANY_NAME}`},
-    {name: 'description', content: data.service.blurb},
-  ];
+export const meta: Route.MetaFunction = ({data, location}) => {
+  if (!data?.service)
+    return seo({title: `Services | ${COMPANY_NAME}`, url: location.pathname});
+  return seo({
+    title: `${data.service.name} | ${COMPANY_NAME}`,
+    description: data.service.blurb,
+    url: location.pathname,
+  });
 };
 
 export async function loader({params}: Route.LoaderArgs) {

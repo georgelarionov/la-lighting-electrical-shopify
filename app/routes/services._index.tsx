@@ -1,6 +1,7 @@
 import {useState, useMemo} from 'react';
 import {Link} from 'react-router';
 import type {Route} from './+types/services._index';
+import {seo} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
 import {SERVICES, SERVICE_TABS, type SvcCat} from '~/lib/services-catalog';
@@ -11,15 +12,13 @@ import insitu from '~/assets/mp/insitu.jpg?url';
 import track from '~/assets/mp/svc-track.jpg?url';
 import museum from '~/assets/mp/svc-museum.jpg?url';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Services | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'One licensed partner for the whole job — lighting design, linear and track lighting, licensed installation and electrical work across Los Angeles.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Services | ${COMPANY_NAME}`,
+    description:
+      'One licensed partner for the whole job — lighting design, linear and track lighting, licensed installation and electrical work across Los Angeles.',
+    url: location.pathname,
+  });
 };
 
 /* icons */

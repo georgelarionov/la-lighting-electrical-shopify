@@ -2,6 +2,7 @@ import {useMemo, useState} from 'react';
 import {Link} from 'react-router';
 import {ArrowRight, Phone} from 'lucide-react';
 import type {Route} from './+types/projects._index';
+import {seo} from '~/lib/seo';
 import {PROJECTS} from '~/lib/projects';
 import {ProjectPhoto} from '~/components/ProjectPhoto';
 import {Reveal} from '~/components/Reveal';
@@ -11,15 +12,13 @@ import ctaImg from '~/assets/about-hero.jpg?url';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
 import {cn} from '~/lib/utils';
 
-export const meta: Route.MetaFunction = () => {
-  return [
-    {title: `Projects | ${COMPANY_NAME}`},
-    {
-      name: 'description',
-      content:
-        'Recent lighting and electrical work across Los Angeles — homes, retail, hospitality, and offices we designed and installed.',
-    },
-  ];
+export const meta: Route.MetaFunction = ({location}) => {
+  return seo({
+    title: `Projects | ${COMPANY_NAME}`,
+    description:
+      'Recent lighting and electrical work across Los Angeles — homes, retail, hospitality, and offices we designed and installed.',
+    url: location.pathname,
+  });
 };
 
 const CATEGORIES = ['All', ...new Set(PROJECTS.map((p) => p.category))];
