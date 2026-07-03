@@ -19,9 +19,9 @@ export function QuoteCta() {
 
   return (
     <section id="quote" className="scroll-mt-24 dark bg-tile-1 text-white">
-      <div className="container-page section-y grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <div className="container-page section-y grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
         {/* Copy */}
-        <div className="flex flex-col justify-center">
+        <div className="flex min-w-0 flex-col justify-center">
           <h2 className="type-display text-balance">
             Tell us about your space.
           </h2>
@@ -32,7 +32,7 @@ export function QuoteCta() {
           <dl className="mt-10 space-y-3 type-body text-body-muted">
             <div className="flex gap-3">
               <dt className="w-16 shrink-0 text-white/50">Call</dt>
-              <dd>
+              <dd className="min-w-0">
                 <a href={CONTACT.phoneHref} className="text-sky hover:underline">
                   {CONTACT.phoneDisplay}
                 </a>
@@ -40,10 +40,10 @@ export function QuoteCta() {
             </div>
             <div className="flex gap-3">
               <dt className="w-16 shrink-0 text-white/50">Email</dt>
-              <dd>
+              <dd className="min-w-0">
                 <a
                   href={`mailto:${CONTACT.emailSales}`}
-                  className="text-sky hover:underline"
+                  className="text-sky underline-offset-2 hover:underline [overflow-wrap:anywhere]"
                 >
                   {CONTACT.emailSales}
                 </a>
@@ -53,7 +53,7 @@ export function QuoteCta() {
         </div>
 
         {/* Form card */}
-        <div className="rounded-[2px] bg-canvas p-6 text-ink sm:p-8">
+        <div className="min-w-0 rounded-[2px] bg-canvas p-6 text-ink sm:p-8">
           {quote?.ok ? (
             <div className="flex h-full min-h-72 flex-col items-center justify-center text-center">
               <CheckCircle2 className="size-12 text-brand-green" strokeWidth={1.75} />
