@@ -18,6 +18,10 @@ import tailwindStyles from '~/styles/tailwind.css?url';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
+// Dev-only annotation toolbar. `import.meta.env.DEV` is a Vite build-time
+// constant (`false` in the Oxygen prod build), so this import and its render
+// are dead-code-eliminated from production — it only ever runs on localhost.
+import {Agentation} from 'agentation';
 
 export type RootLoader = typeof loader;
 
@@ -173,6 +177,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       </head>
       <body>
         {children}
+        {import.meta.env.DEV && <Agentation />}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>

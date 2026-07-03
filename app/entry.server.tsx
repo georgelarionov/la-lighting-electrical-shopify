@@ -19,6 +19,13 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    // Dev-only: let the Agentation toolbar POST annotations to its local MCP
+    // sync server. These values are merged into (not replacing) Hydrogen's
+    // default connect-src. `import.meta.env.DEV` compiles to `false` in the
+    // Oxygen prod build, so production CSP is never loosened.
+    ...(import.meta.env.DEV
+      ? {connectSrc: ['http://localhost:4747', 'ws://localhost:4747']}
+      : {}),
   });
 
   const body = await renderToReadableStream(
