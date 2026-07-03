@@ -266,6 +266,9 @@ function ContactForm() {
   const navigation = useNavigation();
   const submitting = navigation.state !== 'idle';
   const errors = actionData?.errors;
+  // Both consent boxes must be ticked before the form can be submitted.
+  const [consent, setConsent] = useState(false);
+  const [smsConsent, setSmsConsent] = useState(false);
 
   if (actionData?.ok) {
     return (
@@ -339,6 +342,8 @@ function ContactForm() {
         <input
           type="checkbox"
           name="consent"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
           className="mt-0.5 size-4 accent-[#3e6ae1]"
         />
         <span>
@@ -355,10 +360,15 @@ function ContactForm() {
       {errors?.consent ? (
         <p className="mt-2 type-caption text-destructive">{errors.consent}</p>
       ) : null}
-      <SmsConsent id="c-sms" className="mt-4" />
+      <SmsConsent
+        id="c-sms"
+        className="mt-4"
+        checked={smsConsent}
+        onCheckedChange={setSmsConsent}
+      />
       <Button
         type="submit"
-        disabled={submitting}
+        disabled={submitting || !consent || !smsConsent}
         className="mt-6 h-12 w-full text-[15px] font-medium sm:w-auto sm:px-8"
       >
         {submitting ? 'Sending…' : 'Send request'}

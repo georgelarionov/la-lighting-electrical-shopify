@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Link, useFetcher} from 'react-router';
 import {CheckCircle2} from 'lucide-react';
 import {Aside} from '~/components/Aside';
@@ -20,6 +21,9 @@ export function QuoteAside() {
   const data = fetcher.data;
   const errors = data?.ok === false ? data.errors : undefined;
   const submitting = fetcher.state !== 'idle';
+  // Both consent boxes must be ticked before the form can be submitted.
+  const [consent, setConsent] = useState(false);
+  const [smsConsent, setSmsConsent] = useState(false);
 
   return (
     <Aside type="quote" heading="Request a free quote">
@@ -67,7 +71,13 @@ export function QuoteAside() {
           <LightingPreferences />
 
           <div className="flex items-start gap-3">
-            <Checkbox id="qd-consent" name="consent" className="mt-1" />
+            <Checkbox
+              id="qd-consent"
+              name="consent"
+              className="mt-1"
+              checked={consent}
+              onCheckedChange={(v) => setConsent(v === true)}
+            />
             <Label htmlFor="qd-consent" className="type-caption font-normal text-ink-muted">
               I agree to the{' '}
               <Link
@@ -83,11 +93,15 @@ export function QuoteAside() {
             <p className="type-caption text-destructive">{errors.consent}</p>
           ) : null}
 
-          <SmsConsent id="qd-sms" />
+          <SmsConsent
+            id="qd-sms"
+            checked={smsConsent}
+            onCheckedChange={setSmsConsent}
+          />
 
           <Button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !consent || !smsConsent}
             className="mt-1 h-12 w-full type-body font-normal"
           >
             {submitting ? 'Sending…' : 'Request a quote'}

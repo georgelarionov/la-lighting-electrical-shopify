@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Form, Link, useActionData, useNavigation} from 'react-router';
 import {CheckCircle2} from 'lucide-react';
 import {Button} from '~/components/ui/button';
@@ -16,6 +17,9 @@ export function QuoteCta() {
   const submitting =
     navigation.state !== 'idle' &&
     navigation.formData?.get('intent') === 'quote';
+  // Both consent boxes must be ticked before the form can be submitted.
+  const [consent, setConsent] = useState(false);
+  const [smsConsent, setSmsConsent] = useState(false);
 
   return (
     <section id="quote" className="scroll-mt-24 dark bg-tile-1 text-white">
@@ -107,7 +111,13 @@ export function QuoteCta() {
               </div>
 
               <div className="flex items-start gap-3">
-                <Checkbox id="q-consent" name="consent" className="mt-1" />
+                <Checkbox
+                  id="q-consent"
+                  name="consent"
+                  className="mt-1"
+                  checked={consent}
+                  onCheckedChange={(v) => setConsent(v === true)}
+                />
                 <Label htmlFor="q-consent" className="type-caption font-normal text-ink-muted">
                   I agree to the{' '}
                   <Link to="/privacy-policy" className="text-primary underline-offset-4 hover:underline">
@@ -120,11 +130,15 @@ export function QuoteCta() {
                 <ErrorText>{quote.errors.consent}</ErrorText>
               ) : null}
 
-              <SmsConsent id="q-sms" />
+              <SmsConsent
+                id="q-sms"
+                checked={smsConsent}
+                onCheckedChange={setSmsConsent}
+              />
 
               <Button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || !consent || !smsConsent}
                 className="mt-1 h-12 w-full type-body font-normal"
               >
                 {submitting ? 'Sending…' : 'Request a quote'}
