@@ -36,13 +36,27 @@ function str(value: FormDataEntryValue | null): string {
 export function validateQuote(formData: FormData): {
   ok: boolean;
   errors?: QuoteErrors;
-  values: {name: string; email: string; phone: string; message: string};
+  values: {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    // Optional lighting-plan preferences (design wishes, not Shopify variants).
+    direction: string;
+    dimming: string;
+    shape: string;
+    runLength: string;
+  };
 } {
   const name = str(formData.get('name'));
   const email = str(formData.get('email'));
   const phone = str(formData.get('phone'));
   const message = str(formData.get('message'));
   const consent = formData.get('consent');
+  const direction = str(formData.get('direction'));
+  const dimming = str(formData.get('dimming'));
+  const shape = str(formData.get('shape'));
+  const runLength = str(formData.get('runLength'));
 
   const errors: QuoteErrors = {};
   if (!name) errors.name = 'Please enter your name.';
@@ -55,7 +69,7 @@ export function validateQuote(formData: FormData): {
   return {
     ok,
     errors: ok ? undefined : errors,
-    values: {name, email, phone, message},
+    values: {name, email, phone, message, direction, dimming, shape, runLength},
   };
 }
 

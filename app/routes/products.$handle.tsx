@@ -1,13 +1,26 @@
-import React, {useState, useRef, useEffect, useMemo} from 'react';
-import {useLoaderData, Link} from 'react-router';
+import React, {useState, useRef, useEffect} from 'react';
+import {useLoaderData, Link, useNavigate} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {seo} from '~/lib/seo';
-import {getSelectedProductOptions, Analytics} from '@shopify/hydrogen';
+import {
+  getSelectedProductOptions,
+  getProductOptions,
+  getAdjacentAndFirstAvailableVariants,
+  useOptimisticVariant,
+  useSelectedOptionInUrlParam,
+  Analytics,
+  type MappedProductOptions,
+} from '@shopify/hydrogen';
+import type {
+  Maybe,
+  ProductOptionValueSwatch,
+} from '@shopify/hydrogen/storefront-api-types';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import {cn} from '~/lib/utils';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
 import hero from '~/assets/mp/linear-hero.jpg?url';
 import config from '~/assets/mp/twoup-config.jpg?url';
@@ -58,28 +71,9 @@ const Shield = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke=
 const Bolt = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg>;
 const Ruler = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z" /><path d="m7.5 10.5 2 2M11 7l2 2M14.5 3.5l2 2M4 14l2 2" /></svg>;
 
-/* --------------------------- data (placeholder configurator) ------ */
-const LENGTHS = [
-  {id: '2ft', label: '2 ft', watt: 20, lumens: 2600, price: 99},
-  {id: '4ft', label: '4 ft', watt: 40, lumens: 5200, price: 149},
-  {id: '8ft', label: '8 ft', watt: 80, lumens: 10400, price: 229},
-] as const;
-const COLORS = [{id: 'Black', hex: '#1c1a17'}, {id: 'White', hex: '#f3f1ec'}] as const;
-const CCTS = [
-  {id: '3000K', label: '3000K', sub: 'Warm', hex: '#f4d9ad'},
-  {id: '3500K', label: '3500K', sub: 'Neutral', hex: '#f7ecd6'},
-  {id: '4000K', label: '4000K', sub: 'Cool', hex: '#fbf7ef'},
-] as const;
-const DIRECTIONS = ['Down', 'Up & Down'] as const;
-const MOUNTS = ['J-Box Canopy', 'T-Clip', 'T-Support', 'Surface'] as const;
-const DIMMING = ['0–10V', 'Non-dim'] as const;
-const SHAPES = [
-  {id: 'Line', label: 'Straight line', connectors: 'In-line couplers'},
-  {id: 'L', label: 'L-shape', connectors: '1 × L-connector'},
-  {id: 'Rectangle', label: 'Rectangle', connectors: '4 × L-connector'},
-  {id: 'Grid', label: 'Grid', connectors: '4 × T + 1 × X'},
-  {id: 'Custom', label: 'Custom', connectors: 'We spec it'},
-] as const;
+/* --------------------------- data (static marketing) ------ */
+// Body-color swatch fallbacks when a Shopify option has no configured swatch.
+const COLOR_HEX: Record<string, string> = {black: '#1c1a17', white: '#f3f1ec'};
 const FEATURES = [
   {t: 'Seamless continuous runs', d: 'No dark gaps between fixtures — light reads as one unbroken line across the ceiling.', img: hero},
   {t: 'Configurable geometry', d: 'L, T, X and Y connectors turn straight runs into rectangles, grids and bespoke shapes.', img: config},
@@ -105,10 +99,10 @@ const REVIEWS = [
   {n: 'Priya S.', r: 'Restaurant · West Hollywood', t: '3000K up-and-down completely changed the room. Warm, even, zero glare on the tables.'},
 ];
 const CROSS = [
-  {t: 'X-Connector', img: connectorImg, p: 'From $39', to: '/products/x-connector'},
-  {t: 'L-Connector', img: connectorImg, p: 'From $34', to: '/products/l-connector'},
-  {t: 'T-Connector', img: connectorImg, p: 'From $36', to: '/products/t-connector'},
-  {t: '48" LED Panel Light', img: panelImg, p: 'From $129', to: '/products/48-led-panel-light'},
+  {t: 'X-Connector', img: connectorImg, to: '/products/architectural-linear-light-x-connector'},
+  {t: 'L-Connector', img: connectorImg, to: '/products/architectural-linear-light-l-connector'},
+  {t: 'T-Connector', img: connectorImg, to: '/products/architectural-linear-light-t-connector'},
+  {t: '48" LED Panel Light', img: panelImg, to: '/products/48-led-panel-light'},
 ];
 const TIERS = [
   {id: 'fixture', t: 'Fixture only', s: 'You install it.', d: 'The configured fixture, shipped to your door with a clear install guide.', cta: 'Add to cart', tag: ''},
@@ -122,34 +116,41 @@ const MOCK_GALLERY = [
   {src: detail, alt: 'Macro detail of the diffuser and end cap'},
   {src: white, alt: 'White linear fixture, studio shot'},
 ];
-const fmt = (n: number) => '$' + n.toLocaleString('en-US');
+// Prices render from the selected Shopify variant (variant currency) — see money() in the component.
 
 /* ============================ component ============================ */
 export default function ProductPageArchitecturalLinear() {
   const {product} = useLoaderData<typeof loader>();
   const {open} = useAside();
-  const variant = product.selectedOrFirstAvailableVariant;
-  const realUnit = variant?.price ? Number(variant.price.amount) : undefined;
+  const navigate = useNavigate();
 
-  const [len, setLen] = useState<(typeof LENGTHS)[number]['id']>('4ft');
-  const [color, setColor] = useState<(typeof COLORS)[number]['id']>('Black');
-  const [cct, setCct] = useState<(typeof CCTS)[number]['id']>('3500K');
-  const [dir, setDir] = useState<(typeof DIRECTIONS)[number]>('Down');
-  const [mount, setMount] = useState<(typeof MOUNTS)[number]>('J-Box Canopy');
-  const [dim, setDim] = useState<(typeof DIMMING)[number]>('0–10V');
+  // Real Shopify variant selection — the buy box, price, availability and
+  // add-to-cart all follow the product's actual options and variants.
+  const selectedVariant = useOptimisticVariant(
+    product.selectedOrFirstAvailableVariant,
+    getAdjacentAndFirstAvailableVariants(product),
+  );
+  useSelectedOptionInUrlParam(selectedVariant?.selectedOptions ?? []);
+  const productOptions = getProductOptions({
+    ...product,
+    selectedOrFirstAvailableVariant: selectedVariant,
+  });
+
   const [qty, setQty] = useState(1);
   const [tier, setTier] = useState<(typeof TIERS)[number]['id']>('design');
   const [active, setActive] = useState(0);
-  const [shape, setShape] = useState<(typeof SHAPES)[number]['id']>('Line');
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
-  const [runFeet, setRunFeet] = useState(24);
 
-  const lenObj = useMemo(() => LENGTHS.find((l) => l.id === len)!, [len]);
-  const unit = realUnit ?? lenObj.price;
-  const total = unit * qty;
-  const lenFeet = parseInt(len);
-  const fixturesNeeded = Math.max(1, Math.ceil(runFeet / lenFeet));
+  const currency = selectedVariant?.price?.currencyCode ?? 'USD';
+  const money = (n: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: n % 1 === 0 ? 0 : 2,
+    }).format(n);
+  const unitAmount = Number(selectedVariant?.price?.amount ?? 0);
+  const total = unitAmount * qty;
 
   // Real product gallery when present; otherwise the mockup renders.
   const realImages = (product.images?.nodes ?? []).map((n) => ({
@@ -171,14 +172,17 @@ export default function ProductPageArchitecturalLinear() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  useEffect(() => {
-    if (color === 'White' && gallery.length > 4) setActive(4);
-  }, [color, gallery.length]);
 
-  const configSummary = `${lenObj.label} · ${color} · ${cct}`;
-  const canBuy = Boolean(variant?.availableForSale && variant?.id);
-  const lines = variant?.id
-    ? [{merchandiseId: variant.id, quantity: qty}]
+  const configSummary =
+    selectedVariant?.selectedOptions
+      ?.filter((o) => o.name !== 'Title')
+      .map((o) => o.value)
+      .join(' · ') ?? '';
+  const canBuy = Boolean(
+    selectedVariant?.availableForSale && selectedVariant?.id,
+  );
+  const lines = selectedVariant?.id
+    ? [{merchandiseId: selectedVariant.id, quantity: qty}]
     : [];
   const addLabel = tier === 'fixture' ? 'Add to cart' : 'Add to project';
 
@@ -226,66 +230,23 @@ export default function ProductPageArchitecturalLinear() {
           </div>
 
           <div className="mt-6 flex items-baseline gap-3">
-            <span className="tnum font-heading text-[32px] leading-none">{fmt(unit)}</span>
-            <span className="text-[12.5px] text-muted-foreground">per fixture · price updates with your build</span>
+            <span className="tnum font-heading text-[32px] leading-none">{money(unitAmount)}</span>
+            {selectedVariant?.compareAtPrice ? (
+              <s className="text-[15px] text-muted-foreground">{money(Number(selectedVariant.compareAtPrice.amount))}</s>
+            ) : null}
+            <span className="text-[12.5px] text-muted-foreground">per fixture</span>
           </div>
 
-          {/* length */}
-          <Field label="Length" value={`${lenObj.watt}W · ${lenObj.lumens.toLocaleString()} lm`}>
-            <div className="grid grid-cols-3 gap-2">
-              {LENGTHS.map((l) => (
-                <SelChip key={l.id} active={len === l.id} onClick={() => setLen(l.id)}>
-                  <span className="text-[14px]">{l.label}</span>
-                  <span className="mt-0.5 block text-[10.5px] text-muted-foreground">{l.watt}W</span>
-                </SelChip>
-              ))}
-            </div>
-          </Field>
-
-          {/* color */}
-          <Field label="Body color" value={color}>
-            <div className="flex gap-2.5">
-              {COLORS.map((c) => (
-                <button key={c.id} onClick={() => setColor(c.id)} className={`press flex items-center gap-2 rounded-sm border px-3 py-2 text-[13px] ${color === c.id ? 'border-foreground' : 'border-border hover:border-foreground/40'}`}>
-                  <span className="h-4 w-4 rounded-full border border-black/10" style={{background: c.hex}} />{c.id}
-                </button>
-              ))}
-            </div>
-          </Field>
-
-          {/* cct */}
-          <Field label="Color temperature" value={CCTS.find((c) => c.id === cct)!.sub}>
-            <div className="grid grid-cols-3 gap-2">
-              {CCTS.map((c) => (
-                <SelChip key={c.id} active={cct === c.id} onClick={() => setCct(c.id)}>
-                  <span className="mx-auto block h-3.5 w-3.5 rounded-full border border-black/10" style={{background: c.hex}} />
-                  <span className="mt-1.5 block text-[13px]">{c.label}</span>
-                  <span className="block text-[10.5px] text-muted-foreground">{c.sub}</span>
-                </SelChip>
-              ))}
-            </div>
-          </Field>
-
-          {/* direction + dimming */}
-          <div className="mt-5 grid grid-cols-2 gap-4">
-            <Field label="Light direction" tight>
-              <div className="grid grid-cols-2 gap-2">
-                {DIRECTIONS.map((d) => <SelChip key={d} active={dir === d} onClick={() => setDir(d)}><span className="text-[12.5px]">{d}</span></SelChip>)}
-              </div>
-            </Field>
-            <Field label="Dimming" tight>
-              <div className="grid grid-cols-2 gap-2">
-                {DIMMING.map((d) => <SelChip key={d} active={dim === d} onClick={() => setDim(d)}><span className="text-[12.5px]">{d}</span></SelChip>)}
-              </div>
-            </Field>
-          </div>
-
-          {/* mounting */}
-          <Field label="Mounting" value={mount}>
-            <div className="flex flex-wrap gap-2">
-              {MOUNTS.map((m) => <button key={m} onClick={() => setMount(m)} className={`press rounded-sm border px-3 py-1.5 text-[12.5px] ${mount === m ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/40'}`}>{m}</button>)}
-            </div>
-          </Field>
+          {/* real Shopify variant options */}
+          <ProductOptions
+            productOptions={productOptions}
+            onSelect={(query) =>
+              void navigate(`?${query}`, {
+                replace: true,
+                preventScrollReset: true,
+              })
+            }
+          />
 
           {/* spec readout */}
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 rounded-md border border-border bg-parchment px-4 py-3 text-[12px] text-muted-foreground">
@@ -306,7 +267,7 @@ export default function ProductPageArchitecturalLinear() {
                 onClick={() => open('cart')}
                 className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
               >
-                {canBuy ? <>{addLabel} · {fmt(total)}</> : 'Sold out'}
+                {canBuy ? <>{addLabel} · {money(total)}</> : 'Sold out'}
               </AddToCartButton>
             </div>
           </div>
@@ -383,44 +344,8 @@ export default function ProductPageArchitecturalLinear() {
         </div>
       </section>
 
-      {/* design your run */}
-      <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <Reveal>
-            <p className="type-eyebrow">Design your run</p>
-            <h2 className="mt-3 font-heading text-[32px] leading-[1.1] sm:text-[38px]">One system. Any shape.</h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-              Pick a geometry and we&apos;ll work out the fixtures and connectors you need. Building a continuous line? Enter the total length.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-2">
-              {SHAPES.map((s) => <button key={s.id} onClick={() => setShape(s.id)} className={`press rounded-sm border px-3.5 py-2 text-[13px] ${shape === s.id ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/40'}`}>{s.label}</button>)}
-            </div>
-            <div className="mt-6 rounded-lg border border-border bg-parchment p-5">
-              <div className="flex items-center justify-between text-[13px]">
-                <span className="text-muted-foreground">Geometry</span><span className="font-medium">{SHAPES.find((s) => s.id === shape)!.label}</span>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-[13px]">
-                <span className="text-muted-foreground">Connectors</span><span className="font-medium">{SHAPES.find((s) => s.id === shape)!.connectors}</span>
-              </div>
-              <div className="mt-4 border-t border-border pt-4">
-                <label className="flex items-center justify-between text-[13px]">
-                  <span className="text-muted-foreground">Total run length</span>
-                  <span className="tnum font-medium">{runFeet} ft</span>
-                </label>
-                <input type="range" min={8} max={120} step={4} value={runFeet} onChange={(e) => setRunFeet(parseInt(e.target.value))} className="mt-3 w-full accent-[var(--onyx)]" />
-                <p className="mt-3 text-[13px] text-muted-foreground">
-                  ≈ <span className="tnum font-medium text-foreground">{fixturesNeeded}× {lenObj.label}</span> fixtures for a {runFeet} ft run · est. <span className="tnum font-medium text-foreground">{fmt(fixturesNeeded * unit)}</span>
-                </p>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={80}>
-            <div className="img-zoom h-full overflow-hidden rounded-lg bg-parchment" style={{minHeight: 320}}>
-              <img src={config} alt="Linear run forming a ceiling grid" className="h-full w-full object-cover" />
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* Geometry / run-length planning moved into the free lighting-plan
+          request (quote drawer) — it drives a quote, not a variant. */}
 
       {/* specifications */}
       <section className="bg-parchment">
@@ -533,7 +458,7 @@ export default function ProductPageArchitecturalLinear() {
                   <img src={c.img} alt={c.t} className="h-full w-full object-cover" />
                 </div>
                 <h3 className="mt-3 text-[14px] font-medium">{c.t}</h3>
-                <p className="mt-0.5 text-[13px] text-muted-foreground">{c.p}</p>
+                <p className="mt-0.5 inline-flex items-center gap-1 text-[13px] text-muted-foreground">View <Arrow className="h-3 w-3" /></p>
               </Link>
             </Reveal>
           ))}
@@ -564,7 +489,7 @@ export default function ProductPageArchitecturalLinear() {
             <p className="truncate text-[13.5px] font-medium">{product.title}</p>
             <p className="truncate text-[11.5px] text-muted-foreground">{configSummary}</p>
           </div>
-          <span className="tnum hidden font-heading text-[18px] sm:block">{fmt(total)}</span>
+          <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
           <AddToCartButton
             lines={lines}
             disabled={!canBuy}
@@ -582,10 +507,10 @@ export default function ProductPageArchitecturalLinear() {
             {
               id: product.id,
               title: product.title,
-              price: variant?.price?.amount || '0',
+              price: selectedVariant?.price?.amount || '0',
               vendor: product.vendor,
-              variantId: variant?.id || '',
-              variantTitle: variant?.title || '',
+              variantId: selectedVariant?.id || '',
+              variantTitle: selectedVariant?.title || '',
               quantity: 1,
             },
           ],
@@ -613,6 +538,125 @@ function SelChip({active, onClick, children}: {active: boolean; onClick: () => v
       {children}
     </button>
   );
+}
+
+/* ------------------- real Shopify variant options ------------------- */
+// Renders the product's actual options/variants in the buy-box chip style.
+// Selecting a value navigates to that variant (via variantUriQuery); the
+// optimistic variant then updates price/availability/add-to-cart.
+function ProductOptions({
+  productOptions,
+  onSelect,
+}: {
+  productOptions: MappedProductOptions[];
+  onSelect: (variantUriQuery: string) => void;
+}) {
+  return (
+    <>
+      {productOptions.map((option) => {
+        // A single value isn't a choice — don't render it as one.
+        if (option.optionValues.length <= 1) return null;
+        const current = option.optionValues.find((v) => v.selected)?.name;
+        const isColor = /colou?r/i.test(option.name);
+        const layout = isColor
+          ? 'flex flex-wrap gap-2.5'
+          : 'grid grid-cols-3 gap-2';
+
+        return (
+          <Field key={option.name} label={option.name} value={current}>
+            <div className={layout}>
+              {option.optionValues.map((value) => {
+                const {
+                  name,
+                  handle,
+                  variantUriQuery,
+                  selected,
+                  available,
+                  exists,
+                  isDifferentProduct,
+                  swatch,
+                } = value;
+                const chipClass = cn(
+                  'press rounded-sm border px-3 py-2.5 text-center text-[13px]',
+                  selected
+                    ? 'border-foreground bg-foreground/[0.03] ring-1 ring-foreground'
+                    : 'border-border hover:border-foreground/40',
+                  !available && 'opacity-40',
+                  !exists && 'cursor-not-allowed',
+                );
+                const inner = (
+                  <OptionValueContent
+                    name={name}
+                    swatch={swatch}
+                    isColor={isColor}
+                  />
+                );
+
+                if (isDifferentProduct) {
+                  // Combined-listing child that lives at another URL.
+                  return (
+                    <Link
+                      key={option.name + name}
+                      to={`/products/${handle}?${variantUriQuery}`}
+                      prefetch="intent"
+                      preventScrollReset
+                      replace
+                      className={chipClass}
+                    >
+                      {inner}
+                    </Link>
+                  );
+                }
+                return (
+                  <button
+                    key={option.name + name}
+                    type="button"
+                    disabled={!exists}
+                    onClick={() => {
+                      if (!selected) onSelect(variantUriQuery);
+                    }}
+                    className={chipClass}
+                  >
+                    {inner}
+                  </button>
+                );
+              })}
+            </div>
+          </Field>
+        );
+      })}
+    </>
+  );
+}
+
+function OptionValueContent({
+  name,
+  swatch,
+  isColor,
+}: {
+  name: string;
+  swatch?: Maybe<ProductOptionValueSwatch> | undefined;
+  isColor: boolean;
+}) {
+  const image = swatch?.image?.previewImage?.url;
+  const color = swatch?.color ?? (isColor ? COLOR_HEX[name.toLowerCase()] : undefined);
+
+  if (isColor && (color || image)) {
+    return (
+      <span className="flex items-center justify-center gap-2">
+        <span
+          className="h-4 w-4 rounded-full border border-black/10"
+          style={{
+            background: color || 'transparent',
+            backgroundImage: image ? `url(${image})` : undefined,
+            backgroundSize: 'cover',
+          }}
+        />
+        {name}
+      </span>
+    );
+  }
+  return <span>{name}</span>;
 }
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql

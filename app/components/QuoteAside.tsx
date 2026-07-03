@@ -64,6 +64,8 @@ export function QuoteAside() {
             ) : null}
           </div>
 
+          <LightingPreferences />
+
           <div className="flex items-start gap-3">
             <Checkbox id="qd-consent" name="consent" className="mt-1" />
             <Label htmlFor="qd-consent" className="type-caption font-normal text-ink-muted">
@@ -93,6 +95,82 @@ export function QuoteAside() {
         </fetcher.Form>
       )}
     </Aside>
+  );
+}
+
+/**
+ * Optional lighting-plan preferences. These are design wishes (not purchasable
+ * Shopify variants), so they live on the quote request rather than the product
+ * buy box. All optional; captured with the quote payload.
+ */
+const DIRECTIONS = ['Down', 'Up & Down'];
+const DIMMING = ['0–10V', 'Non-dim'];
+const SHAPES = ['Straight line', 'L-shape', 'Rectangle', 'Grid', 'Custom'];
+
+function LightingPreferences() {
+  return (
+    <details className="rounded-[2px] border border-hairline">
+      <summary className="type-caption-strong cursor-pointer select-none px-4 py-3 text-ink">
+        Lighting preferences{' '}
+        <span className="type-caption font-normal text-ink-muted">
+          (optional)
+        </span>
+      </summary>
+      <div className="flex flex-col gap-4 border-t border-hairline p-4">
+        <div className="grid grid-cols-2 gap-4">
+          <QSelect id="qd-direction" name="direction" label="Light direction" options={DIRECTIONS} />
+          <QSelect id="qd-dimming" name="dimming" label="Dimming" options={DIMMING} />
+        </div>
+        <QSelect id="qd-shape" name="shape" label="Geometry" options={SHAPES} />
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="qd-run" className="type-caption-strong text-ink">
+            Approx. run length (ft)
+          </Label>
+          <Input
+            id="qd-run"
+            name="runLength"
+            type="number"
+            min={0}
+            inputMode="numeric"
+            placeholder="e.g. 24"
+            className="h-11 rounded-[2px] type-body"
+          />
+        </div>
+      </div>
+    </details>
+  );
+}
+
+function QSelect({
+  id,
+  name,
+  label,
+  options,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  options: string[];
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor={id} className="type-caption-strong text-ink">
+        {label}
+      </Label>
+      <select
+        id={id}
+        name={name}
+        defaultValue=""
+        className="h-11 rounded-[2px] border border-hairline bg-canvas px-3 type-body text-ink"
+      >
+        <option value="">No preference</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
 
