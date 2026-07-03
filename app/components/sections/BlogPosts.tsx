@@ -68,7 +68,7 @@ export function BlogPosts({articles}: {articles: HomeArticle[]}) {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-xl">
             <h2 className="type-display text-ink text-balance">
-              From the journal
+              Blog posts
             </h2>
             <p className="type-body mt-2.5 text-ink-muted">
               Notes on lighting, energy, and getting a room to feel right.

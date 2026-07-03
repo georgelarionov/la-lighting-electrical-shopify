@@ -30,7 +30,7 @@ export function Hero() {
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
               <Button
                 onClick={() => open('quote')}
-                className="h-12 px-7 text-[15px] font-medium"
+                className="h-9 px-7 text-[15px] font-medium"
               >
                 Request a free quote
                 <ArrowRight className="size-4" />
@@ -38,7 +38,7 @@ export function Hero() {
               <Button
                 asChild
                 variant="outline"
-                className="h-12 border-ink/25 px-6 text-[15px] font-medium hover:border-ink/50"
+                className="h-9 border-ink/25 px-6 text-[15px] font-medium hover:border-ink/50"
               >
                 <Link to="/projects">See our work</Link>
               </Button>
