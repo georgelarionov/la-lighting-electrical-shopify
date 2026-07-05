@@ -6,7 +6,7 @@
  * `services` cross-links handles into `services.ts`.
  */
 
-export type ProjectImage = '1' | '2' | '3' | '4' | '5' | '6';
+export type ProjectImage = '1' | '2' | '3' | '4' | '5' | '6' | '7';
 
 export type Project = {
   handle: string;
@@ -26,6 +26,28 @@ export type Project = {
 };
 
 export const PROJECTS: ReadonlyArray<Project> = [
+  {
+    handle: 'the-resort-playa-vista',
+    title: 'The Resort: Full Lighting Replacement',
+    location: 'Playa Vista, Los Angeles, CA',
+    category: 'Hospitality',
+    year: '2026',
+    summary:
+      'Full replacement of an unreliable custom lighting system with a modular, in-house architectural linear pendant system.',
+    description: [
+      "For five to six years, The Resort community in Playa Vista relied on a custom lighting system that never lived up to its cost. Poor engineering meant components burned out regularly, and replacement parts were costly and hard to source. By the time Playa Vista's management brought us in, 90% of the lighting was non-operational, a significant problem for a community whose reputation rests on a premium, resort-style atmosphere.",
+      "We started with lighting design, running full photometric calculations and developing a new lighting layout, which we reviewed and confirmed with Playa Vista's management before finalizing the product. We then supplied our own architectural linear pendant system, a fully modular solution with L, X, T, and Y-shaped connectors that allows long continuous runs to be configured to any ceiling geometry. Our C-10 licensed electricians handled the full removal of the old system and installation of the new one, creating a cohesive, upscale lighting composition befitting the property.",
+    ],
+    scope: [
+      'Photometric calculations and custom lighting layout design',
+      'Design and product review/sign-off with Playa Vista management',
+      'Supply of custom-configured, in-house architectural linear pendant system',
+      'Removal of old system and full installation by C-10 licensed electricians',
+    ],
+    // Frame from the project install video (The Resort, Playa Vista).
+    image: '7',
+    services: ['linear-led-lighting', 'lighting-design', 'electrical-installation'],
+  },
   {
     handle: 'marina-del-rey-residence',
     title: 'Ambient lighting for compact interiors',

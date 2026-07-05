@@ -1,9 +1,12 @@
 /**
  * Service catalog — static brand content (services are not a Storefront API
- * resource). Mirrors the pattern in `site.ts`: marketing copy lives in code.
- * Consumed by `routes/services._index.tsx` (grid) and
- * `routes/services.$handle.tsx` (detail). `icon` is a lucide key resolved in
- * the component, the same indirection the Footer uses for socials.
+ * resource). Marketing copy lives in code, like `site.ts`.
+ *
+ * Feeds project cross-links (`getService`, used by `routes/projects.$handle.tsx`)
+ * and the `routes/services.$handle.tsx` detail page via the `getServiceEntry`
+ * fallback in `services-catalog.ts`. The `routes/services._index.tsx` grid is
+ * driven by `services-catalog.ts`. `icon` is a lucide key resolved in
+ * `ServiceGlyph`.
  */
 
 export type ServiceIcon =
@@ -12,7 +15,8 @@ export type ServiceIcon =
   | 'install'
   | 'controls'
   | 'retrofit'
-  | 'maintenance';
+  | 'maintenance'
+  | 'linear';
 
 export type Service = {
   handle: string;
@@ -50,6 +54,28 @@ export const SERVICES: ReadonlyArray<Service> = [
       'A room that feels considered, not flooded',
     ],
     icon: 'design',
+  },
+  {
+    handle: 'linear-led-lighting',
+    title: 'Linear LED lighting',
+    summary:
+      'Our own modular architectural linear pendant system — continuous runs shaped to any ceiling.',
+    description: [
+      'We build our own architectural linear pendant system, so the light in your space is specified, supplied, and supported by one team. L, X, T, and Y connectors turn straight runs into rectangles, grids, and bespoke shapes that follow the architecture.',
+      'Because the system is modular, long continuous runs read as one unbroken line with no dark gaps — configured to your ceiling, tuned to the room, and installed to California code.',
+    ],
+    includes: [
+      'Modular linear pendants with L, X, T and Y connectors',
+      'Continuous runs configured to your ceiling geometry',
+      'Color temperature and dimming matched to the space',
+      'Supply, design, and licensed installation from one team',
+    ],
+    outcomes: [
+      'Seamless linear light with no visible joints',
+      'Any shape — straight runs, rectangles, grids, or custom',
+      'One accountable source for the whole system',
+    ],
+    icon: 'linear',
   },
   {
     handle: 'title-24-compliance',
