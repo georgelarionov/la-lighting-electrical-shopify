@@ -31,6 +31,7 @@ export const SERVICE_IMAGES = {design, designHero, linear, track, museum, electr
 
 export const SERVICES: ServiceEntry[] = [
   {id: 'lighting-design', cat: 'Design', name: 'Lighting Design', blurb: 'A free photometric plan — layout, fixture list and spacing for your exact space.', img: design, featured: true},
+  {id: 'linear-led-lighting', cat: 'Linear', name: 'Linear LED Lighting', blurb: 'Our own modular architectural linear pendant system — continuous runs shaped to any ceiling.', img: linear, featured: true},
   {id: 'office-linear', cat: 'Linear', name: 'Office Linear Lighting', blurb: 'Even, glare-free linear light that makes open-plan offices easy to work in.', img: linear},
   {id: 'retail-linear', cat: 'Linear', name: 'Retail Linear Lighting', blurb: 'Continuous lines that pull the eye to the product, not the fixture.', img: linear},
   {id: 'horeca-linear', cat: 'Linear', name: 'HoReCa Linear Lighting', blurb: 'Warm, seamless linear light for restaurants, bars and hotels.', img: linear},
