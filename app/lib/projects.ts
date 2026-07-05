@@ -46,7 +46,7 @@ export const PROJECTS: ReadonlyArray<Project> = [
     ],
     // Frame from the project install video (The Resort, Playa Vista).
     image: '7',
-    services: ['linear-led-lighting', 'lighting-design', 'electrical-installation'],
+    services: ['hospitality-architectural-lighting-installation', 'lighting-design', 'electrical-installation'],
   },
   {
     handle: 'marina-del-rey-residence',

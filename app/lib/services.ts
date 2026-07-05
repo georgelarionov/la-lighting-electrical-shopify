@@ -56,23 +56,23 @@ export const SERVICES: ReadonlyArray<Service> = [
     icon: 'design',
   },
   {
-    handle: 'linear-led-lighting',
-    title: 'Linear LED lighting',
+    handle: 'hospitality-architectural-lighting-installation',
+    title: 'Hospitality Architectural Lighting Installation',
     summary:
-      'Our own modular architectural linear pendant system — continuous runs shaped to any ceiling.',
+      'Warm, seamless architectural linear lighting for hospitality — our modular pendant system, designed, supplied, and installed.',
     description: [
-      'We build our own architectural linear pendant system, so the light in your space is specified, supplied, and supported by one team. L, X, T, and Y connectors turn straight runs into rectangles, grids, and bespoke shapes that follow the architecture.',
-      'Because the system is modular, long continuous runs read as one unbroken line with no dark gaps — configured to your ceiling, tuned to the room, and installed to California code.',
+      'We build our own architectural linear pendant system, so the light in your restaurant, bar, or hotel is specified, supplied, and installed by one team. L, X, T, and Y connectors turn straight runs into rectangles, grids, and bespoke shapes that follow the architecture.',
+      'Because the system is modular, long continuous runs read as one warm, unbroken line with no dark gaps — tuned to the room, dimmable for service hours, and installed to California code.',
     ],
     includes: [
       'Modular linear pendants with L, X, T and Y connectors',
       'Continuous runs configured to your ceiling geometry',
-      'Color temperature and dimming matched to the space',
+      'Warm color temperature and dimming for service hours',
       'Supply, design, and licensed installation from one team',
     ],
     outcomes: [
       'Seamless linear light with no visible joints',
-      'Any shape — straight runs, rectangles, grids, or custom',
+      'A warm, upscale atmosphere for guests',
       'One accountable source for the whole system',
     ],
     icon: 'linear',
