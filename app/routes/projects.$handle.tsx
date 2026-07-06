@@ -6,6 +6,7 @@ import {PROJECTS, getProject} from '~/lib/projects';
 import {getService} from '~/lib/services';
 import {PageHeader} from '~/components/PageHeader';
 import {ProjectPhoto} from '~/components/ProjectPhoto';
+import {ProjectVideo} from '~/components/ProjectVideo';
 import {QuoteButton} from '~/components/QuoteButton';
 import {ArrowLink} from '~/components/ArrowLink';
 import {COMPANY_NAME} from '~/lib/site';
@@ -58,12 +59,11 @@ export default function ProjectDetail() {
       />
 
       <div className="container-page">
-        <div className="img-zoom overflow-hidden rounded-lg border border-hairline bg-parchment">
-          <ProjectPhoto
+        <div className="overflow-hidden rounded-lg border border-hairline bg-parchment">
+          <ProjectVideo
             image={project.image}
+            youtubeId={project.youtubeId}
             alt={project.title}
-            eager
-            className="aspect-[16/9] w-full md:aspect-[2/1]"
           />
         </div>
       </div>

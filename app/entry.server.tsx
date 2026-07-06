@@ -19,6 +19,15 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    // Allow the click-to-play YouTube embed on project pages (privacy-friendly
+    // nocookie host). Setting frame-src overrides the default-src fallback, so
+    // restate the prior sources ('self' + Shopify) alongside the nocookie host.
+    frameSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://www.youtube-nocookie.com',
+    ],
     // Dev-only: let the Agentation toolbar POST annotations to its local MCP
     // sync server. These values are merged into (not replacing) Hydrogen's
     // default connect-src. `import.meta.env.DEV` compiles to `false` in the

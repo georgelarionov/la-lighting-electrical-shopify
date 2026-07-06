@@ -21,6 +21,8 @@ export type Project = {
   /** What the job involved. */
   scope: string[];
   image: ProjectImage;
+  /** Optional YouTube video id — renders a click-to-play hero. */
+  youtubeId?: string;
   /** Handles into `services.ts` for cross-linking. */
   services: string[];
 };
@@ -46,6 +48,7 @@ export const PROJECTS: ReadonlyArray<Project> = [
     ],
     // Frame from the project install video (The Resort, Playa Vista).
     image: '7',
+    youtubeId: 'pnwd9xA2_3Q',
     services: ['hospitality-architectural-lighting-installation', 'lighting-design', 'electrical-installation'],
   },
   {
