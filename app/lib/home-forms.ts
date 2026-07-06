@@ -73,6 +73,28 @@ export function validateQuote(formData: FormData): {
   };
 }
 
+/**
+ * Compose a Zoho Lead description from a validated quote submission — the
+ * message plus any optional lighting preferences and consent flags.
+ */
+export function describeQuoteLead(
+  values: ReturnType<typeof validateQuote>['values'],
+  opts: {smsConsent: boolean; projectType?: string},
+): string {
+  const lines: string[] = [];
+  if (values.message) lines.push(values.message);
+  if (opts.projectType) lines.push(`Project type: ${opts.projectType}`);
+  const prefs = [
+    values.direction && `Direction: ${values.direction}`,
+    values.dimming && `Dimming: ${values.dimming}`,
+    values.shape && `Geometry: ${values.shape}`,
+    values.runLength && `Run length: ${values.runLength} ft`,
+  ].filter(Boolean);
+  if (prefs.length) lines.push(`Lighting preferences — ${prefs.join(', ')}`);
+  lines.push(`SMS consent: ${opts.smsConsent ? 'yes' : 'no'}`);
+  return lines.join('\n');
+}
+
 /** Single-field email validation, shared by newsletter + referral. */
 export function validateEmail(formData: FormData): {
   ok: boolean;

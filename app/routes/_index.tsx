@@ -11,7 +11,12 @@ import {PromiseSection} from '~/components/sections/Promise';
 import {QuoteCta} from '~/components/sections/QuoteCta';
 import {BlogPosts} from '~/components/sections/BlogPosts';
 import {Offer} from '~/components/sections/Offer';
-import {validateQuote, type HomeActionData} from '~/lib/home-forms';
+import {
+  validateQuote,
+  describeQuoteLead,
+  type HomeActionData,
+} from '~/lib/home-forms';
+import {createZohoLead} from '~/lib/zoho';
 import {COMPANY_NAME} from '~/lib/site';
 
 export const meta: Route.MetaFunction = ({location}) => {
@@ -45,12 +50,23 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
 
 export async function action({
   request,
+  context,
 }: Route.ActionArgs): Promise<HomeActionData> {
   const formData = await request.formData();
   // The homepage handles the Request a Quote form; newsletter + referral post
   // to the /api/subscribe resource route.
-  const {ok, errors} = validateQuote(formData);
-  // TODO: forward `values` to email / CRM on success.
+  const {ok, errors, values} = validateQuote(formData);
+  if (ok) {
+    await createZohoLead(context.env, {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      source: 'Website — homepage quote',
+      description: describeQuoteLead(values, {
+        smsConsent: formData.get('smsConsent') === 'yes',
+      }),
+    });
+  }
   return {intent: 'quote', ok, errors};
 }
 

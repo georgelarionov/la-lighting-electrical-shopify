@@ -16,7 +16,12 @@ import {Reveal} from '~/components/Reveal';
 import {Button} from '~/components/ui/button';
 import {SmsConsent} from '~/components/SmsConsent';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
-import {validateQuote, type QuoteErrors} from '~/lib/home-forms';
+import {
+  validateQuote,
+  describeQuoteLead,
+  type QuoteErrors,
+} from '~/lib/home-forms';
+import {createZohoLead} from '~/lib/zoho';
 
 export const meta: Route.MetaFunction = ({location}) => {
   return seo({
@@ -31,10 +36,22 @@ type ContactActionData = {ok: boolean; errors?: QuoteErrors};
 
 export async function action({
   request,
+  context,
 }: Route.ActionArgs): Promise<ContactActionData> {
   const formData = await request.formData();
-  const {ok, errors} = validateQuote(formData);
-  // TODO: forward the validated payload to email / CRM on success.
+  const {ok, errors, values} = validateQuote(formData);
+  if (ok) {
+    await createZohoLead(context.env, {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      source: 'Website — contact page',
+      description: describeQuoteLead(values, {
+        smsConsent: formData.get('smsConsent') === 'yes',
+        projectType: String(formData.get('type') ?? '').trim() || undefined,
+      }),
+    });
+  }
   return {ok, errors};
 }
 
