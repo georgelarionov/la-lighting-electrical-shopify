@@ -1,42 +1,13 @@
 import {Link} from 'react-router';
 import {ArrowRight} from 'lucide-react';
-import project1 from '~/assets/project-1.jpg?url';
-import project2 from '~/assets/project-2.jpg?url';
-import project3 from '~/assets/project-3.jpg?url';
 import {ArrowLink} from '~/components/ArrowLink';
 import {Reveal} from '~/components/Reveal';
+import {ProjectPhoto} from '~/components/ProjectPhoto';
+import {PROJECTS} from '~/lib/projects';
 
-type Project = {
-  id: string;
-  handle: string;
-  img: string;
-  tags: string[];
-  title: string;
-};
-
-const PROJECTS: Project[] = [
-  {
-    id: 'p1',
-    handle: 'marina-del-rey-residence',
-    img: project1,
-    tags: ['Marina Del Rey', 'Private Residence', '2024'],
-    title: 'Ambient lighting for compact interiors',
-  },
-  {
-    id: 'p2',
-    handle: 'santa-monica-storefront',
-    img: project2,
-    tags: ['Santa Monica', 'Retail', '2023'],
-    title: 'Storefront relight on a tight footprint',
-  },
-  {
-    id: 'p3',
-    handle: 'beverly-hills-evening-room',
-    img: project3,
-    tags: ['Beverly Hills', 'Hospitality', '2023'],
-    title: 'Layered lighting for an evening room',
-  },
-];
+// Data-driven from the project portfolio (app/lib/projects.ts) so new work
+// shows here automatically. "Recent work" = the first three (newest first).
+const RECENT = PROJECTS.slice(0, 3);
 
 export function Projects() {
   return (
@@ -56,33 +27,32 @@ export function Projects() {
         </div>
 
         <div className="mt-11 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((project, i) => (
-            <Reveal as="article" key={project.id} delay={(i % 3) * 70}>
+          {RECENT.map((project, i) => (
+            <Reveal as="article" key={project.handle} delay={(i % 3) * 70}>
               <Link
                 to={`/projects/${project.handle}`}
                 prefetch="intent"
                 className="lift group flex h-full flex-col overflow-hidden rounded-lg border border-hairline bg-canvas"
               >
                 <div className="img-zoom overflow-hidden">
-                  <img
-                    src={project.img}
+                  <ProjectPhoto
+                    image={project.image}
                     alt={project.title}
-                    width={1200}
-                    height={720}
-                    loading="lazy"
-                    className="aspect-[5/3] w-full object-cover"
+                    className="aspect-[5/3] w-full"
                   />
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-sm bg-parchment px-2.5 py-1 type-fine font-medium text-ink-muted"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                    {[project.location, project.category, project.year].map(
+                      (tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-sm bg-parchment px-2.5 py-1 type-fine font-medium text-ink-muted"
+                        >
+                          {tag}
+                        </span>
+                      ),
+                    )}
                   </div>
                   <h3 className="mt-[18px] text-xl font-semibold leading-snug tracking-tight text-ink transition-colors group-hover:text-primary">
                     {project.title}
