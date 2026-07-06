@@ -7,6 +7,7 @@ import {getService} from '~/lib/services';
 import {PageHeader} from '~/components/PageHeader';
 import {ProjectPhoto} from '~/components/ProjectPhoto';
 import {ProjectVideo} from '~/components/ProjectVideo';
+import {ProjectGallery} from '~/components/ProjectGallery';
 import {QuoteButton} from '~/components/QuoteButton';
 import {ArrowLink} from '~/components/ArrowLink';
 import {COMPANY_NAME} from '~/lib/site';
@@ -67,6 +68,8 @@ export default function ProjectDetail() {
           />
         </div>
       </div>
+
+      <ProjectGallery handle={project.handle} />
 
       <div className="container-page section-y">
         <div className="grid gap-12 lg:grid-cols-[1fr_340px] lg:gap-16">
