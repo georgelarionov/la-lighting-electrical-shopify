@@ -4,14 +4,8 @@ import type {Route} from './+types/collections._index';
 import {seo} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
+import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {COMPANY_NAME} from '~/lib/site';
-import ringBlack from '~/assets/mp/pendant-black.jpg?url';
-import ringGold from '~/assets/mp/pendant-gold.jpg?url';
-import round from '~/assets/mp/round-led.jpg?url';
-import panel from '~/assets/mp/led-panel.jpg?url';
-import linear from '~/assets/mp/linear-48.jpg?url';
-import connector from '~/assets/mp/connector.jpg?url';
-import heroLinear from '~/assets/mp/linear-hero.jpg?url';
 import serviceImg from '~/assets/mp/catalog-service.jpg?url';
 
 export const meta: Route.MetaFunction = ({location}) => {
@@ -23,17 +17,58 @@ export const meta: Route.MetaFunction = ({location}) => {
   });
 };
 
-// Real Shopify prices merged onto the mockup catalog by handle.
+// Data-driven catalog. The Storefront API only ever returns products that are
+// ACTIVE and published to this storefront channel, so status filtering is the
+// platform's job — there is no draft/archived leak to guard against here.
+// Facets (category / CCT / finish / price) are derived from the real products'
+// productType and variant options — no hardcoded product list, no drift.
 export async function loader({context}: Route.LoaderArgs) {
-  const data = await context.storefront
-    .query(CATALOG_PRICES_QUERY)
-    .catch(() => null);
-  const prices: Record<string, string> = {};
-  for (const p of data?.products?.nodes ?? []) {
-    prices[p.handle] = p.priceRange.minVariantPrice.amount;
-  }
-  return {prices};
+  const data = await context.storefront.query(CATALOG_QUERY).catch(() => null);
+  const nodes = data?.products?.nodes ?? [];
+
+  const products: CatalogProduct[] = nodes.map((p) => {
+    const finishes = p.options
+      .filter((o) => FINISH_OPTS.has(o.name))
+      .flatMap((o) => o.optionValues.map((v) => v.name));
+    const ccts = p.options
+      .filter((o) => o.name === 'Color Temperature')
+      .flatMap((o) => o.optionValues.map((v) => v.name));
+    return {
+      handle: p.handle,
+      name: p.title,
+      type: p.productType || 'Fixture',
+      cat: p.productType || 'Other',
+      img: p.featuredImage?.url ?? null,
+      alt: p.featuredImage?.altText ?? p.title,
+      price: Math.round(Number(p.priceRange.minVariantPrice.amount)),
+      finishes,
+      ccts,
+    };
+  });
+
+  const cats = [...new Set(products.map((p) => p.cat))].sort();
+  const ccts = [...new Set(products.flatMap((p) => p.ccts))].sort(
+    (a, b) => parseInt(a, 10) - parseInt(b, 10),
+  );
+  const finishes = [...new Set(products.flatMap((p) => p.finishes))];
+  const maxPrice =
+    Math.ceil(products.reduce((m, p) => Math.max(m, p.price), 0) / 10) * 10 ||
+    200;
+
+  return {products, cats, ccts, finishes, maxPrice};
 }
+
+type CatalogProduct = {
+  handle: string;
+  name: string;
+  type: string;
+  cat: string;
+  img: string | null;
+  alt: string;
+  price: number;
+  finishes: string[];
+  ccts: string[];
+};
 
 /* icons (from mockup) */
 type IP = {className?: string};
@@ -50,64 +85,30 @@ const Sliders = ({className}: IP) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" /></svg>
 );
 
-/* ----------------------------- data: 16 real products ----------------------------- */
-type Cat = 'Pendant' | 'Round' | 'Linear' | 'Panel' | 'Connector';
-type Product = {
-  id: string;
-  name: string;
-  type: string;
-  cat: Cat;
-  img: string;
-  price: number;
-  finishes: string[];
-  ccts: string[];
-  mounts: string[];
-  apps: string[];
-  installable: boolean;
-  featured?: boolean;
+/* Which variant options count as a "Finish" facet, and swatch colors. */
+const FINISH_OPTS = new Set(['Body Color', 'Finish', 'Color']);
+const FINISH_HEX: Record<string, string> = {
+  Black: '#1c1a17',
+  White: '#f3f1ec',
+  Gold: '#b89968',
+  Bronze: '#7d5b3f',
+  Brown: '#6b4f3a',
+  Silver: '#c9ccce',
 };
-const C3 = ['3000K', '3500K', '4000K'];
-const PRODUCTS: Product[] = [
-  {id: 'standart-ring-62', name: 'Standart Ring 62"', type: 'Ring Pendant', cat: 'Pendant', img: ringBlack, price: 189, finishes: ['Black', 'White', 'Gold'], ccts: C3, mounts: ['Suspended', 'Cable'], apps: ['Residential', 'HoReCa', 'Office'], installable: true, featured: true},
-  {id: 'standart-ring-47', name: 'Standart Ring 47"', type: 'Ring Pendant', cat: 'Pendant', img: ringGold, price: 159, finishes: ['Black', 'White', 'Gold'], ccts: C3, mounts: ['Suspended', 'Cable'], apps: ['Residential', 'HoReCa'], installable: true},
-  {id: 'standart-ring-36', name: 'Standart Ring 36"', type: 'Ring Pendant', cat: 'Pendant', img: ringBlack, price: 129, finishes: ['Black', 'White', 'Gold'], ccts: C3, mounts: ['Suspended', 'Cable'], apps: ['Residential'], installable: true},
-  {id: 'round-36-rod', name: 'Round LED 36" — Rod', type: 'Round LED', cat: 'Round', img: round, price: 149, finishes: ['Black', 'White'], ccts: C3, mounts: ['Rod'], apps: ['Office', 'Retail'], installable: true},
-  {id: 'round-36-suspended', name: 'Round LED 36" — Suspended', type: 'Round LED', cat: 'Round', img: round, price: 149, finishes: ['Black', 'White'], ccts: C3, mounts: ['Suspended'], apps: ['Office', 'Retail'], installable: true},
-  {id: 'round-36-surface', name: 'Round LED 36" — Surface', type: 'Round LED', cat: 'Round', img: round, price: 139, finishes: ['Black', 'White'], ccts: C3, mounts: ['Surface'], apps: ['Office', 'Residential'], installable: true},
-  {id: 'round-24-rod', name: 'Round LED 24" — Rod', type: 'Round LED', cat: 'Round', img: round, price: 119, finishes: ['Black', 'White'], ccts: C3, mounts: ['Rod'], apps: ['Office', 'Retail'], installable: true},
-  {id: 'round-24-suspended', name: 'Round LED 24" — Suspended', type: 'Round LED', cat: 'Round', img: round, price: 119, finishes: ['Black', 'White'], ccts: C3, mounts: ['Suspended'], apps: ['Office', 'HoReCa'], installable: true},
-  {id: 'round-24-surface', name: 'Round LED 24" — Surface', type: 'Round LED', cat: 'Round', img: round, price: 109, finishes: ['Black', 'White'], ccts: C3, mounts: ['Surface'], apps: ['Residential'], installable: true},
-  {id: 'architectural-led-lighting', name: 'Architectural Linear Lighting', type: 'Linear System', cat: 'Linear', img: heroLinear, price: 99, finishes: ['Black', 'White'], ccts: C3, mounts: ['Canopy', 'T-Clip', 'T-Support', 'Surface'], apps: ['Office', 'Retail', 'HoReCa', 'Museum'], installable: true, featured: true},
-  {id: '48-led-linear-light', name: '48" LED Linear Light', type: 'Linear', cat: 'Linear', img: linear, price: 99, finishes: ['Black', 'White'], ccts: C3, mounts: ['Canopy', 'T-Clip', 'T-Support'], apps: ['Office', 'Retail'], installable: true},
-  {id: '48-led-panel-light', name: '48" LED Panel Light', type: 'Panel', cat: 'Panel', img: panel, price: 129, finishes: ['Black', 'White'], ccts: C3, mounts: ['Canopy', 'T-Clip', 'T-Support'], apps: ['Office'], installable: true},
-  {id: 'x-connector', name: 'Linear X-Connector', type: 'Accessory', cat: 'Connector', img: connector, price: 39, finishes: ['Black', 'White'], ccts: [], mounts: [], apps: [], installable: false},
-  {id: 'l-connector', name: 'Linear L-Connector', type: 'Accessory', cat: 'Connector', img: connector, price: 34, finishes: ['Black', 'White'], ccts: [], mounts: [], apps: [], installable: false},
-  {id: 't-connector', name: 'Linear T-Connector', type: 'Accessory', cat: 'Connector', img: connector, price: 36, finishes: ['Black', 'White'], ccts: [], mounts: [], apps: [], installable: false},
-  {id: 'y-connector', name: 'Linear Y-Connector', type: 'Accessory', cat: 'Connector', img: connector, price: 36, finishes: ['Black', 'White'], ccts: [], mounts: [], apps: [], installable: false},
-];
-const CATS: Cat[] = ['Pendant', 'Round', 'Linear', 'Panel', 'Connector'];
-const FINISHES = [
-  {id: 'Black', hex: '#1c1a17'},
-  {id: 'White', hex: '#f3f1ec'},
-  {id: 'Gold', hex: '#b89968'},
-];
-const MOUNTS = ['Suspended', 'Surface', 'Rod', 'Canopy', 'T-Clip', 'T-Support', 'Cable'];
-const APPS = ['Office', 'Retail', 'HoReCa', 'Residential', 'Museum'];
+const finishHex = (name: string) => FINISH_HEX[name] ?? '#b8b2a8';
+
 const SORTS = ['Featured', 'Price: low → high', 'Price: high → low', 'Name A → Z'];
-const MAX_PRICE = 200;
 const fmt = (n: number) => '$' + n.toLocaleString('en-US');
 const has = (s: Set<string>) => s.size > 0;
 const intersects = (a: string[], s: Set<string>) => a.some((x) => s.has(x));
 
 export default function Catalog() {
-  const {prices} = useLoaderData<typeof loader>();
+  const {products, cats: CATS, ccts: CCTS, finishes: FINISHES, maxPrice} =
+    useLoaderData<typeof loader>();
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [ccts, setCcts] = useState<Set<string>>(new Set());
   const [finishes, setFinishes] = useState<Set<string>>(new Set());
-  const [mounts, setMounts] = useState<Set<string>>(new Set());
-  const [apps, setApps] = useState<Set<string>>(new Set());
-  const [services, setServices] = useState<Set<string>>(new Set());
-  const [priceMax, setPriceMax] = useState(MAX_PRICE);
+  const [priceMax, setPriceMax] = useState(maxPrice);
   const [sort, setSort] = useState(SORTS[0]);
   const [drawer, setDrawer] = useState(false);
   const toggle = (
@@ -124,79 +125,60 @@ export default function Catalog() {
     setCats(new Set());
     setCcts(new Set());
     setFinishes(new Set());
-    setMounts(new Set());
-    setApps(new Set());
-    setServices(new Set());
-    setPriceMax(MAX_PRICE);
+    setPriceMax(maxPrice);
   };
   const filtered = useMemo(() => {
-    let r = PRODUCTS.filter(
+    let r = products.filter(
       (p) =>
         (!has(cats) || cats.has(p.cat)) &&
         (!has(ccts) || intersects(p.ccts, ccts)) &&
         (!has(finishes) || intersects(p.finishes, finishes)) &&
-        (!has(mounts) || intersects(p.mounts, mounts)) &&
-        (!has(apps) || intersects(p.apps, apps)) &&
-        (!has(services) || p.installable) &&
         p.price <= priceMax,
     );
     if (sort === 'Price: low → high') r = [...r].sort((a, b) => a.price - b.price);
     else if (sort === 'Price: high → low') r = [...r].sort((a, b) => b.price - a.price);
     else if (sort === 'Name A → Z') r = [...r].sort((a, b) => a.name.localeCompare(b.name));
-    else r = [...r].sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
+    // 'Featured' keeps the Storefront API order.
     return r;
-  }, [cats, ccts, finishes, mounts, apps, services, priceMax, sort]);
+  }, [products, cats, ccts, finishes, priceMax, sort]);
   const chips: {group: string; v: string; clear: () => void}[] = [
     ...[...cats].map((v) => ({group: 'Category', v, clear: () => toggle(setCats, v)})),
     ...[...ccts].map((v) => ({group: 'CCT', v, clear: () => toggle(setCcts, v)})),
     ...[...finishes].map((v) => ({group: 'Finish', v, clear: () => toggle(setFinishes, v)})),
-    ...[...mounts].map((v) => ({group: 'Mount', v, clear: () => toggle(setMounts, v)})),
-    ...[...apps].map((v) => ({group: 'Use', v, clear: () => toggle(setApps, v)})),
-    ...[...services].map((v) => ({group: 'Service', v, clear: () => toggle(setServices, v)})),
-    ...(priceMax < MAX_PRICE
-      ? [{group: 'Price', v: `≤ ${fmt(priceMax)}`, clear: () => setPriceMax(MAX_PRICE)}]
+    ...(priceMax < maxPrice
+      ? [{group: 'Price', v: `≤ ${fmt(priceMax)}`, clear: () => setPriceMax(maxPrice)}]
       : []),
   ];
   const FilterPanel = (
     <div className="space-y-7">
       <FilterGroup title="Category">
         {CATS.map((c) => (
-          <CheckRow key={c} label={c} count={PRODUCTS.filter((p) => p.cat === c).length} checked={cats.has(c)} onClick={() => toggle(setCats, c)} />
+          <CheckRow key={c} label={c} count={products.filter((p) => p.cat === c).length} checked={cats.has(c)} onClick={() => toggle(setCats, c)} />
         ))}
       </FilterGroup>
-      <FilterGroup title="Color temperature">
-        <div className="flex flex-wrap gap-2">
-          {C3.map((c) => <Pill key={c} label={c} active={ccts.has(c)} onClick={() => toggle(setCcts, c)} />)}
-        </div>
-      </FilterGroup>
-      <FilterGroup title="Finish">
-        <div className="flex flex-wrap gap-2">
-          {FINISHES.map((f) => (
-            <button key={f.id} onClick={() => toggle(setFinishes, f.id)} className={`press flex items-center gap-2 rounded-sm border px-2.5 py-1.5 text-[12.5px] ${finishes.has(f.id) ? 'border-foreground' : 'border-border hover:border-foreground/40'}`}>
-              <span className="h-3.5 w-3.5 rounded-full border border-black/10" style={{background: f.hex}} />{f.id}
-            </button>
-          ))}
-        </div>
-      </FilterGroup>
-      <FilterGroup title="Mounting">
-        <div className="flex flex-wrap gap-2">
-          {MOUNTS.map((m) => <Pill key={m} label={m} active={mounts.has(m)} onClick={() => toggle(setMounts, m)} />)}
-        </div>
-      </FilterGroup>
-      <FilterGroup title="Application">
-        <div className="flex flex-wrap gap-2">
-          {APPS.map((a) => <Pill key={a} label={a} active={apps.has(a)} onClick={() => toggle(setApps, a)} />)}
-        </div>
-      </FilterGroup>
+      {CCTS.length > 0 && (
+        <FilterGroup title="Color temperature">
+          <div className="flex flex-wrap gap-2">
+            {CCTS.map((c) => <Pill key={c} label={c} active={ccts.has(c)} onClick={() => toggle(setCcts, c)} />)}
+          </div>
+        </FilterGroup>
+      )}
+      {FINISHES.length > 0 && (
+        <FilterGroup title="Finish">
+          <div className="flex flex-wrap gap-2">
+            {FINISHES.map((f) => (
+              <button key={f} onClick={() => toggle(setFinishes, f)} className={`press flex items-center gap-2 rounded-sm border px-2.5 py-1.5 text-[12.5px] ${finishes.has(f) ? 'border-foreground' : 'border-border hover:border-foreground/40'}`}>
+                <span className="h-3.5 w-3.5 rounded-full border border-black/10" style={{background: finishHex(f)}} />{f}
+              </button>
+            ))}
+          </div>
+        </FilterGroup>
+      )}
       <FilterGroup title="Price">
         <div className="flex items-center justify-between text-[12.5px] text-muted-foreground">
           <span>$0</span><span className="tnum font-medium text-foreground">≤ {fmt(priceMax)}</span>
         </div>
-        <input type="range" min={30} max={MAX_PRICE} step={10} value={priceMax} onChange={(e) => setPriceMax(parseInt(e.target.value))} className="mt-2 w-full accent-[var(--onyx)]" />
-      </FilterGroup>
-      <FilterGroup title="Service">
-        <CheckRow label="Installation available" checked={services.has('install')} onClick={() => toggle(setServices, 'install')} />
-        <CheckRow label="Free design plan" checked={services.has('design')} onClick={() => toggle(setServices, 'design')} />
+        <input type="range" min={0} max={maxPrice} step={10} value={priceMax} onChange={(e) => setPriceMax(parseInt(e.target.value))} className="mt-2 w-full accent-[var(--onyx)]" />
       </FilterGroup>
     </div>
   );
@@ -265,7 +247,7 @@ export default function Catalog() {
             ) : (
               <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3">
                 {filtered.flatMap((p, i) => {
-                  const card = <ProductCard key={p.id} p={p} realPrice={prices[p.id]} />;
+                  const card = <ProductCard key={p.handle} p={p} />;
                   if (i === 8) return [<ServicesBand key="band" />, card];
                   return [card];
                 })}
@@ -295,16 +277,16 @@ export default function Catalog() {
 }
 
 /* ----------------------------- pieces ----------------------------- */
-function ProductCard({p, realPrice}: {p: Product; realPrice?: string}) {
-  const priceLabel = realPrice
-    ? `From ${fmt(Math.round(Number(realPrice)))}`
-    : `From ${fmt(p.price)}`;
+function ProductCard({p}: {p: CatalogProduct}) {
   return (
     <Reveal>
-      <Link to={`/products/${p.id}`} prefetch="intent" className="lift group block">
+      <Link to={`/products/${p.handle}`} prefetch="intent" className="lift group block">
         <div className="img-zoom relative overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
-          <img src={p.img} alt={p.name} className="h-full w-full object-cover" />
-          {p.featured && <span className="absolute left-3 top-3 rounded-sm bg-background/90 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-foreground backdrop-blur">Featured</span>}
+          {p.img ? (
+            <img src={p.img} alt={p.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          ) : (
+            <PlaceholderImage aspect="" className="h-full w-full" />
+          )}
           <div className="absolute inset-x-3 bottom-3 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
             <span className="flex h-9 items-center justify-center gap-1.5 rounded-sm bg-background/95 text-[12.5px] font-medium backdrop-blur">Configure <Arrow className="h-3.5 w-3.5" /></span>
           </div>
@@ -314,14 +296,13 @@ function ProductCard({p, realPrice}: {p: Product; realPrice?: string}) {
             <p className="type-eyebrow !text-[10px]">{p.type}</p>
             <h3 className="mt-1 truncate text-[14px] font-medium">{p.name}</h3>
           </div>
-          <span className="tnum shrink-0 text-[13.5px] text-muted-foreground">{priceLabel}</span>
+          <span className="tnum shrink-0 text-[13.5px] text-muted-foreground">From {fmt(p.price)}</span>
         </div>
         <div className="mt-2 flex items-center gap-2">
           <div className="flex items-center gap-1">
-            {p.finishes.map((f) => {
-              const hex = FINISHES.find((x) => x.id === f)!.hex;
-              return <span key={f} className="h-3 w-3 rounded-full border border-black/10" style={{background: hex}} />;
-            })}
+            {p.finishes.map((f) => (
+              <span key={f} className="h-3 w-3 rounded-full border border-black/10" style={{background: finishHex(f)}} />
+            ))}
           </div>
           {p.ccts.length > 0 && <span className="text-[11px] text-muted-foreground">· {p.ccts.length} CCT</span>}
         </div>
@@ -376,16 +357,28 @@ function Pill({label, active, onClick}: {label: string; active: boolean; onClick
   );
 }
 
-const CATALOG_PRICES_QUERY = `#graphql
-  query CatalogPrices($country: CountryCode, $language: LanguageCode)
+const CATALOG_QUERY = `#graphql
+  query CatalogIndex($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     products(first: 100) {
       nodes {
         handle
+        title
+        productType
+        featuredImage {
+          url
+          altText
+        }
         priceRange {
           minVariantPrice {
             amount
             currencyCode
+          }
+        }
+        options {
+          name
+          optionValues {
+            name
           }
         }
       }

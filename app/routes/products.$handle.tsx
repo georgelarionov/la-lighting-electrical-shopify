@@ -15,21 +15,20 @@ import type {
   Maybe,
   ProductOptionValueSwatch,
 } from '@shopify/hydrogen/storefront-api-types';
+import type {ProductFragment} from 'storefrontapi.generated';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
+import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {cn} from '~/lib/utils';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
+// hero + serviceImg back the two globally-shared marketing blocks (final CTA
+// background, lighting-design section). Per-product imagery now comes from
+// Shopify media/metafields, so the other mockup imports are gone.
 import hero from '~/assets/mp/linear-hero.jpg?url';
-import config from '~/assets/mp/twoup-config.jpg?url';
-import insitu from '~/assets/mp/insitu.jpg?url';
-import detail from '~/assets/mp/detail.jpg?url';
-import white from '~/assets/mp/twoup-white.jpg?url';
 import serviceImg from '~/assets/mp/catalog-service.jpg?url';
-import panelImg from '~/assets/mp/led-panel.jpg?url';
-import connectorImg from '~/assets/mp/connector.jpg?url';
 
 export const meta: Route.MetaFunction = ({data, location}) => {
   // ponytail: canonical is now handled inside seo() via url — dropped the raw
@@ -55,7 +54,95 @@ export async function loader(args: Route.LoaderArgs) {
 
   if (!product?.id) throw new Response(null, {status: 404});
   redirectIfHandleIsLocalized(request, {handle, data: product});
-  return {product};
+  return {product, content: buildContent(product)};
+}
+
+/* --------- content-manager metafields → clean render model ---------- */
+// Every PDP marketing section is driven by product metafields (namespace
+// `custom`) a content manager edits in Shopify admin. Empty → the section is
+// hidden (see the component), so an un-authored product shows only the buy box
+// + the four globally-shared blocks — never another product's copy.
+function parseJsonList(v?: string | null): string[] {
+  if (!v) return [];
+  try {
+    const p = JSON.parse(v);
+    return Array.isArray(p) ? p.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+// Flatten a metaobject's fields into {key: {value, imageUrl, imageAlt}}.
+function moFields(node: {
+  fields?: ReadonlyArray<{
+    key: string;
+    value?: string | null;
+    reference?: {image?: {url: string; altText?: string | null} | null} | null;
+  }>;
+}) {
+  const out: Record<string, {value: string; url: string | null; alt: string | null}> =
+    {};
+  for (const f of node.fields ?? []) {
+    const img = f.reference && 'image' in f.reference ? f.reference.image : null;
+    out[f.key] = {
+      value: f.value ?? '',
+      url: img?.url ?? null,
+      alt: img?.altText ?? null,
+    };
+  }
+  return out;
+}
+function buildContent(product: ProductFragment) {
+  const metaobjects = (
+    mf?: {references?: {nodes: ReadonlyArray<unknown>} | null} | null,
+  ) =>
+    ((mf?.references?.nodes ?? []) as ReadonlyArray<unknown>)
+      .filter(
+        (n): n is Parameters<typeof moFields>[0] =>
+          !!n && typeof n === 'object' && 'fields' in n,
+      )
+      .map(moFields);
+
+  return {
+    eyebrow: product.eyebrow?.value?.trim() || null,
+    subtitle: product.subtitle?.value?.trim() || null,
+    highlights: parseJsonList(product.highlights?.value),
+    features: metaobjects(product.features).map((f) => ({
+      heading: f.heading?.value ?? '',
+      body: f.body?.value ?? '',
+      img: f.image?.url ?? null,
+      imgAlt: f.image?.alt ?? f.heading?.value ?? '',
+    })),
+    featureCards: metaobjects(product.featureCards).map((f) => ({
+      icon: (f.icon?.value ?? '').toLowerCase().trim(),
+      heading: f.heading?.value ?? '',
+      body: f.body?.value ?? '',
+    })),
+    specs: metaobjects(product.specs).map((f) => ({
+      label: f.label?.value ?? '',
+      value: f.value?.value ?? '',
+    })),
+    faqs: metaobjects(product.faqs).map((f) => ({
+      question: f.question?.value ?? '',
+      answer: f.answer?.value ?? '',
+    })),
+    crossSell: ((product.crossSell?.references?.nodes ?? []) as ReadonlyArray<any>)
+      .filter((n) => n && 'handle' in n)
+      .map((p) => ({
+        handle: p.handle as string,
+        title: p.title as string,
+        img: (p.featuredImage?.url as string) ?? null,
+        imgAlt: (p.featuredImage?.altText as string) ?? (p.title as string),
+        price: (p.priceRange?.minVariantPrice?.amount as string) ?? null,
+      })),
+    downloads: ((product.downloads?.references?.nodes ?? []) as ReadonlyArray<any>)
+      .map((n) => {
+        if (n && 'url' in n && n.url) return {url: n.url as string, label: (n.alt as string) || 'Download'};
+        if (n && 'image' in n && n.image?.url)
+          return {url: n.image.url as string, label: (n.image.altText as string) || 'Download'};
+        return null;
+      })
+      .filter((d): d is {url: string; label: string} => !!d),
+  };
 }
 
 /* ----------------------------- icons ------------------------------ */
@@ -71,56 +158,34 @@ const Shield = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke=
 const Bolt = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg>;
 const Ruler = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z" /><path d="m7.5 10.5 2 2M11 7l2 2M14.5 3.5l2 2M4 14l2 2" /></svg>;
 
-/* --------------------------- data (static marketing) ------ */
+/* --------------------------- data (globally shared) ------ */
 // Body-color swatch fallbacks when a Shopify option has no configured swatch.
 const COLOR_HEX: Record<string, string> = {black: '#1c1a17', white: '#f3f1ec'};
-const FEATURES = [
-  {t: 'Seamless continuous runs', d: 'No dark gaps between fixtures — light reads as one unbroken line across the ceiling.', img: hero},
-  {t: 'Configurable geometry', d: 'L, T, X and Y connectors turn straight runs into rectangles, grids and bespoke shapes.', img: config},
-  {t: 'Tunable to the room', d: '3000–4000K and up- or down-light to match the space, from warm hospitality to crisp retail.', img: insitu},
-];
-const FEATURE_GRID = [
-  {icon: Ruler, t: 'Architectural-grade aluminum', d: 'Extruded body, frosted diffuser, precision end caps. Built to disappear into the architecture.'},
-  {icon: Bolt, t: 'Flicker-free dimming', d: 'Smooth 0–10V dimming with 94+ CRI, so colors stay true at every level.'},
-  {icon: Shield, t: 'Code-ready', d: 'Title 24 certified and documented for permits and inspection.'},
-];
-const SPECS: [string, string][] = [['Fixture type', 'LED linear — suspended / surface'], ['CRI', '94+'], ['Color temperature', '3000K / 3500K / 4000K'], ['Power', '20W (2ft) · 40W (4ft) · 80W (8ft)'], ['Lumen output', '2,600 · 5,200 · 10,400 lm'], ['Input voltage', '100–277 VAC'], ['Dimming', '0–10V / 1–10V'], ['Lifetime', '70,000 hours'], ['Light direction', 'Down · Up & Down'], ['Material', 'Extruded aluminum, frosted diffuser'], ['Body color', 'Black / White'], ['Mounting', 'J-Box Canopy / T-Clip / T-Support / Surface'], ['Compliance', 'Title 24 certified'], ['Warranty', '5 years'], ['Outdoor rated', 'No']];
-const FAQS = [
-  {q: 'Do you install, or just ship the fixtures?', a: 'Both. We provide licensed C-10 installation across Los Angeles County, or ship anywhere in the US for self-install.'},
-  {q: 'How fast can I get it?', a: 'In-stock configurations ship in 3–5 business days. Custom runs get a firm date before you commit.'},
-  {q: 'Will it work with my dimmer?', a: 'Standard 0–10V dimming is compatible with most commercial dimmers. We confirm compatibility on every free design plan.'},
-  {q: 'Can you do custom lengths and shapes?', a: 'Yes — connectors build any geometry and we cut continuous runs to your exact plan.'},
-  {q: 'Is it code-compliant?', a: 'Title 24 certified and documented for permits and inspection.'},
-  {q: "What if it isn't right?", a: '30-day returns on stock items. Design plans are always free.'},
-];
+// Icon keys a content manager can type into a PDP Feature Card's `icon` field.
+const ICONS: Record<string, typeof Bolt> = {
+  ruler: Ruler,
+  bolt: Bolt,
+  shield: Shield,
+  check: Check,
+  star: Star,
+};
+// Reviews and the three purchase tiers are identical on every product (the
+// globally-shared blocks), so they stay in code — not per-product metafields.
 const REVIEWS = [
   {n: 'Marina D.', r: 'Retail rollout · 1,200 ft', t: 'The continuous runs are flawless — not a single visible joint. Their team drew the whole layout before we ordered a thing.'},
   {n: 'Anthony R.', r: 'Office TI · Culver City', t: 'Spec, supply and licensed install from one place. Passed Title 24 inspection first time.'},
   {n: 'Priya S.', r: 'Restaurant · West Hollywood', t: '3000K up-and-down completely changed the room. Warm, even, zero glare on the tables.'},
-];
-const CROSS = [
-  {t: 'X-Connector', img: connectorImg, to: '/products/architectural-linear-light-x-connector'},
-  {t: 'L-Connector', img: connectorImg, to: '/products/architectural-linear-light-l-connector'},
-  {t: 'T-Connector', img: connectorImg, to: '/products/architectural-linear-light-t-connector'},
-  {t: '48" LED Panel Light', img: panelImg, to: '/products/48-led-panel-light'},
 ];
 const TIERS = [
   {id: 'fixture', t: 'Fixture only', s: 'You install it.', d: 'The configured fixture, shipped to your door with a clear install guide.', cta: 'Add to cart', tag: ''},
   {id: 'design', t: 'Fixture + Lighting design', s: 'Free photometric plan.', d: 'We return a layout, fixture count and spacing for your exact space — at no charge.', cta: 'Add design plan', tag: ''},
   {id: 'install', t: 'Fixture + Licensed install', s: 'Turnkey, to code.', d: 'C-10 electricians install everything to Title 24. You flip the switch.', cta: 'Get install quote', tag: 'Most popular'},
 ] as const;
-const MOCK_GALLERY = [
-  {src: hero, alt: 'Architectural linear pendant in a bright minimalist interior'},
-  {src: config, alt: 'Connected linear fixtures forming a ceiling grid'},
-  {src: insitu, alt: 'Linear lighting in an upscale retail interior'},
-  {src: detail, alt: 'Macro detail of the diffuser and end cap'},
-  {src: white, alt: 'White linear fixture, studio shot'},
-];
 // Prices render from the selected Shopify variant (variant currency) — see money() in the component.
 
 /* ============================ component ============================ */
-export default function ProductPageArchitecturalLinear() {
-  const {product} = useLoaderData<typeof loader>();
+export default function ProductPage() {
+  const {product, content} = useLoaderData<typeof loader>();
   const {open} = useAside();
   const navigate = useNavigate();
 
@@ -152,13 +217,14 @@ export default function ProductPageArchitecturalLinear() {
   const unitAmount = Number(selectedVariant?.price?.amount ?? 0);
   const total = unitAmount * qty;
 
-  // Real product gallery when present; otherwise the mockup renders.
-  const realImages = (product.images?.nodes ?? []).map((n) => ({
+  // Real Shopify product media only — no mock fallback (an un-authored product
+  // shows a neutral placeholder, never another product's photos).
+  const gallery = (product.images?.nodes ?? []).map((n) => ({
     src: n.url,
     alt: n.altText || product.title,
   }));
-  const gallery = realImages.length ? realImages : MOCK_GALLERY;
-  const safeActive = Math.min(active, gallery.length - 1);
+  const safeActive = gallery.length ? Math.min(active, gallery.length - 1) : 0;
+  const heroImg = gallery[safeActive];
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(false);
@@ -202,27 +268,35 @@ export default function ProductPageArchitecturalLinear() {
         {/* gallery */}
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <div className="img-zoom group relative overflow-hidden rounded-md bg-parchment" style={{aspectRatio: '3 / 2'}}>
-            <img key={safeActive} src={gallery[safeActive].src} alt={gallery[safeActive].alt} className="h-full w-full object-cover" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
+            {heroImg ? (
+              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-cover" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
+            ) : (
+              <PlaceholderImage aspect="" className="h-full w-full" />
+            )}
             <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-sm bg-background/90 px-2.5 py-1 text-[11px] font-medium tracking-wide text-foreground backdrop-blur">
               <Shield className="h-3.5 w-3.5" /> C-10 licensed install available
             </div>
           </div>
-          <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
-            {gallery.map((g, i) => (
-              <button key={g.src} onClick={() => setActive(i)} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm bg-parchment ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
-                <img src={g.src} alt="" className="h-full w-full object-cover" />
-              </button>
-            ))}
-          </div>
+          {gallery.length > 1 && (
+            <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
+              {gallery.map((g, i) => (
+                <button key={g.src} onClick={() => setActive(i)} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm bg-parchment ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
+                  <img src={g.src} alt="" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* configurator / buy box */}
         <div className="flex min-w-0 flex-col">
-          <p className="type-eyebrow">ECO Series · Architectural Linear</p>
+          {content.eyebrow && <p className="type-eyebrow">{content.eyebrow}</p>}
           <h1 className="mt-3 font-heading text-[40px] leading-[1.05] tracking-[-0.02em] sm:text-[46px]">{product.title}</h1>
-          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-            A seamless continuous-run LED system that draws light in clean lines — specified, supplied, and installed to California code.
-          </p>
+          {content.subtitle && (
+            <p className="mt-4 max-w-md whitespace-pre-line text-[15px] leading-relaxed text-muted-foreground">
+              {content.subtitle}
+            </p>
+          )}
 
           <div className="mt-4 flex items-center gap-3">
             <div className="flex items-center gap-0.5 text-foreground">{[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-4 w-4" />)}</div>
@@ -249,9 +323,11 @@ export default function ProductPageArchitecturalLinear() {
           />
 
           {/* spec readout */}
-          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 rounded-md border border-border bg-parchment px-4 py-3 text-[12px] text-muted-foreground">
-            {['CRI 94+', '100–277V', '70,000 h', 'Title 24'].map((s) => <span key={s} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-foreground" />{s}</span>)}
-          </div>
+          {content.highlights.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 rounded-md border border-border bg-parchment px-4 py-3 text-[12px] text-muted-foreground">
+              {content.highlights.slice(0, 4).map((s) => <span key={s} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-foreground" />{s}</span>)}
+            </div>
+          )}
 
           {/* qty + add */}
           <div className="mt-6 flex items-center gap-3">
@@ -280,11 +356,13 @@ export default function ProductPageArchitecturalLinear() {
       <div ref={sentinelRef} aria-hidden className="h-px w-full" />
 
       {/* trust strip */}
-      <div className="border-y border-border bg-parchment">
-        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5 py-4 text-[12px] tracking-wide text-muted-foreground sm:px-8">
-          {['CRI 94+', '70,000-hour life', 'Title 24 certified', '100–277 VAC', '5-year warranty', 'Designed in Italy · Built for US code'].map((t, i) => <span key={t} className="flex items-center gap-2">{i > 0 && <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />}{t}</span>)}
+      {content.highlights.length > 0 && (
+        <div className="border-y border-border bg-parchment">
+          <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5 py-4 text-[12px] tracking-wide text-muted-foreground sm:px-8">
+            {content.highlights.map((t, i) => <span key={t} className="flex items-center gap-2">{i > 0 && <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />}{t}</span>)}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* three ways to buy */}
       <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
@@ -311,66 +389,85 @@ export default function ProductPageArchitecturalLinear() {
         </div>
       </section>
 
-      {/* feature rows */}
-      <section className="bg-parchment">
-        <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
-          <div className="space-y-16 md:space-y-24">
-            {FEATURES.map((f, i) => (
-              <Reveal key={f.t}>
-                <div className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                  <div className="img-zoom overflow-hidden rounded-lg bg-background" style={{aspectRatio: '4 / 3'}}>
-                    <img src={f.img} alt={f.t} className="h-full w-full object-cover" />
-                  </div>
-                  <div>
-                    <span className="tnum font-heading text-[14px] text-muted-foreground">0{i + 1}</span>
-                    <h3 className="mt-2 font-heading text-[26px] leading-tight sm:text-[30px]">{f.t}</h3>
-                    <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted-foreground">{f.d}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
+      {/* feature rows + cards (per-product) */}
+      {(content.features.length > 0 || content.featureCards.length > 0) && (
+        <section className="bg-parchment">
+          <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
+            {content.features.length > 0 && (
+              <div className="space-y-16 md:space-y-24">
+                {content.features.map((f, i) => (
+                  <Reveal key={f.heading + i}>
+                    <div className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
+                      <div className="img-zoom overflow-hidden rounded-lg bg-background" style={{aspectRatio: '4 / 3'}}>
+                        {f.img ? (
+                          <img src={f.img} alt={f.imgAlt} className="h-full w-full object-cover" />
+                        ) : (
+                          <PlaceholderImage aspect="" className="h-full w-full" />
+                        )}
+                      </div>
+                      <div>
+                        <span className="tnum font-heading text-[14px] text-muted-foreground">0{i + 1}</span>
+                        <h3 className="mt-2 font-heading text-[26px] leading-tight sm:text-[30px]">{f.heading}</h3>
+                        <p className="mt-3 max-w-md whitespace-pre-line text-[15px] leading-relaxed text-muted-foreground">{f.body}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+            {content.featureCards.length > 0 && (
+              <div className={`grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3 ${content.features.length > 0 ? 'mt-20' : ''}`}>
+                {content.featureCards.map((f, i) => {
+                  const Icon = ICONS[f.icon] ?? Bolt;
+                  return (
+                    <Reveal key={f.heading + i} delay={i * 60} className="bg-background">
+                      <div className="h-full p-7">
+                        <Icon className="h-6 w-6 text-foreground" />
+                        <h4 className="mt-4 font-heading text-[18px]">{f.heading}</h4>
+                        <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{f.body}</p>
+                      </div>
+                    </Reveal>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          <div className="mt-20 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
-            {FEATURE_GRID.map((f, i) => (
-              <Reveal key={f.t} delay={i * 60} className="bg-background">
-                <div className="h-full p-7">
-                  <f.icon className="h-6 w-6 text-foreground" />
-                  <h4 className="mt-4 font-heading text-[18px]">{f.t}</h4>
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{f.d}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Geometry / run-length planning moved into the free lighting-plan
           request (quote drawer) — it drives a quote, not a variant. */}
 
       {/* specifications */}
-      <section className="bg-parchment">
-        <div className="mx-auto max-w-[1000px] px-5 py-16 sm:px-8">
-          <button onClick={() => setSpecOpen((o) => !o)} className="press flex w-full items-center justify-between border-b border-border pb-4 text-left">
-            <h2 className="font-heading text-[24px]">Specifications</h2>
-            <Chevron className={`h-5 w-5 transition-transform duration-300 ${specOpen ? 'rotate-180' : ''}`} />
-          </button>
-          <div className="grid transition-all duration-500" style={{gridTemplateRows: specOpen ? '1fr' : '0fr'}}>
-            <div className="overflow-hidden">
-              <dl className="grid grid-cols-1 sm:grid-cols-2">
-                {SPECS.map(([k, v], i) => (
-                  <div key={k} className={`flex items-start justify-between gap-6 border-b border-border py-3 ${i % 2 === 0 ? 'sm:pr-8' : 'sm:pl-8'}`}>
-                    <dt className="text-[13px] text-muted-foreground">{k}</dt>
-                    <dd className="text-right text-[13px] font-medium">{v}</dd>
+      {(content.specs.length > 0 || content.downloads.length > 0) && (
+        <section className="bg-parchment">
+          <div className="mx-auto max-w-[1000px] px-5 py-16 sm:px-8">
+            <button onClick={() => setSpecOpen((o) => !o)} className="press flex w-full items-center justify-between border-b border-border pb-4 text-left">
+              <h2 className="font-heading text-[24px]">Specifications</h2>
+              <Chevron className={`h-5 w-5 transition-transform duration-300 ${specOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <div className="grid transition-all duration-500" style={{gridTemplateRows: specOpen ? '1fr' : '0fr'}}>
+              <div className="overflow-hidden">
+                {content.specs.length > 0 && (
+                  <dl className="grid grid-cols-1 sm:grid-cols-2">
+                    {content.specs.map((s, i) => (
+                      <div key={s.label + i} className={`flex items-start justify-between gap-6 border-b border-border py-3 ${i % 2 === 0 ? 'sm:pr-8' : 'sm:pl-8'}`}>
+                        <dt className="text-[13px] text-muted-foreground">{s.label}</dt>
+                        <dd className="text-right text-[13px] font-medium">{s.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+                {content.downloads.length > 0 && (
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {content.downloads.map((d) => <a key={d.url} href={d.url} target="_blank" rel="noopener noreferrer" className="press inline-flex items-center gap-2 rounded-sm border border-border bg-background px-3 py-2 text-[12.5px] hover:border-foreground/40"><Arrow className="h-3.5 w-3.5 -rotate-45" /> {d.label}</a>)}
                   </div>
-                ))}
-              </dl>
-              <div className="mt-6 flex flex-wrap gap-3">
-                {['Spec sheet (PDF)', 'IES photometric files', 'Installation guide', 'Title 24 certificate'].map((d) => <button key={d} type="button" className="press inline-flex items-center gap-2 rounded-sm border border-border bg-background px-3 py-2 text-[12.5px] hover:border-foreground/40"><Arrow className="h-3.5 w-3.5 -rotate-45" /> {d}</button>)}
+                )}
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* lighting design service (dark) */}
       <section id="design" className="bg-onyx text-white">
@@ -425,45 +522,53 @@ export default function ProductPageArchitecturalLinear() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-parchment">
-        <div className="mx-auto max-w-[840px] px-5 py-16 sm:px-8">
-          <Reveal><h2 className="font-heading text-[28px]">Questions, answered</h2></Reveal>
-          <div className="mt-8 divide-y divide-border border-y border-border">
-            {FAQS.map((f, i) => {
-              const isOpen = faqOpen === i;
-              return (
-                <div key={f.q}>
-                  <button onClick={() => setFaqOpen(isOpen ? null : i)} className="press flex w-full items-center justify-between gap-6 py-5 text-left">
-                    <span className="text-[15px] font-medium">{f.q}</span>
-                    <Chevron className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  <div className="grid transition-all duration-300" style={{gridTemplateRows: isOpen ? '1fr' : '0fr'}}>
-                    <div className="overflow-hidden"><p className="pb-5 pr-10 text-[14px] leading-relaxed text-muted-foreground">{f.a}</p></div>
+      {content.faqs.length > 0 && (
+        <section className="bg-parchment">
+          <div className="mx-auto max-w-[840px] px-5 py-16 sm:px-8">
+            <Reveal><h2 className="font-heading text-[28px]">Questions, answered</h2></Reveal>
+            <div className="mt-8 divide-y divide-border border-y border-border">
+              {content.faqs.map((f, i) => {
+                const isOpen = faqOpen === i;
+                return (
+                  <div key={f.question + i}>
+                    <button onClick={() => setFaqOpen(isOpen ? null : i)} className="press flex w-full items-center justify-between gap-6 py-5 text-left">
+                      <span className="text-[15px] font-medium">{f.question}</span>
+                      <Chevron className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className="grid transition-all duration-300" style={{gridTemplateRows: isOpen ? '1fr' : '0fr'}}>
+                      <div className="overflow-hidden"><p className="whitespace-pre-line pb-5 pr-10 text-[14px] leading-relaxed text-muted-foreground">{f.answer}</p></div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* cross-sell */}
-      <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
-        <Reveal><h2 className="font-heading text-[28px]">Complete the system</h2></Reveal>
-        <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {CROSS.map((c, i) => (
-            <Reveal key={c.t} delay={i * 60}>
-              <Link to={c.to} prefetch="intent" className="lift group block">
-                <div className="img-zoom overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
-                  <img src={c.img} alt={c.t} className="h-full w-full object-cover" />
-                </div>
-                <h3 className="mt-3 text-[14px] font-medium">{c.t}</h3>
-                <p className="mt-0.5 inline-flex items-center gap-1 text-[13px] text-muted-foreground">View <Arrow className="h-3 w-3" /></p>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      {content.crossSell.length > 0 && (
+        <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
+          <Reveal><h2 className="font-heading text-[28px]">Complete the system</h2></Reveal>
+          <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+            {content.crossSell.map((c, i) => (
+              <Reveal key={c.handle} delay={i * 60}>
+                <Link to={`/products/${c.handle}`} prefetch="intent" className="lift group block">
+                  <div className="img-zoom overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
+                    {c.img ? (
+                      <img src={c.img} alt={c.imgAlt} className="h-full w-full object-cover" />
+                    ) : (
+                      <PlaceholderImage aspect="" className="h-full w-full" />
+                    )}
+                  </div>
+                  <h3 className="mt-3 text-[14px] font-medium">{c.title}</h3>
+                  <p className="mt-0.5 inline-flex items-center gap-1 text-[13px] text-muted-foreground">View <Arrow className="h-3 w-3" /></p>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* final CTA */}
       <section className="relative isolate overflow-hidden">
@@ -484,7 +589,7 @@ export default function ProductPageArchitecturalLinear() {
       {/* sticky buy bar */}
       <div className={`fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 backdrop-blur-md transition-transform duration-300 ${showBar ? 'translate-y-0' : 'translate-y-full'}`} style={{transitionTimingFunction: 'var(--ease-out)'}}>
         <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-5 py-3 sm:px-8">
-          <img src={gallery[safeActive].src} alt="" className="hidden h-11 w-14 rounded-sm object-cover sm:block" />
+          {heroImg && <img src={heroImg.src} alt="" className="hidden h-11 w-14 rounded-sm object-cover sm:block" />}
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13.5px] font-medium">{product.title}</p>
             <p className="truncate text-[11.5px] text-muted-foreground">{configSummary}</p>
@@ -702,6 +807,55 @@ const PRODUCT_FRAGMENT = `#graphql
       ...ProductVariant
     }
     seo { description title }
+
+    # ---- Content-manager–editable PDP content (namespace: custom) ----
+    eyebrow: metafield(namespace: "custom", key: "eyebrow") { value }
+    subtitle: metafield(namespace: "custom", key: "subtitle") { value }
+    highlights: metafield(namespace: "custom", key: "highlights") { value }
+    features: metafield(namespace: "custom", key: "features") {
+      references(first: 6) { nodes { ...PdpMetaobject } }
+    }
+    featureCards: metafield(namespace: "custom", key: "feature_cards") {
+      references(first: 6) { nodes { ...PdpMetaobject } }
+    }
+    specs: metafield(namespace: "custom", key: "specs") {
+      references(first: 40) { nodes { ...PdpMetaobject } }
+    }
+    faqs: metafield(namespace: "custom", key: "faqs") {
+      references(first: 20) { nodes { ...PdpMetaobject } }
+    }
+    crossSell: metafield(namespace: "custom", key: "cross_sell") {
+      references(first: 8) {
+        nodes {
+          ... on Product {
+            id
+            title
+            handle
+            featuredImage { url altText }
+            priceRange { minVariantPrice { amount currencyCode } }
+          }
+        }
+      }
+    }
+    downloads: metafield(namespace: "custom", key: "downloads") {
+      references(first: 8) {
+        nodes {
+          ... on GenericFile { id url alt mimeType }
+          ... on MediaImage { id image { url altText } }
+        }
+      }
+    }
+  }
+  fragment PdpMetaobject on Metaobject {
+    id
+    type
+    fields {
+      key
+      value
+      reference {
+        ... on MediaImage { image { url altText } }
+      }
+    }
   }
   ${PRODUCT_VARIANT_FRAGMENT}
 ` as const;
