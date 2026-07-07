@@ -39,6 +39,8 @@ A change is "done" only when `codegen`, `typecheck`, and `build` all pass and `d
 
 **Homepage** (`app/routes/_index.tsx`) composes section components from `app/components/sections/*` — it is a 1:1 port of the Pencil design in `design/design.pen` (the source of truth; `HANDOFF.md` is the port plan). Catalog + Blog are data-driven from the `_index` loader; other sections are static. Marketing copy/nav/contact live in `app/lib/site.ts`; form validators in `app/lib/home-forms.ts` (the quote form posts to the `_index` action; newsletter + referral post to the `app/routes/api.subscribe.tsx` resource route). **Imagery is self-hosted** in `app/assets/*.jpg`, imported via `?url` and rendered with plain `<img>` (same-origin — no CSP change needed). Real Shopify product/collection/article images load from `cdn.shopify.com` via Hydrogen `<Image>`; arbitrary external image hosts are blocked by the CSP in `app/entry.server.tsx`.
 
+**Redesign 2026 (`design/redesign-2026/`)** — the **Tesla-style** direction (white/achromatic + accent blue `#3e6ae1`, Inter, **no serif**, 4/8px radii) has since been **ported** to live routes (PDP, catalog, services, lighting-design calculator, content pages). Its MagicPath mockups + content pack live here (see its `README.md`); mockup imagery is self-hosted in `app/assets/mp/`. The Catalog and PDP are now **data-driven from live Shopify** — see **Shopify data** below.
+
 **Key config files (do not casually change):** `vite.config.ts` (the `hydrogen()`, `oxygen()`, `reactRouter()` plugins — removing/reordering them breaks the Oxygen target), `react-router.config.ts` (`hydrogenPreset()`).
 
 ## GraphQL — never guess fields
@@ -49,6 +51,18 @@ The Storefront and Customer Account APIs change often; do not hand-write GraphQL
 - `customer` (Customer Account API): documents in `app/graphql/customer-account/*`. Output: `customer-accountapi.generated.d.ts`.
 
 The Shopify MCP "AI Toolkit" tools (`validate_graphql_codeblocks`, `search_docs_chunks`) are available to validate queries against the live schema.
+
+## Shopify data — catalog, PDP content & Admin access
+
+**Catalog** (`app/routes/collections._index.tsx`) is data-driven: a Storefront `products` query supplies the grid, and the filter facets are derived in the loader — category = `productType`, CCT/finish = variant option values, price from `priceRange` — with **no hardcoded product list**. The Storefront API only returns products that are **ACTIVE and published to this storefront's sales channel**, so status filtering is the platform's job (no app-level guard). That channel is the publication named **"Main Store"** (`gid://shopify/Publication/251973795863`), **not** the confusingly-named "…Headless" one — to surface a product on the site, `publishablePublish` it to Main Store.
+
+**PDP** (`app/routes/products.$handle.tsx`) is content-manager-editable via **`custom`-namespace metafields + metaobjects**. Every marketing section reads from a metafield and **hides when empty** (an un-authored product shows only the buy box + the four globally-shared blocks — three purchase tiers, lighting-design service, reviews, final CTA — which stay hardcoded; it never shows another product's copy). Model:
+- Scalars: `custom.eyebrow`, `custom.subtitle`, `custom.highlights` (list text), `custom.cross_sell` (`list.product_reference`), `custom.downloads` (`list.file_reference`).
+- Repeatable blocks are metaobjects, referenced by `list.metaobject_reference` metafields: `custom.features`→`pdp_feature` (image/heading/body), `custom.feature_cards`→`pdp_feature_card` (icon/heading/body), `custom.specs`→`pdp_spec` (label/value), `custom.faqs`→`pdp_faq` (question/answer). All defs are Storefront `PUBLIC_READ`. Gallery = native `product.images`; title/description = native fields.
+
+**Admin API access** (for catalog/PDP data ops) is via Shopify CLI: `shopify store execute -s 7c20fd-dq.myshopify.com` (one-time interactive `shopify store auth --scopes …`; add `--allow-mutations` to write). There is **no** Shopify Admin MCP tool connected. The CLI token acts as an **app**, with two non-obvious limits:
+1. It **cannot create metaobject *definitions*** (bare merchant types are reserved → `NOT_AUTHORIZED`) and cannot even list them. Those are created by the merchant in **Admin UI** (Settings → Custom data → Metaobjects). But the token **can** create metaobject **entries** (`metaobjectUpsert`) and reference them — so bulk content-seeding is scriptable.
+2. Creating a `custom`-namespace metafield definition must **omit `access.admin`** (Shopify defaults it to `PUBLIC_READ_WRITE`, which is required; setting it explicitly errors) — pass only `access:{storefront:PUBLIC_READ}`. Pin new defs (`metafieldDefinitionPin`) or they only show under "View all" on the product editor page.
 
 ## Imports (Cursor rule, enforced)
 
