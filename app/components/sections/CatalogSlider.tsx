@@ -6,24 +6,33 @@ import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {ArrowLink} from '~/components/ArrowLink';
 import {cn} from '~/lib/utils';
 
-export type CatalogCollection = {
+export type FeaturedProduct = {
   id: string;
   title: string;
   handle: string;
-  image?: {
+  productType?: string | null;
+  featuredImage?: {
     id?: string | null;
     url: string;
     altText?: string | null;
     width?: number | null;
     height?: number | null;
   } | null;
+  priceRange?: {
+    minVariantPrice?: {amount: string; currencyCode: string} | null;
+  } | null;
 };
 
-export function CatalogSlider({
-  collections,
-}: {
-  collections: CatalogCollection[];
-}) {
+function money(price?: {amount: string; currencyCode: string} | null) {
+  if (!price) return null;
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: price.currencyCode,
+    maximumFractionDigits: 0,
+  }).format(Number(price.amount));
+}
+
+export function CatalogSlider({products}: {products: FeaturedProduct[]}) {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {
@@ -33,9 +42,9 @@ export function CatalogSlider({
     el.scrollBy({left: amount * dir, behavior: 'smooth'});
   };
 
-  const hasData = collections.length > 0;
-  const items: Array<CatalogCollection | null> = hasData
-    ? collections
+  const hasData = products.length > 0;
+  const items: Array<FeaturedProduct | null> = hasData
+    ? products
     : Array.from({length: 6}, () => null);
 
   return (
@@ -73,9 +82,9 @@ export function CatalogSlider({
           className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {items.map((item, i) => (
-            <CollectionCard
+            <ProductCard
               key={item?.id ?? `ph-${i}`}
-              collection={item}
+              product={item}
               eager={i < 3}
             />
           ))}
@@ -85,39 +94,46 @@ export function CatalogSlider({
   );
 }
 
-function CollectionCard({
-  collection,
+function ProductCard({
+  product,
   eager,
 }: {
-  collection: CatalogCollection | null;
+  product: FeaturedProduct | null;
   eager: boolean;
 }) {
+  const price = money(product?.priceRange?.minVariantPrice);
   const inner = (
     <>
       <div className="overflow-hidden rounded-lg border border-hairline bg-parchment">
-        {collection?.image ? (
+        {product?.featuredImage ? (
           <Image
-            data={collection.image}
+            data={product.featuredImage}
             aspectRatio="4/5"
             sizes="(min-width: 1024px) 300px, 70vw"
             loading={eager ? 'eager' : 'lazy'}
             className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           />
         ) : (
-          <PlaceholderImage aspect="aspect-[4/5]" label="Category" />
+          <PlaceholderImage aspect="aspect-[4/5]" label="Fixture" />
         )}
       </div>
-      <h3 className="type-body-strong mt-4 text-ink transition-colors group-hover:text-primary">
-        {collection?.title ?? 'Lighting category'}
+      {product?.productType ? (
+        <p className="type-caption mt-4 text-ink-subtle">{product.productType}</p>
+      ) : null}
+      <h3 className="type-body-strong mt-1 text-ink transition-colors group-hover:text-primary">
+        {product?.title ?? 'Lighting fixture'}
       </h3>
+      {price ? (
+        <p className="type-body mt-0.5 text-ink-muted">From {price}</p>
+      ) : null}
     </>
   );
 
   const className = 'group w-[70vw] shrink-0 snap-start sm:w-[44vw] lg:w-[300px]';
 
-  return collection ? (
+  return product ? (
     <Link
-      to={`/collections/${collection.handle}`}
+      to={`/products/${product.handle}`}
       prefetch="intent"
       className={className}
     >

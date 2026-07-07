@@ -34,8 +34,11 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}, articlesResult] = await Promise.all([
-    context.storefront.query(HOME_COLLECTIONS_QUERY),
+  const [featuredResult, articlesResult] = await Promise.all([
+    context.storefront.query(HOME_FEATURED_QUERY).catch((error: Error) => {
+      console.error(error);
+      return null;
+    }),
     context.storefront.query(HOME_ARTICLES_QUERY).catch((error: Error) => {
       console.error(error);
       return null;
@@ -43,7 +46,7 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
   ]);
 
   return {
-    collections: collections.nodes,
+    featured: featuredResult?.collection?.products?.nodes ?? [],
     articles: articlesResult?.articles?.nodes ?? [],
   };
 }
@@ -76,7 +79,7 @@ export default function Homepage() {
     <>
       <Hero />
       <TrustStrip />
-      <CatalogSlider collections={data.collections} />
+      <CatalogSlider products={data.featured} />
       <Services />
       <TwoUp />
       <Projects />
@@ -88,24 +91,37 @@ export default function Homepage() {
   );
 }
 
-const HOME_COLLECTIONS_QUERY = `#graphql
-  fragment HomeCollection on Collection {
+// Featured products for the homepage are whatever the merchant puts in the
+// "Home page" collection (handle `frontpage`, Shopify's built-in featured
+// collection) — add / remove / reorder them in admin, no code change.
+// COLLECTION_DEFAULT respects the collection's manual sort order.
+const HOME_FEATURED_QUERY = `#graphql
+  fragment HomeFeaturedProduct on Product {
     id
     title
     handle
-    image {
+    productType
+    featuredImage {
       id
       url
       altText
       width
       height
     }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
   }
-  query HomeCollections($country: CountryCode, $language: LanguageCode)
+  query HomeFeatured($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    collections(first: 12, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...HomeCollection
+    collection(handle: "frontpage") {
+      products(first: 12, sortKey: COLLECTION_DEFAULT) {
+        nodes {
+          ...HomeFeaturedProduct
+        }
       }
     }
   }
