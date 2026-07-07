@@ -12,8 +12,14 @@ export async function loader({
     params,
     locales: ['EN-US', 'EN-CA', 'FR-CA'],
     getLink: ({type, baseUrl, handle, locale}) => {
-      if (!locale) return `${baseUrl}/${type}/${handle}`;
-      return `${baseUrl}/${locale}/${type}/${handle}`;
+      // The blog uses a flat structure: /blog (listing) and /blog/<article>.
+      const path =
+        type === 'articles'
+          ? `blog/${handle}`
+          : type === 'blogs'
+            ? 'blog'
+            : `${type}/${handle}`;
+      return locale ? `${baseUrl}/${locale}/${path}` : `${baseUrl}/${path}`;
     },
   });
 

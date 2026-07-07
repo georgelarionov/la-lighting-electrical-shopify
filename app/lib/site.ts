@@ -41,7 +41,7 @@ export const PRIMARY_NAV: ReadonlyArray<{label: string; to: string}> = [
  */
 export const MOBILE_NAV: ReadonlyArray<{label: string; to: string}> = [
   ...PRIMARY_NAV.slice(0, 3),
-  {label: 'Blog', to: '/blogs'},
+  {label: 'Blog', to: '/blog'},
   ...PRIMARY_NAV.slice(3),
 ];
 
@@ -50,7 +50,7 @@ export const FOOTER_NAV: ReadonlyArray<{label: string; to: string}> = [
   {label: 'Catalog', to: '/collections'},
   {label: 'Projects', to: '/projects'},
   {label: 'Services', to: '/services'},
-  {label: 'Blog', to: '/blogs'},
+  {label: 'Blog', to: '/blog'},
   {label: 'About', to: '/pages/about'},
   {label: 'Contacts', to: '/contact'},
 ];
@@ -110,7 +110,7 @@ export const FOOTER_COLUMNS: ReadonlyArray<{
       {label: 'About', to: '/pages/about'},
       {label: 'Projects', to: '/projects'},
       {label: 'Services', to: '/services'},
-      {label: 'Blog', to: '/blogs'},
+      {label: 'Blog', to: '/blog'},
       {label: 'Contacts', to: '/contact'},
     ],
   },

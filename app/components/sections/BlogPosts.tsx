@@ -74,7 +74,7 @@ export function BlogPosts({articles}: {articles: HomeArticle[]}) {
               Notes on lighting, energy, and getting a room to feel right.
             </p>
           </div>
-          <ArrowLink to="/blogs" className="type-body shrink-0">
+          <ArrowLink to="/blog" className="type-body shrink-0">
             Read the blog
           </ArrowLink>
         </div>
@@ -104,8 +104,8 @@ function ArticleCard({
   eager: boolean;
 }) {
   // Both real Shopify articles and the fallback journal entries resolve to a
-  // designed article page (see blogs.$blogHandle.$articleHandle).
-  const href = `/blogs/${post.blog.handle}/${post.handle}`;
+  // designed article page (see blog.$articleHandle).
+  const href = `/blog/${post.handle}`;
   const excerpt = post.excerpt || post.contentExcerpt || '';
   const initials = (post.author?.name ?? 'LA')
     .split(' ')
