@@ -173,6 +173,11 @@ const EDGE_BLEND: React.CSSProperties = {
     'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent)',
   WebkitMaskComposite: 'source-in',
 };
+// Soft studio-grey backdrop for the gallery slideshow — lighter toward the top
+// centre, subtly deeper at the edges, so transparent product renders (black or
+// white) read as if shot on a seamless. Gallery uses object-contain over this,
+// so the whole fixture is always visible (never cropped).
+const STUDIO_BG = 'radial-gradient(120% 120% at 50% 32%, #eef0f3 0%, #d9dce1 100%)';
 // Icon keys a content manager can type into a PDP Feature Card's `icon` field.
 const ICONS: Record<string, typeof Bolt> = {
   ruler: Ruler,
@@ -279,9 +284,9 @@ export default function ProductPage() {
       <section className="mx-auto grid max-w-[1280px] grid-cols-1 gap-10 px-5 pb-12 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:gap-14">
         {/* gallery */}
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-          <div className="img-zoom group relative overflow-hidden rounded-md bg-parchment" style={{aspectRatio: '3 / 2'}}>
+          <div className="img-zoom group relative overflow-hidden rounded-md p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
             {heroImg ? (
-              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-cover" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
+              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-contain" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
             ) : (
               <PlaceholderImage aspect="" className="h-full w-full" />
             )}
@@ -292,8 +297,8 @@ export default function ProductPage() {
           {gallery.length > 1 && (
             <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
               {gallery.map((g, i) => (
-                <button key={g.src} onClick={() => setActive(i)} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm bg-parchment ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
-                  <img src={g.src} alt="" className="h-full w-full object-cover" />
+                <button key={g.src} onClick={() => setActive(i)} style={{background: STUDIO_BG}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
+                  <img src={g.src} alt="" className="h-full w-full object-contain p-1.5" />
                 </button>
               ))}
             </div>
