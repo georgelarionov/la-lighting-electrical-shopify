@@ -161,6 +161,18 @@ const Ruler = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="
 /* --------------------------- data (globally shared) ------ */
 // Body-color swatch fallbacks when a Shopify option has no configured swatch.
 const COLOR_HEX: Record<string, string> = {black: '#1c1a17', white: '#f3f1ec'};
+// Feathers the outer edge of a feature image so studio product shots (often on
+// a flat grey/white backdrop) melt into the parchment section instead of
+// showing a hard rectangular box. Two linear gradients intersected = a soft
+// border on all four sides; the faded pixels reveal the parchment container.
+const EDGE_BLEND: React.CSSProperties = {
+  maskImage:
+    'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent)',
+  maskComposite: 'intersect',
+  WebkitMaskImage:
+    'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent)',
+  WebkitMaskComposite: 'source-in',
+};
 // Icon keys a content manager can type into a PDP Feature Card's `icon` field.
 const ICONS: Record<string, typeof Bolt> = {
   ruler: Ruler,
@@ -398,9 +410,9 @@ export default function ProductPage() {
                 {content.features.map((f, i) => (
                   <Reveal key={f.heading + i}>
                     <div className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                      <div className="img-zoom overflow-hidden rounded-lg bg-background" style={{aspectRatio: '4 / 3'}}>
+                      <div className="img-zoom overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '4 / 3'}}>
                         {f.img ? (
-                          <img src={f.img} alt={f.imgAlt} className="h-full w-full object-cover" />
+                          <img src={f.img} alt={f.imgAlt} className="h-full w-full object-cover" style={EDGE_BLEND} />
                         ) : (
                           <PlaceholderImage aspect="" className="h-full w-full" />
                         )}
