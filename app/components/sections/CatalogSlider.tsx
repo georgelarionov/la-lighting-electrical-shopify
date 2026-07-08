@@ -108,13 +108,13 @@ function ProductCard({
         {product?.featuredImage ? (
           <Image
             data={product.featuredImage}
-            aspectRatio="4/5"
+            aspectRatio="1/1"
             sizes="(min-width: 1024px) 300px, 70vw"
             loading={eager ? 'eager' : 'lazy'}
             className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
           />
         ) : (
-          <PlaceholderImage aspect="aspect-[4/5]" label="Fixture" />
+          <PlaceholderImage aspect="aspect-[1/1]" label="Fixture" />
         )}
       </div>
       {product?.productType ? (
