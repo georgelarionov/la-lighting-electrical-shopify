@@ -5,6 +5,7 @@ import {ArrowLink} from '~/components/ArrowLink';
 import blog1 from '~/assets/blog-1.jpg?url';
 import blog2 from '~/assets/blog-2.jpg?url';
 import blog3 from '~/assets/blog-3.jpg?url';
+import russAvatar from '~/assets/russ-avatar.jpg?url';
 
 export type HomeArticle = {
   id: string;
@@ -112,6 +113,9 @@ function ArticleCard({
     .map((w) => w[0])
     .slice(0, 2)
     .join('');
+  // Real author photo (same as the /blog listing) when the article is Russ's.
+  const authorPhoto =
+    post.author?.name === 'Russ Oshkin' ? russAvatar : undefined;
 
   return (
     <article className="lift img-zoom group flex flex-col overflow-hidden rounded-lg border border-hairline bg-canvas">
@@ -152,9 +156,17 @@ function ArticleCard({
         ) : null}
 
         <div className="mt-auto flex items-center gap-2.5 pt-5">
-          <span className="inline-flex size-9 items-center justify-center rounded-full bg-parchment type-caption-strong text-ink">
-            {initials}
-          </span>
+          {authorPhoto ? (
+            <img
+              src={authorPhoto}
+              alt={post.author?.name ?? 'Author'}
+              className="size-9 rounded-full object-cover"
+            />
+          ) : (
+            <span className="inline-flex size-9 items-center justify-center rounded-full bg-parchment type-caption-strong text-ink">
+              {initials}
+            </span>
+          )}
           <div className="leading-tight">
             <p className="type-caption-strong text-ink">
               {post.author?.name ?? 'LA Lighting Team'}

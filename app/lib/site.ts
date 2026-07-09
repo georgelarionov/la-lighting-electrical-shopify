@@ -122,10 +122,10 @@ export const SOCIAL: ReadonlyArray<{
   icon: 'instagram' | 'youtube' | 'linkedin' | 'facebook';
   href: string;
 }> = [
-  {label: 'Instagram', icon: 'instagram', href: 'https://instagram.com'},
-  {label: 'YouTube', icon: 'youtube', href: 'https://youtube.com'},
-  {label: 'LinkedIn', icon: 'linkedin', href: 'https://linkedin.com'},
-  {label: 'Facebook', icon: 'facebook', href: 'https://facebook.com'},
+  {label: 'Instagram', icon: 'instagram', href: 'https://www.instagram.com/la_lightingelectrical/'},
+  {label: 'YouTube', icon: 'youtube', href: 'https://youtube.com/@losangeleslightingelectrical'},
+  {label: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/company/los-angeles-lighting-electrical/'},
+  {label: 'Facebook', icon: 'facebook', href: 'https://www.facebook.com/people/Los-Angeles-Lighting-and-Electrical/61591577727742/'},
 ];
 
 /** Footer contact cards (icons resolved in the Footer component). */
