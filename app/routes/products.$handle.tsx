@@ -404,7 +404,7 @@ export default function ProductPage() {
                 {content.features.map((f, i) => (
                   <Reveal key={f.heading + i}>
                     <div className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                      <div className="img-zoom overflow-hidden rounded-lg p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
+                      <div className="overflow-hidden rounded-lg p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
                         {f.img ? (
                           <img src={f.img} alt={f.imgAlt} className="h-full w-full object-contain" />
                         ) : (
@@ -492,7 +492,7 @@ export default function ProductPage() {
             </Link>
           </Reveal>
           <Reveal delay={80}>
-            <div className="img-zoom overflow-hidden rounded-lg" style={{aspectRatio: '4 / 3'}}>
+            <div className="overflow-hidden rounded-lg" style={{aspectRatio: '4 / 3'}}>
               <img src={serviceImg} alt="Licensed electrician installing a linear fixture" className="h-full w-full object-cover" />
             </div>
           </Reveal>
@@ -560,7 +560,7 @@ export default function ProductPage() {
             {content.crossSell.map((c, i) => (
               <Reveal key={c.handle} delay={i * 60}>
                 <Link to={`/products/${c.handle}`} prefetch="intent" className="lift group block">
-                  <div className="img-zoom overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
+                  <div className="overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
                     {c.img ? (
                       <img src={c.img} alt={c.imgAlt} className="h-full w-full object-cover" />
                     ) : (
