@@ -71,33 +71,6 @@ function parseJsonList(v?: string | null): string[] {
     return [];
   }
 }
-// Parse the first HTML <table> in a product description into {label,value}
-// rows. The wall sconce authors its full spec sheet as a description table
-// (single source of truth); the gallery lightbox reads it from here instead of
-// duplicating 20 values into metaobjects. Returns [] when there is no table.
-function parseSpecTable(html?: string | null): {label: string; value: string}[] {
-  if (!html) return [];
-  const table = html.match(/<table[\s\S]*?<\/table>/i);
-  if (!table) return [];
-  const decode = (s: string) =>
-    s
-      .replace(/<[^>]+>/g, '')
-      .replace(/&amp;/g, '&')
-      .replace(/&gt;/g, '>')
-      .replace(/&lt;/g, '<')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&quot;/g, '"')
-      .replace(/&#0?39;/g, "'")
-      .replace(/\s+/g, ' ')
-      .trim();
-  return [
-    ...table[0].matchAll(
-      /<tr>\s*<td>([\s\S]*?)<\/td>\s*<td>([\s\S]*?)<\/td>\s*<\/tr>/gi,
-    ),
-  ]
-    .map((m) => ({label: decode(m[1]), value: decode(m[2])}))
-    .filter((r) => r.label && r.value);
-}
 // Flatten a metaobject's fields into {key: {value, imageUrl, imageAlt}}.
 function moFields(node: {
   fields?: ReadonlyArray<{
@@ -148,9 +121,6 @@ function buildContent(product: ProductFragment) {
       label: f.label?.value ?? '',
       value: f.value?.value ?? '',
     })),
-    // Spec sheet parsed from the description table — drives the gallery
-    // lightbox's spec panel (currently the wall sconce).
-    specSheet: parseSpecTable(product.descriptionHtml),
     faqs: metaobjects(product.faqs).map((f) => ({
       question: f.question?.value ?? '',
       answer: f.answer?.value ?? '',
@@ -187,10 +157,6 @@ const Phone = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="
 const Shield = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></svg>;
 const Bolt = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M13 2 3 14h9l-1 8 10-12h-9z" /></svg>;
 const Ruler = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z" /><path d="m7.5 10.5 2 2M11 7l2 2M14.5 3.5l2 2M4 14l2 2" /></svg>;
-const Close = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18M6 6l12 12" /></svg>;
-const ChevronLeft = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m15 18-6-6 6-6" /></svg>;
-const ChevronRight = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6" /></svg>;
-const Expand = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>;
 
 /* --------------------------- data (globally shared) ------ */
 // Body-color swatch fallbacks when a Shopify option has no configured swatch.
@@ -246,10 +212,6 @@ export default function ProductPage() {
   const [active, setActive] = useState(0);
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
-  const [lightbox, setLightbox] = useState(false);
-  // Targeted rollout: the click-to-open gallery lightbox (photos + spec panel)
-  // is enabled for the wall sconce only for now.
-  const isSconce = product.handle === 'led-cylinder-wall-sconce';
 
   const currency = selectedVariant?.price?.currencyCode ?? 'USD';
   const money = (n: number) =>
@@ -313,16 +275,7 @@ export default function ProductPage() {
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <div className="img-zoom group relative overflow-hidden rounded-md p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
             {heroImg ? (
-              isSconce ? (
-                <button type="button" onClick={() => setLightbox(true)} className="block h-full w-full cursor-zoom-in" aria-label="Open full gallery and specifications">
-                  <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-contain" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
-                  <span className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-sm bg-background/90 px-2.5 py-1 text-[11px] font-medium tracking-wide text-foreground backdrop-blur">
-                    <Expand className="h-3.5 w-3.5" /> Specs &amp; gallery
-                  </span>
-                </button>
-              ) : (
-                <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-contain" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
-              )
+              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-contain" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
             ) : (
               <PlaceholderImage aspect="" className="h-full w-full" />
             )}
@@ -659,17 +612,6 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {isSconce && lightbox && heroImg && (
-        <GalleryLightbox
-          gallery={gallery}
-          index={safeActive}
-          setIndex={setActive}
-          specs={content.specSheet}
-          title={product.title}
-          onClose={() => setLightbox(false)}
-        />
-      )}
-
       <Analytics.ProductView
         data={{
           products: [
@@ -685,93 +627,6 @@ export default function ProductPage() {
           ],
         }}
       />
-    </div>
-  );
-}
-
-/* --------------------- gallery lightbox (photos + specs) --------------------- */
-// Full-screen overlay opened by clicking the sconce hero photo: swipe through
-// every product image with the spec sheet pinned alongside. Arrow keys navigate,
-// Esc or the backdrop closes; body scroll is locked while open.
-function GalleryLightbox({
-  gallery,
-  index,
-  setIndex,
-  specs,
-  title,
-  onClose,
-}: {
-  gallery: {src: string; alt: string}[];
-  index: number;
-  setIndex: (i: number) => void;
-  specs: {label: string; value: string}[];
-  title: string;
-  onClose: () => void;
-}) {
-  const go = (d: number) =>
-    setIndex((index + d + gallery.length) % gallery.length);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      else if (e.key === 'ArrowRight') setIndex((index + 1) % gallery.length);
-      else if (e.key === 'ArrowLeft')
-        setIndex((index - 1 + gallery.length) % gallery.length);
-    };
-    document.addEventListener('keydown', onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [index, gallery.length, setIndex, onClose]);
-
-  const cur = gallery[index];
-  return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-black/90 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={`${title} gallery and specifications`}>
-      <div className="flex items-center justify-between px-5 py-4 text-white sm:px-8">
-        <span className="text-[13px] font-medium tracking-wide">{title}</span>
-        <button onClick={onClose} aria-label="Close" className="press grid h-10 w-10 place-items-center rounded-sm text-white/80 hover:bg-white/10 hover:text-white">
-          <Close className="h-5 w-5" />
-        </button>
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        {/* photo stage — clicking the empty backdrop closes */}
-        <div className="relative flex min-h-0 flex-1 items-center justify-center p-4 sm:p-8" onClick={onClose}>
-          {gallery.length > 1 && (
-            <button onClick={(e) => {e.stopPropagation(); go(-1);}} aria-label="Previous photo" className="press absolute left-3 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-6">
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-          )}
-          {cur && <img key={index} src={cur.src} alt={cur.alt} onClick={(e) => e.stopPropagation()} className="max-h-full max-w-full object-contain" style={{animation: 'fadeIn .3s var(--ease-out)'}} />}
-          {gallery.length > 1 && (
-            <button onClick={(e) => {e.stopPropagation(); go(1);}} aria-label="Next photo" className="press absolute right-3 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6">
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          )}
-          {gallery.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2" onClick={(e) => e.stopPropagation()}>
-              {gallery.map((g, i) => (
-                <button key={g.src} onClick={() => setIndex(i)} aria-label={`Photo ${i + 1}`} className={`h-1.5 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70'}`} />
-              ))}
-            </div>
-          )}
-        </div>
-        {/* spec panel */}
-        {specs.length > 0 && (
-          <aside className="w-full shrink-0 overflow-y-auto border-t border-white/10 bg-[#101012] px-5 py-6 text-white sm:px-8 lg:max-h-none lg:w-[380px] lg:border-l lg:border-t-0">
-            <h3 className="font-heading text-[18px]">Specifications</h3>
-            <dl className="mt-4 divide-y divide-white/10">
-              {specs.map((s, i) => (
-                <div key={s.label + i} className="flex items-start justify-between gap-6 py-2.5">
-                  <dt className="text-[12.5px] text-white/55">{s.label}</dt>
-                  <dd className="max-w-[62%] text-right text-[12.5px] font-medium text-white/90">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
-        )}
-      </div>
     </div>
   );
 }
