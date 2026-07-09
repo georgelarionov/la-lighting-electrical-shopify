@@ -212,6 +212,14 @@ export default function ProductPage() {
   const [active, setActive] = useState(0);
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
+  // The sconce's studio photos already carry their own grey backdrop, so
+  // contain-fitting them on the studio panel showed a picture-within-a-picture.
+  // Fill (cover) edge-to-edge with no padding for this product so each shot
+  // reads as one clean frame. Other products keep object-contain (e.g. the
+  // track light's transparent renders, which must float, never crop).
+  const isSconce = product.handle === 'led-cylinder-wall-sconce';
+  const galleryFit = isSconce ? 'object-cover' : 'object-contain';
+  const framePad = isSconce ? '' : 'p-6 sm:p-8';
 
   const currency = selectedVariant?.price?.currencyCode ?? 'USD';
   const money = (n: number) =>
@@ -273,9 +281,9 @@ export default function ProductPage() {
       <section className="mx-auto grid max-w-[1280px] grid-cols-1 gap-10 px-5 pb-12 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:gap-14">
         {/* gallery */}
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-          <div className="img-zoom group relative overflow-hidden rounded-md p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
+          <div className={`img-zoom group relative overflow-hidden rounded-md ${framePad}`} style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
             {heroImg ? (
-              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className="h-full w-full object-contain" style={{animation: 'fadeIn .5s var(--ease-out)'}} />
+              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className={`h-full w-full ${galleryFit}`} style={{animation: 'fadeIn .5s var(--ease-out)'}} />
             ) : (
               <PlaceholderImage aspect="" className="h-full w-full" />
             )}
@@ -287,7 +295,7 @@ export default function ProductPage() {
             <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
               {gallery.map((g, i) => (
                 <button key={g.src} onClick={() => setActive(i)} style={{background: STUDIO_BG}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
-                  <img src={g.src} alt="" className="h-full w-full object-contain p-1.5" />
+                  <img src={g.src} alt="" className={`h-full w-full ${isSconce ? 'object-cover' : 'object-contain p-1.5'}`} />
                 </button>
               ))}
             </div>
@@ -404,9 +412,9 @@ export default function ProductPage() {
                 {content.features.map((f, i) => (
                   <Reveal key={f.heading + i}>
                     <div className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                      <div className="overflow-hidden rounded-lg p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
+                      <div className={`overflow-hidden rounded-lg ${framePad}`} style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
                         {f.img ? (
-                          <img src={f.img} alt={f.imgAlt} className="h-full w-full object-contain" />
+                          <img src={f.img} alt={f.imgAlt} className={`h-full w-full ${galleryFit}`} />
                         ) : (
                           <PlaceholderImage aspect="" className="h-full w-full" />
                         )}
