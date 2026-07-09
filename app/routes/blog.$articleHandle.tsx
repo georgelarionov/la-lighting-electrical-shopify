@@ -213,7 +213,7 @@ export const meta: Route.MetaFunction = ({data, location}) => {
       : `${SITE_URL}${a.hero}`
     : undefined;
   const base = seo({
-    title: `${a?.title ?? 'Journal'} | ${COMPANY_NAME}`,
+    title: `${a?.title ?? 'Blog'} | ${COMPANY_NAME}`,
     description: a?.description,
     url: location.pathname,
     type: 'article',
@@ -279,7 +279,7 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
     const isRuss = authorName === AUTHOR_RUSS.name;
     const article: NormArticle = {
       title: a.title,
-      category: a.tags?.[0] ?? 'Journal',
+      category: a.tags?.[0] ?? 'Article',
       author: {
         name: authorName,
         bio: isRuss
@@ -430,7 +430,7 @@ export default function Article() {
           prefetch="intent"
           className="press inline-flex items-center gap-1 text-[13px] text-ink-subtle transition-colors hover:text-ink"
         >
-          <ChevronLeft className="size-4" /> Back to the journal
+          <ChevronLeft className="size-4" /> Back to the blog
         </Link>
         <Reveal>
           <div className="mt-6 flex items-center gap-3 text-[12px] text-ink-subtle">

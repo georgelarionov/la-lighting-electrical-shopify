@@ -17,7 +17,7 @@ import russAvatar from '~/assets/russ-avatar.jpg?url';
 
 export const meta: Route.MetaFunction = ({location}) => {
   return seo({
-    title: `Journal | ${COMPANY_NAME}`,
+    title: `Blog | ${COMPANY_NAME}`,
     description:
       'Practical notes on lighting, energy and code — from the team that designs and installs it across Los Angeles.',
     url: location.pathname,
@@ -88,7 +88,7 @@ export default function Journal() {
   const posts: Post[] = articles.length
     ? articles.map((a) => ({
         image: a.image,
-        cat: a.tags?.[0] ?? 'Journal',
+        cat: a.tags?.[0] ?? 'Article',
         title: a.title,
         excerpt: a.excerpt ?? '',
         author: a.author?.name ?? 'LA Lighting Team',
@@ -114,7 +114,7 @@ export default function Journal() {
       <header className="border-b border-hairline">
         <div className="container-page pt-12 pb-10 md:pt-16">
           <Reveal>
-            <p className="type-eyebrow text-ink-subtle">Journal</p>
+            <p className="type-eyebrow text-ink-subtle">Blog</p>
             <h1 className="type-hero mt-3 max-w-2xl text-ink">
               Notes on light, energy &amp; code.
             </h1>
