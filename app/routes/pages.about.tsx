@@ -16,6 +16,7 @@ import crew from '~/assets/services.jpg?url';
 import project1 from '~/assets/project-1.jpg?url';
 import project2 from '~/assets/project-2.jpg?url';
 import project3 from '~/assets/project-3.jpg?url';
+import russPhoto from '~/assets/russ-oshkin.jpg?url';
 import {Reveal} from '~/components/Reveal';
 import {Button} from '~/components/ui/button';
 import {useAside} from '~/components/Aside';
@@ -147,6 +148,37 @@ export default function About() {
             </div>
           </Reveal>
         </div>
+      </section>
+
+      {/* owner — clickable, leads to the author/bio page */}
+      <section className="container-page pt-14 md:pt-20">
+        <Reveal>
+          <Link
+            to="/team/russ-oshkin"
+            prefetch="intent"
+            className="lift group flex flex-col overflow-hidden rounded-lg border border-hairline bg-parchment sm:flex-row"
+          >
+            <img
+              src={russPhoto}
+              alt="Russ Oshkin, Owner of Los Angeles Lighting & Electrical"
+              className="h-60 w-full object-cover object-top sm:h-auto sm:w-64 sm:shrink-0"
+            />
+            <div className="flex flex-1 flex-col justify-center p-7 sm:p-9">
+              <p className="type-eyebrow text-ink-subtle">Meet the owner</p>
+              <h2 className="type-display-sm mt-2 text-ink transition-colors group-hover:text-primary">
+                Russ Oshkin
+              </h2>
+              <p className="type-body mt-2 max-w-xl text-ink-muted">
+                Owner · C-10 licensed · in the trade since 2004. Hands-on from
+                design through installation on every project.
+              </p>
+              <span className="type-caption-strong mt-4 inline-flex items-center gap-1.5 text-primary">
+                Read Russ&rsquo;s story
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </div>
+          </Link>
+        </Reveal>
       </section>
 
       {/* story */}

@@ -10,6 +10,16 @@ import bpHero from '~/assets/mp/bp-hero.jpg?url';
 import bpLayers from '~/assets/mp/bp-layers.jpg?url';
 import bpRetrofit from '~/assets/mp/bp-retrofit.jpg?url';
 import bpTitle24 from '~/assets/mp/bp-title24.jpg?url';
+import russPhoto from '~/assets/russ-oshkin.jpg?url';
+
+// The blog's real author. When an article's Shopify author matches, the byline
+// links to the author bio page and carries a photo (EEAT).
+const AUTHOR_RUSS = {
+  name: 'Russ Oshkin',
+  href: '/team/russ-oshkin',
+  photo: russPhoto,
+  linkedin: 'https://www.linkedin.com/in/russ-oshkin/',
+};
 
 /* ============================================================
    Article (blog post) — 1:1 port of the MagicPath "Blog Post".
@@ -29,7 +39,7 @@ type Block =
 type NormArticle = {
   title: string;
   category: string;
-  author: {name: string; bio: string};
+  author: {name: string; bio: string; href?: string; photo?: string};
   dateISO: string;
   readMins: number;
   hero: string | null;
@@ -201,13 +211,31 @@ export const meta: Route.MetaFunction = ({data, location}) => {
       ? a.hero
       : `${SITE_URL}${a.hero}`
     : undefined;
-  return seo({
+  const base = seo({
     title: `${a?.title ?? 'Journal'} | ${COMPANY_NAME}`,
     description: a?.description,
     url: location.pathname,
     type: 'article',
     image: img,
   });
+  if (!a) return base;
+
+  const isRuss = a.author.name === AUTHOR_RUSS.name;
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: a.title,
+    ...(img ? {image: [img]} : {}),
+    datePublished: a.dateISO,
+    author: {
+      '@type': 'Person',
+      name: a.author.name,
+      ...(a.author.href ? {url: `${SITE_URL}${a.author.href}`} : {}),
+      ...(isRuss ? {jobTitle: 'Owner', sameAs: [AUTHOR_RUSS.linkedin]} : {}),
+    },
+    publisher: {'@type': 'Organization', name: COMPANY_NAME, url: SITE_URL},
+  };
+  return [...base, {'script:ld+json': ld}];
 };
 
 function readTime(html: string) {
@@ -246,12 +274,18 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
     });
 
     const a = blog.articleByHandle;
+    const authorName = a.author?.name ?? 'LA Lighting Team';
+    const isRuss = authorName === AUTHOR_RUSS.name;
     const article: NormArticle = {
       title: a.title,
       category: a.tags?.[0] ?? 'Journal',
       author: {
-        name: a.author?.name ?? 'LA Lighting Team',
-        bio: `Writes about the practical side of getting light right in real rooms, for ${COMPANY_NAME}.`,
+        name: authorName,
+        bio: isRuss
+          ? `Owner of ${COMPANY_NAME}, a boutique C-10 licensed lighting and electrical contractor in Los Angeles. Designing, fabricating and installing architectural lighting since 2004.`
+          : `Writes about the practical side of getting light right in real rooms, for ${COMPANY_NAME}.`,
+        href: isRuss ? AUTHOR_RUSS.href : undefined,
+        photo: isRuss ? AUTHOR_RUSS.photo : undefined,
       },
       dateISO: a.publishedAt,
       readMins: readTime(a.contentHtml),
@@ -410,11 +444,31 @@ export default function Article() {
             {title}
           </h1>
           <div className="mt-6 flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-full bg-parchment text-[13px] font-semibold text-ink">
-              {initials(author.name)}
-            </span>
+            {author.photo ? (
+              <img
+                src={author.photo}
+                alt={author.name}
+                className="size-10 rounded-full object-cover"
+              />
+            ) : (
+              <span className="grid size-10 place-items-center rounded-full bg-parchment text-[13px] font-semibold text-ink">
+                {initials(author.name)}
+              </span>
+            )}
             <div className="leading-tight">
-              <p className="text-[13.5px] font-medium text-ink">{author.name}</p>
+              <p className="text-[13.5px] font-medium text-ink">
+                {author.href ? (
+                  <Link
+                    to={author.href}
+                    prefetch="intent"
+                    className="transition-colors hover:text-primary"
+                  >
+                    {author.name}
+                  </Link>
+                ) : (
+                  author.name
+                )}
+              </p>
               <time
                 dateTime={article.dateISO}
                 className="text-[12px] text-ink-subtle"
@@ -451,14 +505,43 @@ export default function Article() {
 
         {/* author card */}
         <div className="mt-12 flex items-start gap-4 rounded-lg border border-hairline bg-parchment p-6">
-          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-canvas text-[15px] font-semibold text-ink">
-            {initials(author.name)}
-          </span>
+          {author.photo ? (
+            <img
+              src={author.photo}
+              alt={author.name}
+              className="size-12 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-canvas text-[15px] font-semibold text-ink">
+              {initials(author.name)}
+            </span>
+          )}
           <div>
-            <p className="text-[14.5px] font-medium text-ink">{author.name}</p>
+            <p className="text-[14.5px] font-medium text-ink">
+              {author.href ? (
+                <Link
+                  to={author.href}
+                  prefetch="intent"
+                  className="transition-colors hover:text-primary"
+                >
+                  {author.name}
+                </Link>
+              ) : (
+                author.name
+              )}
+            </p>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
               {author.bio}
             </p>
+            {author.href ? (
+              <Link
+                to={author.href}
+                prefetch="intent"
+                className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-medium text-primary hover:underline"
+              >
+                More about {author.name.split(' ')[0]} →
+              </Link>
+            ) : null}
           </div>
         </div>
       </article>
