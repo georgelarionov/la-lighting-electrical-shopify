@@ -499,7 +499,13 @@ export type JournalQuery = {
     nodes: Array<
       Pick<
         StorefrontAPI.Article,
-        'id' | 'title' | 'handle' | 'excerpt' | 'publishedAt' | 'tags'
+        | 'id'
+        | 'title'
+        | 'handle'
+        | 'excerpt'
+        | 'contentHtml'
+        | 'publishedAt'
+        | 'tags'
       > & {
         image?: StorefrontAPI.Maybe<
           Pick<
@@ -1454,7 +1460,7 @@ interface GeneratedQueryTypes {
     return: ArticleQuery;
     variables: ArticleQueryVariables;
   };
-  '#graphql\n  query Journal($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    articles(first: 13, sortKey: PUBLISHED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        excerpt\n        publishedAt\n        tags\n        image {\n          id\n          url\n          altText\n          width\n          height\n        }\n        author: authorV2 {\n          name\n        }\n        blog {\n          handle\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query Journal($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    articles(first: 13, sortKey: PUBLISHED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        excerpt\n        contentHtml\n        publishedAt\n        tags\n        image {\n          id\n          url\n          altText\n          width\n          height\n        }\n        author: authorV2 {\n          name\n        }\n        blog {\n          handle\n        }\n      }\n    }\n  }\n': {
     return: JournalQuery;
     variables: JournalQueryVariables;
   };

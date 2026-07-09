@@ -13,9 +13,8 @@ import {
 } from 'lucide-react';
 import aboutHero from '~/assets/about-hero.jpg?url';
 import crew from '~/assets/services.jpg?url';
-import project1 from '~/assets/project-1.jpg?url';
-import project2 from '~/assets/project-2.jpg?url';
-import project3 from '~/assets/project-3.jpg?url';
+import {PROJECTS} from '~/lib/projects';
+import {ProjectPhoto} from '~/components/ProjectPhoto';
 import russPhoto from '~/assets/russ-oshkin.jpg?url';
 import {Reveal} from '~/components/Reveal';
 import {Button} from '~/components/ui/button';
@@ -102,11 +101,9 @@ const STEPS = [
   },
 ];
 
-const WORK = [
-  {img: project1, t: 'Marina Del Rey residence', s: 'Warm, low-glare ambient scheme'},
-  {img: project2, t: 'Santa Monica storefront', s: 'LED relight + accent lighting'},
-  {img: project3, t: 'Beverly Hills evening room', s: 'Three-layer hospitality lighting'},
-];
+// The three most recent projects, straight from the portfolio source so this
+// stays in sync with /projects (no hardcoded list).
+const WORK = PROJECTS.slice(0, 3);
 
 export default function About() {
   const {open} = useAside();
@@ -328,23 +325,29 @@ export default function About() {
             </div>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {WORK.map((w, i) => (
-              <Reveal key={w.t} delay={i * 60}>
-                <Link to="/projects" prefetch="intent" className="lift group block">
+            {WORK.map((p, i) => (
+              <Reveal key={p.handle} delay={i * 60}>
+                <Link
+                  to={`/projects/${p.handle}`}
+                  prefetch="intent"
+                  className="lift group block"
+                >
                   <div
                     className="img-zoom overflow-hidden rounded-lg border border-hairline"
                     style={{aspectRatio: '4 / 3'}}
                   >
-                    <img
-                      src={w.img}
-                      alt={w.t}
-                      className="h-full w-full object-cover"
+                    <ProjectPhoto
+                      image={p.image}
+                      alt={p.title}
+                      className="h-full w-full"
                     />
                   </div>
                   <h3 className="type-body-strong mt-3 text-ink transition-colors group-hover:text-primary">
-                    {w.t}
+                    {p.title}
                   </h3>
-                  <p className="type-caption mt-0.5 text-ink-muted">{w.s}</p>
+                  <p className="type-caption mt-0.5 text-ink-muted">
+                    {p.category} · {p.location}
+                  </p>
                 </Link>
               </Reveal>
             ))}

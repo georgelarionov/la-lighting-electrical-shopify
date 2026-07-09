@@ -10,14 +10,15 @@ import bpHero from '~/assets/mp/bp-hero.jpg?url';
 import bpLayers from '~/assets/mp/bp-layers.jpg?url';
 import bpRetrofit from '~/assets/mp/bp-retrofit.jpg?url';
 import bpTitle24 from '~/assets/mp/bp-title24.jpg?url';
-import russPhoto from '~/assets/russ-oshkin.jpg?url';
+import russAvatar from '~/assets/russ-avatar.jpg?url';
 
 // The blog's real author. When an article's Shopify author matches, the byline
-// links to the author bio page and carries a photo (EEAT).
+// links to the author bio page and carries a photo (EEAT). The byline uses a
+// tight head-and-shoulders crop so the face reads in the small avatar circle.
 const AUTHOR_RUSS = {
   name: 'Russ Oshkin',
   href: '/team/russ-oshkin',
-  photo: russPhoto,
+  photo: russAvatar,
   linkedin: 'https://www.linkedin.com/in/russ-oshkin/',
 };
 

@@ -13,6 +13,7 @@ import blog3 from '~/assets/blog-3.jpg?url';
 import blog4 from '~/assets/blog-4.jpg?url';
 import blog5 from '~/assets/blog-5.jpg?url';
 import blog6 from '~/assets/blog-6.jpg?url';
+import russAvatar from '~/assets/russ-avatar.jpg?url';
 
 export const meta: Route.MetaFunction = ({location}) => {
   return seo({
@@ -45,6 +46,7 @@ type Post = {
   title: string;
   excerpt: string;
   author: string;
+  authorPhoto?: string;
   date: string;
   href: string;
   read: string;
@@ -65,6 +67,12 @@ const initials = (n: string) =>
     .map((w) => w[0])
     .slice(0, 2)
     .join('');
+// Same estimate as the article page (blog.$articleHandle) so the two match.
+const readTime = (html: string) =>
+  Math.max(
+    1,
+    Math.round(html.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).length / 200),
+  );
 const fmtDate = (iso?: string | null) =>
   iso
     ? new Intl.DateTimeFormat('en-US', {
@@ -84,9 +92,11 @@ export default function Journal() {
         title: a.title,
         excerpt: a.excerpt ?? '',
         author: a.author?.name ?? 'LA Lighting Team',
+        authorPhoto:
+          a.author?.name === 'Russ Oshkin' ? russAvatar : undefined,
         date: fmtDate(a.publishedAt),
         href: `/blog/${a.handle}`,
-        read: '5 min',
+        read: `${readTime(a.contentHtml ?? '')} min`,
       }))
     : FALLBACK;
 
@@ -153,7 +163,7 @@ export default function Journal() {
               >
                 <PostImage post={featured} eager className="h-full w-full object-cover" />
               </div>
-              <div className="flex flex-col justify-center p-7 sm:p-10 md:order-1">
+              <div className="flex flex-col justify-center p-7 sm:p-10 md:order-1 md:h-0 md:min-h-full md:overflow-hidden">
                 <div className="flex items-center gap-3 type-fine text-ink-subtle">
                   <span className="rounded-sm bg-parchment px-2.5 py-1 font-medium text-ink">
                     {featured.cat}
@@ -162,18 +172,26 @@ export default function Journal() {
                     <Clock className="size-3.5" /> {featured.read} read
                   </span>
                 </div>
-                <h2 className="type-display-sm mt-4 text-ink transition-colors group-hover:text-primary">
+                <h2 className="type-display-sm mt-4 line-clamp-2 text-ink transition-colors group-hover:text-primary">
                   {featured.title}
                 </h2>
                 {featured.excerpt && (
-                  <p className="type-body mt-3 max-w-md text-ink-muted">
+                  <p className="type-body mt-3 line-clamp-3 max-w-md text-ink-muted">
                     {featured.excerpt}
                   </p>
                 )}
                 <div className="mt-6 flex items-center gap-2.5">
-                  <span className="grid size-9 place-items-center rounded-full bg-parchment type-caption-strong text-ink">
-                    {initials(featured.author)}
-                  </span>
+                  {featured.authorPhoto ? (
+                    <img
+                      src={featured.authorPhoto}
+                      alt={featured.author}
+                      className="size-9 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="grid size-9 place-items-center rounded-full bg-parchment type-caption-strong text-ink">
+                      {initials(featured.author)}
+                    </span>
+                  )}
                   <div className="leading-tight">
                     <p className="type-fine font-medium text-ink">
                       {featured.author}
@@ -219,9 +237,17 @@ export default function Journal() {
                     </p>
                   )}
                   <div className="mt-5 flex items-center gap-2.5">
-                    <span className="grid size-8 place-items-center rounded-full bg-parchment type-fine font-semibold text-ink">
-                      {initials(p.author)}
-                    </span>
+                    {p.authorPhoto ? (
+                      <img
+                        src={p.authorPhoto}
+                        alt={p.author}
+                        className="size-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="grid size-8 place-items-center rounded-full bg-parchment type-fine font-semibold text-ink">
+                        {initials(p.author)}
+                      </span>
+                    )}
                     <div className="leading-tight">
                       <p className="type-fine font-medium text-ink">{p.author}</p>
                       <p className="type-fine text-ink-subtle">{p.date}</p>
@@ -304,6 +330,7 @@ const JOURNAL_QUERY = `#graphql
         title
         handle
         excerpt
+        contentHtml
         publishedAt
         tags
         image {
