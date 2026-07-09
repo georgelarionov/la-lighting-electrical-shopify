@@ -161,22 +161,11 @@ const Ruler = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="
 /* --------------------------- data (globally shared) ------ */
 // Body-color swatch fallbacks when a Shopify option has no configured swatch.
 const COLOR_HEX: Record<string, string> = {black: '#1c1a17', white: '#f3f1ec'};
-// Feathers the outer edge of a feature image so studio product shots (often on
-// a flat grey/white backdrop) melt into the parchment section instead of
-// showing a hard rectangular box. Two linear gradients intersected = a soft
-// border on all four sides; the faded pixels reveal the parchment container.
-const EDGE_BLEND: React.CSSProperties = {
-  maskImage:
-    'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent)',
-  maskComposite: 'intersect',
-  WebkitMaskImage:
-    'linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent)',
-  WebkitMaskComposite: 'source-in',
-};
-// Soft studio-grey backdrop for the gallery slideshow — lighter toward the top
-// centre, subtly deeper at the edges, so transparent product renders (black or
-// white) read as if shot on a seamless. Gallery uses object-contain over this,
-// so the whole fixture is always visible (never cropped).
+// Soft studio-grey backdrop shared by the gallery slideshow AND the feature
+// rows — lighter toward the top centre, subtly deeper at the edges, so studio
+// product renders (shot on a flat cool-grey seamless) read as one continuous
+// surface instead of a hard rectangle floating on the near-white parchment section.
+// Both use object-contain over this, so the whole fixture is always visible.
 const STUDIO_BG = 'radial-gradient(120% 120% at 50% 32%, #eef0f3 0%, #d9dce1 100%)';
 // Icon keys a content manager can type into a PDP Feature Card's `icon` field.
 const ICONS: Record<string, typeof Bolt> = {
@@ -415,9 +404,9 @@ export default function ProductPage() {
                 {content.features.map((f, i) => (
                   <Reveal key={f.heading + i}>
                     <div className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
-                      <div className="img-zoom overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '4 / 3'}}>
+                      <div className="img-zoom overflow-hidden rounded-lg p-6 sm:p-8" style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
                         {f.img ? (
-                          <img src={f.img} alt={f.imgAlt} className="h-full w-full object-cover" style={EDGE_BLEND} />
+                          <img src={f.img} alt={f.imgAlt} className="h-full w-full object-contain" />
                         ) : (
                           <PlaceholderImage aspect="" className="h-full w-full" />
                         )}
