@@ -81,7 +81,7 @@ const METHODS = [
     icon: MapPin,
     t: 'Visit the showroom',
     d: 'Showroom & warehouse, by appointment.',
-    link: 'Marina Del Rey, CA 90292',
+    link: 'Gardena, CA 90248',
     href: '#map',
   },
 ];
@@ -225,7 +225,7 @@ export default function Contact() {
       <section id="map" className="relative isolate overflow-hidden scroll-mt-20">
         <img
           src={showroom}
-          alt="Our Marina Del Rey showroom"
+          alt="Our Gardena showroom"
           className="h-[52vh] min-h-[380px] w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-onyx/60 to-transparent sm:bg-gradient-to-r sm:from-onyx/70 sm:to-transparent" />
@@ -234,7 +234,7 @@ export default function Contact() {
             <div className="max-w-sm rounded-lg bg-canvas p-7 shadow-product">
               <p className="type-eyebrow text-ink-subtle">Visit us</p>
               <h2 className="type-display-sm mt-2 text-ink">
-                Marina Del Rey showroom
+                Gardena showroom
               </h2>
               <div className="mt-4 flex flex-col gap-2 type-caption text-ink-muted">
                 <span className="flex items-start gap-2.5">

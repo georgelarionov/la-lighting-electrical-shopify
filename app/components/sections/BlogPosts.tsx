@@ -123,6 +123,7 @@ function ArticleCard({
         {post.image ? (
           <Image
             data={post.image}
+            alt={post.title}
             aspectRatio="11/6"
             sizes="(min-width: 1024px) 384px, 100vw"
             loading={eager ? 'eager' : 'lazy'}
@@ -146,7 +147,7 @@ function ArticleCard({
           <Link
             to={href}
             prefetch="intent"
-            className="transition-colors group-hover:text-primary"
+            className="transition-colors hover:text-primary"
           >
             {post.title}
           </Link>

@@ -1,4 +1,4 @@
-import {COMPANY_NAME} from '~/lib/site';
+import {COMPANY_NAME, CONTACT, SOCIAL} from '~/lib/site';
 
 /**
  * One place to build page metadata. Every route's `meta` should return
@@ -12,6 +12,59 @@ const DEFAULT_DESCRIPTION =
   'Licensed, insured C-10 electrical and architectural lighting in Los Angeles — designed, supplied, and installed by one team for commercial, industrial, and residential spaces.';
 
 export const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+
+/** Stable @id + logo for the business entity, reused by page-level schema. */
+export const ORG_ID = `${SITE_URL}/#business`;
+export const ORG_LOGO = `${SITE_URL}/web-app-manifest-512x512.png`;
+
+/**
+ * Site-wide LocalBusiness (Electrician) for local SEO — NAP, service area,
+ * hours and social profiles. Rendered once, in the root document head, so it
+ * appears on every page (including the blog). Keep NAP identical to the
+ * Google Business Profile for consistency.
+ */
+export function localBusinessLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Electrician',
+    '@id': ORG_ID,
+    name: COMPANY_NAME,
+    url: SITE_URL,
+    image: OG_IMAGE,
+    logo: ORG_LOGO,
+    telephone: CONTACT.phoneHref.replace('tel:', ''),
+    email: CONTACT.emailSupport,
+    priceRange: '$$',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CONTACT.addressLine1,
+      addressLocality: 'Gardena',
+      addressRegion: 'CA',
+      postalCode: '90248',
+      addressCountry: 'US',
+    },
+    areaServed: [
+      {'@type': 'City', name: 'Los Angeles'},
+      {'@type': 'AdministrativeArea', name: 'Los Angeles County'},
+    ],
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+        ],
+        opens: '08:00',
+        closes: '18:00',
+      },
+    ],
+    sameAs: SOCIAL.map((s) => s.href),
+    hasMap: CONTACT.mapHref,
+  };
+}
 
 type SeoInput = {
   /** Full, already-formatted <title>. Falls back to a brand default. */
