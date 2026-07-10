@@ -4,8 +4,9 @@ import type {Route} from './+types/blog.$articleHandle';
 import {ChevronLeft, Clock, Check, ArrowRight} from 'lucide-react';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {Reveal} from '~/components/Reveal';
-import {seo, SITE_URL} from '~/lib/seo';
+import {seo, SITE_URL, ORG_ID, ORG_LOGO} from '~/lib/seo';
 import {COMPANY_NAME} from '~/lib/site';
+import {categoryServiceHref} from '~/lib/blog';
 import bpHero from '~/assets/mp/bp-hero.jpg?url';
 import bpLayers from '~/assets/mp/bp-layers.jpg?url';
 import bpRetrofit from '~/assets/mp/bp-retrofit.jpg?url';
@@ -228,13 +229,23 @@ export const meta: Route.MetaFunction = ({data, location}) => {
     headline: a.title,
     ...(img ? {image: [img]} : {}),
     datePublished: a.dateISO,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}${location.pathname}`,
+    },
     author: {
       '@type': 'Person',
       name: a.author.name,
       ...(a.author.href ? {url: `${SITE_URL}${a.author.href}`} : {}),
       ...(isRuss ? {jobTitle: 'Owner', sameAs: [AUTHOR_RUSS.linkedin]} : {}),
     },
-    publisher: {'@type': 'Organization', name: COMPANY_NAME, url: SITE_URL},
+    publisher: {
+      '@type': 'Organization',
+      '@id': ORG_ID,
+      name: COMPANY_NAME,
+      url: SITE_URL,
+      logo: {'@type': 'ImageObject', url: ORG_LOGO},
+    },
   };
   return [...base, {'script:ld+json': ld}];
 };
@@ -291,7 +302,8 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
       dateISO: a.publishedAt,
       readMins: readTime(a.contentHtml),
       hero: a.image?.url ?? null,
-      heroAlt: a.image?.altText ?? a.title,
+      // Rule: a blog post's cover image alt always matches the article title.
+      heroAlt: a.title,
       description:
         a.seo?.description ?? `${a.title} — notes from ${COMPANY_NAME}.`,
       blocks: [{type: 'html', html: a.contentHtml}],
@@ -412,6 +424,7 @@ export default function Article() {
   const {article} = useLoaderData<typeof loader>();
   const {title, hero, heroAlt, category, author, blocks, readMins} = article;
   const backTo = '/blog';
+  const serviceHref = categoryServiceHref(category);
 
   const publishedDate = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -434,9 +447,19 @@ export default function Article() {
         </Link>
         <Reveal>
           <div className="mt-6 flex items-center gap-3 text-[12px] text-ink-subtle">
-            <span className="rounded-sm bg-parchment px-2.5 py-1 font-medium text-ink">
-              {category}
-            </span>
+            {serviceHref ? (
+              <Link
+                to={serviceHref}
+                prefetch="intent"
+                className="rounded-sm bg-parchment px-2.5 py-1 font-medium text-ink transition-colors hover:bg-ink hover:text-white"
+              >
+                {category}
+              </Link>
+            ) : (
+              <span className="rounded-sm bg-parchment px-2.5 py-1 font-medium text-ink">
+                {category}
+              </span>
+            )}
             <span className="inline-flex items-center gap-1">
               <Clock className="size-3.5" /> {readMins} min read
             </span>

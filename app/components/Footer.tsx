@@ -19,7 +19,7 @@ interface FooterProps {
 
 /**
  * Tesla-clean footer (redesign 2026): off-white surface, newsletter + back-to-top,
- * Marina Del Rey / Shop / Company / Connect columns, an achromatic Licensed &
+ * Gardena / Shop / Company / Connect columns, an achromatic Licensed &
  * Insured mark, and the legal row. Footer chrome is static (app/lib/site.ts);
  * Storefront props are accepted for layout compatibility but unused.
  */
@@ -43,7 +43,7 @@ export function Footer(_props: FooterProps) {
         {/* Columns */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4 md:gap-x-12">
           <div className="col-span-2 md:col-span-1">
-            <h3 className="type-body-strong text-ink">Marina Del Rey</h3>
+            <h3 className="type-body-strong text-ink">Gardena</h3>
             <div className="mt-3 flex flex-col gap-1.5 type-caption text-ink-muted">
               <a href={CONTACT.phoneHref} className="hover:text-ink">
                 T: {CONTACT.phoneDisplay}

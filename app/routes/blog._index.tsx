@@ -7,6 +7,7 @@ import {seo} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {COMPANY_NAME} from '~/lib/site';
 import {cn} from '~/lib/utils';
+import {categoryServiceHref} from '~/lib/blog';
 import blog1 from '~/assets/blog-1.jpg?url';
 import blog2 from '~/assets/blog-2.jpg?url';
 import blog3 from '~/assets/blog-3.jpg?url';
@@ -47,6 +48,7 @@ type Post = {
   excerpt: string;
   author: string;
   authorPhoto?: string;
+  authorHref?: string;
   date: string;
   href: string;
   read: string;
@@ -82,6 +84,69 @@ const fmtDate = (iso?: string | null) =>
       }).format(new Date(iso))
     : '';
 
+/** Category chip — links to the related service when one is mapped. */
+function CategoryBadge({cat, className}: {cat: string; className?: string}) {
+  const href = categoryServiceHref(cat);
+  const base = cn('rounded-sm bg-parchment font-medium text-ink', className);
+  return href ? (
+    <Link
+      to={href}
+      prefetch="intent"
+      className={cn(base, 'transition-colors hover:bg-ink hover:text-white')}
+    >
+      {cat}
+    </Link>
+  ) : (
+    <span className={base}>{cat}</span>
+  );
+}
+
+/** Author avatar + name + date. Name/photo link to the author page when set. */
+function AuthorMeta({
+  post,
+  avatarClass,
+  initialsClass,
+  className,
+}: {
+  post: Post;
+  avatarClass: string;
+  initialsClass: string;
+  className?: string;
+}) {
+  const avatar = post.authorPhoto ? (
+    <img src={post.authorPhoto} alt={post.author} className={avatarClass} />
+  ) : (
+    <span className={initialsClass}>{initials(post.author)}</span>
+  );
+  return (
+    <div className={cn('flex items-center gap-2.5', className)}>
+      {post.authorHref ? (
+        <Link to={post.authorHref} prefetch="intent" aria-hidden tabIndex={-1}>
+          {avatar}
+        </Link>
+      ) : (
+        avatar
+      )}
+      <div className="leading-tight">
+        <p className="type-fine font-medium text-ink">
+          {post.authorHref ? (
+            <Link
+              to={post.authorHref}
+              prefetch="intent"
+              className="transition-colors hover:text-primary"
+            >
+              {post.author}
+            </Link>
+          ) : (
+            post.author
+          )}
+        </p>
+        <p className="type-fine text-ink-subtle">{post.date}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Journal() {
   const {articles} = useLoaderData<typeof loader>();
 
@@ -94,6 +159,8 @@ export default function Journal() {
         author: a.author?.name ?? 'LA Lighting Team',
         authorPhoto:
           a.author?.name === 'Russ Oshkin' ? russAvatar : undefined,
+        authorHref:
+          a.author?.name === 'Russ Oshkin' ? '/team/russ-oshkin' : undefined,
         date: fmtDate(a.publishedAt),
         href: `/blog/${a.handle}`,
         read: `${readTime(a.contentHtml ?? '')} min`,
@@ -152,55 +219,46 @@ export default function Journal() {
         {/* featured */}
         {featured && (
           <Reveal>
-            <Link
-              to={featured.href}
-              prefetch="intent"
-              className="lift group mt-8 grid overflow-hidden rounded-lg border border-hairline bg-canvas md:grid-cols-2"
-            >
-              <div
-                className="img-zoom overflow-hidden md:order-2"
+            <div className="lift group mt-8 grid overflow-hidden rounded-lg border border-hairline bg-canvas md:grid-cols-2">
+              <Link
+                to={featured.href}
+                prefetch="intent"
+                aria-hidden
+                tabIndex={-1}
+                className="img-zoom block overflow-hidden md:order-2"
                 style={{aspectRatio: '16 / 10'}}
               >
                 <PostImage post={featured} eager className="h-full w-full object-cover" />
-              </div>
+              </Link>
               <div className="flex flex-col justify-center p-7 sm:p-10 md:order-1 md:h-0 md:min-h-full md:overflow-hidden">
                 <div className="flex items-center gap-3 type-fine text-ink-subtle">
-                  <span className="rounded-sm bg-parchment px-2.5 py-1 font-medium text-ink">
-                    {featured.cat}
-                  </span>
+                  <CategoryBadge cat={featured.cat} className="px-2.5 py-1" />
                   <span className="inline-flex items-center gap-1">
                     <Clock className="size-3.5" /> {featured.read} read
                   </span>
                 </div>
-                <h2 className="type-display-sm mt-4 line-clamp-2 text-ink transition-colors group-hover:text-primary">
-                  {featured.title}
+                <h2 className="type-display-sm mt-4 line-clamp-2 text-ink">
+                  <Link
+                    to={featured.href}
+                    prefetch="intent"
+                    className="transition-colors hover:text-primary"
+                  >
+                    {featured.title}
+                  </Link>
                 </h2>
                 {featured.excerpt && (
                   <p className="type-body mt-3 line-clamp-3 max-w-md text-ink-muted">
                     {featured.excerpt}
                   </p>
                 )}
-                <div className="mt-6 flex items-center gap-2.5">
-                  {featured.authorPhoto ? (
-                    <img
-                      src={featured.authorPhoto}
-                      alt={featured.author}
-                      className="size-9 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="grid size-9 place-items-center rounded-full bg-parchment type-caption-strong text-ink">
-                      {initials(featured.author)}
-                    </span>
-                  )}
-                  <div className="leading-tight">
-                    <p className="type-fine font-medium text-ink">
-                      {featured.author}
-                    </p>
-                    <p className="type-fine text-ink-subtle">{featured.date}</p>
-                  </div>
-                </div>
+                <AuthorMeta
+                  post={featured}
+                  className="mt-6"
+                  avatarClass="size-9 rounded-full object-cover"
+                  initialsClass="grid size-9 place-items-center rounded-full bg-parchment type-caption-strong text-ink"
+                />
               </div>
-            </Link>
+            </div>
           </Reveal>
         )}
 
@@ -208,53 +266,46 @@ export default function Journal() {
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((p, i) => (
             <Reveal as="article" key={p.title} delay={(i % 3) * 60}>
-              <Link
-                to={p.href}
-                prefetch="intent"
-                className="lift group flex h-full flex-col overflow-hidden rounded-lg border border-hairline bg-canvas"
-              >
-                <div
-                  className="img-zoom overflow-hidden"
+              <div className="lift group flex h-full flex-col overflow-hidden rounded-lg border border-hairline bg-canvas">
+                <Link
+                  to={p.href}
+                  prefetch="intent"
+                  aria-hidden
+                  tabIndex={-1}
+                  className="img-zoom block overflow-hidden"
                   style={{aspectRatio: '11 / 6'}}
                 >
                   <PostImage post={p} className="h-full w-full object-cover" />
-                </div>
+                </Link>
                 <div className="flex flex-1 flex-col p-6">
                   <div className="flex items-center gap-3 type-fine text-ink-subtle">
-                    <span className="rounded-sm bg-parchment px-2 py-0.5 font-medium text-ink">
-                      {p.cat}
-                    </span>
+                    <CategoryBadge cat={p.cat} className="px-2 py-0.5" />
                     <span className="inline-flex items-center gap-1">
                       <Clock className="size-3" /> {p.read}
                     </span>
                   </div>
-                  <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight text-ink transition-colors group-hover:text-primary">
-                    {p.title}
+                  <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight text-ink">
+                    <Link
+                      to={p.href}
+                      prefetch="intent"
+                      className="transition-colors hover:text-primary"
+                    >
+                      {p.title}
+                    </Link>
                   </h3>
                   {p.excerpt && (
                     <p className="type-caption mt-2.5 flex-1 text-ink-muted">
                       {p.excerpt}
                     </p>
                   )}
-                  <div className="mt-5 flex items-center gap-2.5">
-                    {p.authorPhoto ? (
-                      <img
-                        src={p.authorPhoto}
-                        alt={p.author}
-                        className="size-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="grid size-8 place-items-center rounded-full bg-parchment type-fine font-semibold text-ink">
-                        {initials(p.author)}
-                      </span>
-                    )}
-                    <div className="leading-tight">
-                      <p className="type-fine font-medium text-ink">{p.author}</p>
-                      <p className="type-fine text-ink-subtle">{p.date}</p>
-                    </div>
-                  </div>
+                  <AuthorMeta
+                    post={p}
+                    className="mt-5"
+                    avatarClass="size-8 rounded-full object-cover"
+                    initialsClass="grid size-8 place-items-center rounded-full bg-parchment type-fine font-semibold text-ink"
+                  />
                 </div>
-              </Link>
+              </div>
             </Reveal>
           ))}
         </div>
@@ -305,6 +356,7 @@ function PostImage({
     return (
       <Image
         data={post.image}
+        alt={post.title}
         sizes="(min-width: 1024px) 400px, 100vw"
         loading={eager ? 'eager' : 'lazy'}
         className={className}

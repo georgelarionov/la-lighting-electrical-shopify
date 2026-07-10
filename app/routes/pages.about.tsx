@@ -192,7 +192,7 @@ export default function About() {
             <div className="flex flex-col gap-4 type-body text-ink-muted">
               <p>
                 {COMPANY_NAME} is a licensed C-10 electrical contractor based in
-                Marina Del Rey. We started because there was a gap no one wanted
+                Gardena. We started because there was a gap no one wanted
                 to own: the space between buying a fixture online and actually
                 having good light on the wall.
               </p>

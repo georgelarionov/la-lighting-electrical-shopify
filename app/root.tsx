@@ -12,7 +12,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import {seo} from '~/lib/seo';
+import {seo, localBusinessLd} from '~/lib/seo';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import tailwindStyles from '~/styles/tailwind.css?url';
 import resetStyles from '~/styles/reset.css?url';
@@ -174,6 +174,14 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <link rel="stylesheet" href={tailwindStyles}></link>
         <Meta />
         <Links />
+        {/* Site-wide LocalBusiness schema for local SEO (present on every page). */}
+        <script
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessLd()),
+          }}
+        />
       </head>
       <body>
         {children}
