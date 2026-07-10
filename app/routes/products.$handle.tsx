@@ -220,6 +220,14 @@ export default function ProductPage() {
   const isSconce = product.handle === 'led-cylinder-wall-sconce';
   const galleryFit = isSconce ? 'object-cover' : 'object-contain';
   const framePad = isSconce ? '' : 'p-6 sm:p-8';
+  // The magnetic-track rails are shot on a white studio backdrop and run long
+  // and horizontal. A white gallery panel lets them blend seamlessly (no grey
+  // panel showing behind the photo) while object-contain keeps the full length
+  // — including both ends — visible. Other products use the studio-grey panel.
+  const isWhiteBg =
+    product.handle === '6-6-ft-magnetic-track-surface-pendant' ||
+    product.handle === '6-6-ft-magnetic-track-recessed';
+  const galleryBg = isWhiteBg ? '#ffffff' : STUDIO_BG;
   // Configured-per-project products (e.g. the Magfinity magnetic track system)
   // are tagged `quote-only`: the buy box swaps price + add-to-cart for a
   // "Request a free quote" CTA that opens the quote drawer.
@@ -285,7 +293,7 @@ export default function ProductPage() {
       <section className="mx-auto grid max-w-[1280px] grid-cols-1 gap-10 px-5 pb-12 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:gap-14">
         {/* gallery */}
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-          <div className={`img-zoom group relative overflow-hidden rounded-md ${framePad}`} style={{aspectRatio: '3 / 2', background: STUDIO_BG}}>
+          <div className={`img-zoom group relative overflow-hidden rounded-md ${framePad}`} style={{aspectRatio: '3 / 2', background: galleryBg}}>
             {heroImg ? (
               <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className={`h-full w-full ${galleryFit}`} style={{animation: 'fadeIn .5s var(--ease-out)'}} />
             ) : (
@@ -298,7 +306,7 @@ export default function ProductPage() {
           {gallery.length > 1 && (
             <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
               {gallery.map((g, i) => (
-                <button key={g.src} onClick={() => setActive(i)} style={{background: STUDIO_BG}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
+                <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
                   <img src={g.src} alt="" className={`h-full w-full ${isSconce ? 'object-cover' : 'object-contain p-1.5'}`} />
                 </button>
               ))}
