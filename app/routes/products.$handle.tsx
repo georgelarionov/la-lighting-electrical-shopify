@@ -220,6 +220,10 @@ export default function ProductPage() {
   const isSconce = product.handle === 'led-cylinder-wall-sconce';
   const galleryFit = isSconce ? 'object-cover' : 'object-contain';
   const framePad = isSconce ? '' : 'p-6 sm:p-8';
+  // Configured-per-project products (e.g. the Magfinity magnetic track system)
+  // are tagged `quote-only`: the buy box swaps price + add-to-cart for a
+  // "Request a free quote" CTA that opens the quote drawer.
+  const quoteOnly = (product.tags ?? []).includes('quote-only');
 
   const currency = selectedVariant?.price?.currencyCode ?? 'USD';
   const money = (n: number) =>
@@ -317,13 +321,20 @@ export default function ProductPage() {
             <span className="text-[13px] text-muted-foreground">4.9 · <span className="underline-offset-2 hover:underline cursor-pointer">320 reviews</span></span>
           </div>
 
-          <div className="mt-6 flex items-baseline gap-3">
-            <span className="tnum font-heading text-[32px] leading-none">{money(unitAmount)}</span>
-            {selectedVariant?.compareAtPrice ? (
-              <s className="text-[15px] text-muted-foreground">{money(Number(selectedVariant.compareAtPrice.amount))}</s>
-            ) : null}
-            <span className="text-[12.5px] text-muted-foreground">per fixture</span>
-          </div>
+          {quoteOnly ? (
+            <div className="mt-6">
+              <span className="font-heading text-[24px] leading-none">Priced per project</span>
+              <p className="mt-1.5 text-[12.5px] text-muted-foreground">Configured to your space — get a free quote below.</p>
+            </div>
+          ) : (
+            <div className="mt-6 flex items-baseline gap-3">
+              <span className="tnum font-heading text-[32px] leading-none">{money(unitAmount)}</span>
+              {selectedVariant?.compareAtPrice ? (
+                <s className="text-[15px] text-muted-foreground">{money(Number(selectedVariant.compareAtPrice.amount))}</s>
+              ) : null}
+              <span className="text-[12.5px] text-muted-foreground">per fixture</span>
+            </div>
+          )}
 
           {/* real Shopify variant options */}
           <ProductOptions
@@ -343,28 +354,34 @@ export default function ProductPage() {
             </div>
           )}
 
-          {/* qty + add */}
-          <div className="mt-6 flex items-center gap-3">
-            <div className="flex items-center rounded-sm border border-border">
-              <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Minus className="h-4 w-4" /></button>
-              <span className="tnum w-8 text-center text-[15px]">{qty}</span>
-              <button onClick={() => setQty((q) => q + 1)} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Plus className="h-4 w-4" /></button>
+          {/* qty + add — or a quote CTA for configured-per-project products */}
+          {quoteOnly ? (
+            <QuoteButton className="press mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary text-[14px] font-medium text-primary-foreground hover:bg-primary/90">
+              Request a free quote <Arrow className="h-4 w-4" />
+            </QuoteButton>
+          ) : (
+            <div className="mt-6 flex items-center gap-3">
+              <div className="flex items-center rounded-sm border border-border">
+                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Minus className="h-4 w-4" /></button>
+                <span className="tnum w-8 text-center text-[15px]">{qty}</span>
+                <button onClick={() => setQty((q) => q + 1)} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Plus className="h-4 w-4" /></button>
+              </div>
+              <div className="flex-1">
+                <AddToCartButton
+                  lines={lines}
+                  disabled={!canBuy}
+                  onClick={() => open('cart')}
+                  className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
+                >
+                  {canBuy ? <>{addLabel} · {money(total)}</> : 'Sold out'}
+                </AddToCartButton>
+              </div>
             </div>
-            <div className="flex-1">
-              <AddToCartButton
-                lines={lines}
-                disabled={!canBuy}
-                onClick={() => open('cart')}
-                className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
-              >
-                {canBuy ? <>{addLabel} · {money(total)}</> : 'Sold out'}
-              </AddToCartButton>
-            </div>
-          </div>
+          )}
           <a href="#design" className="press mt-3 flex h-11 items-center justify-center gap-2 rounded-sm border border-onyx/25 text-[13.5px] hover:border-foreground">
             Book a free lighting plan <Arrow className="h-4 w-4" />
           </a>
-          <p className="mt-3 text-center text-[11.5px] text-muted-foreground">Ships in 3–5 days · Licensed installation in LA County · or from $9/mo</p>
+          <p className="mt-3 text-center text-[11.5px] text-muted-foreground">{quoteOnly ? 'Free design consultation · Licensed installation in LA County' : 'Ships in 3–5 days · Licensed installation in LA County · or from $9/mo'}</p>
         </div>
       </section>
       <div ref={sentinelRef} aria-hidden className="h-px w-full" />
@@ -608,15 +625,23 @@ export default function ProductPage() {
             <p className="truncate text-[13.5px] font-medium">{product.title}</p>
             <p className="truncate text-[11.5px] text-muted-foreground">{configSummary}</p>
           </div>
-          <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
-          <AddToCartButton
-            lines={lines}
-            disabled={!canBuy}
-            onClick={() => open('cart')}
-            className="press h-10 w-auto gap-2 rounded-sm px-5 text-[13.5px]"
-          >
-            {canBuy ? 'Add to project' : 'Sold out'}
-          </AddToCartButton>
+          {quoteOnly ? (
+            <QuoteButton className="press inline-flex h-10 w-auto items-center gap-2 rounded-sm bg-primary px-5 text-[13.5px] font-medium text-primary-foreground hover:bg-primary/90">
+              Request a free quote
+            </QuoteButton>
+          ) : (
+            <>
+              <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
+              <AddToCartButton
+                lines={lines}
+                disabled={!canBuy}
+                onClick={() => open('cart')}
+                className="press h-10 w-auto gap-2 rounded-sm px-5 text-[13.5px]"
+              >
+                {canBuy ? 'Add to project' : 'Sold out'}
+              </AddToCartButton>
+            </>
+          )}
         </div>
       </div>
 
@@ -799,6 +824,7 @@ const PRODUCT_FRAGMENT = `#graphql
     title
     vendor
     handle
+    tags
     descriptionHtml
     description
     encodedVariantExistence
