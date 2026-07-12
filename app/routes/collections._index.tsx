@@ -283,10 +283,11 @@ function ProductCard({p}: {p: CatalogProduct}) {
       <Link to={`/products/${p.handle}`} prefetch="intent" className="lift group block">
         <div className="img-zoom relative overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
           {p.img ? (
-            // Long magnetic-track rails are shot on white and would lose their
-            // ends to a square cover-crop — contain-fit those so the whole
-            // fixture shows; other products keep the filled cover look.
-            <img src={p.img} alt={p.alt} loading="lazy" decoding="async" className={`h-full w-full ${p.handle.startsWith('6-6-ft-magnetic-track') ? 'object-contain' : 'object-cover'}`} />
+            // Every card fills its 1:1 media box with object-cover (no white
+            // bands). The long magnetic-track rails are anchored to the left
+            // (object-left) so the crop keeps the fixture's left end in frame
+            // instead of cropping it away from the center.
+            <img src={p.img} alt={p.alt} loading="lazy" decoding="async" className={`h-full w-full object-cover ${p.handle.startsWith('6-6-ft-magnetic-track') ? 'object-left' : ''}`} />
           ) : (
             <PlaceholderImage aspect="" className="h-full w-full" />
           )}
