@@ -278,16 +278,32 @@ export default function Catalog() {
 
 /* ----------------------------- pieces ----------------------------- */
 function ProductCard({p}: {p: CatalogProduct}) {
+  // The magnetic-track fixtures are shot 16:9 on a near-white seamless with the
+  // rail on the diagonal, so lots of white is baked into the pixels. object-fit
+  // can't remove that (covering a square from 16:9 only overflows horizontally,
+  // leaving the full image height — all the white — visible), so these cards
+  // get an actual scale-up zoom into the left end of the rail. Knobs below:
+  //   scale-[…]      = how hard to zoom (bigger = less white, tighter crop)
+  //   [12%_50%]      = focal point (x% from left, y% from top) held while zooming
+  // img-zoom is dropped on these cards because its hover transform:scale(1.04)
+  // would override the zoom; other cards keep the hover zoom.
+  const isTrack = p.handle.startsWith('6-6-ft-magnetic-track');
   return (
     <Reveal>
       <Link to={`/products/${p.handle}`} prefetch="intent" className="lift group block">
-        <div className="img-zoom relative overflow-hidden rounded-lg bg-parchment" style={{aspectRatio: '1 / 1'}}>
+        <div className={`relative overflow-hidden rounded-lg bg-parchment ${isTrack ? '' : 'img-zoom'}`} style={{aspectRatio: '1 / 1'}}>
           {p.img ? (
-            // Every card fills its 1:1 media box with object-cover (no white
-            // bands). The long magnetic-track rails are anchored to the left
-            // (object-left) so the crop keeps the fixture's left end in frame
-            // instead of cropping it away from the center.
-            <img src={p.img} alt={p.alt} loading="lazy" decoding="async" className={`h-full w-full object-cover ${p.handle.startsWith('6-6-ft-magnetic-track') ? 'object-left' : ''}`} />
+            <img
+              src={p.img}
+              alt={p.alt}
+              loading="lazy"
+              decoding="async"
+              className={
+                isTrack
+                  ? 'h-full w-full origin-[12%_50%] scale-[1.7] object-cover object-[12%_50%]'
+                  : 'h-full w-full object-cover'
+              }
+            />
           ) : (
             <PlaceholderImage aspect="" className="h-full w-full" />
           )}
