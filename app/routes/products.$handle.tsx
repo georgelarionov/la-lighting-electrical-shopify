@@ -218,8 +218,13 @@ export default function ProductPage() {
   // reads as one clean frame. Other products keep object-contain (e.g. the
   // track light's transparent renders, which must float, never crop).
   const isSconce = product.handle === 'led-cylinder-wall-sconce';
-  const galleryFit = isSconce ? 'object-cover' : 'object-contain';
-  const framePad = isSconce ? '' : 'p-6 sm:p-8';
+  // ALS studio photos carry their own backdrop with wide margins, so contain-
+  // fitting them on the padded grey panel left a small picture-in-picture.
+  // Fill (cover) edge-to-edge like the sconce so each shot sits to the window.
+  const fillGallery =
+    isSconce || product.handle.startsWith('als-architectural-linear-system');
+  const galleryFit = fillGallery ? 'object-cover' : 'object-contain';
+  const framePad = fillGallery ? '' : 'p-6 sm:p-8';
   // The magnetic-track rails are shot on a white studio backdrop and run long
   // and horizontal. A white gallery panel lets them blend seamlessly (no grey
   // panel showing behind the photo) while object-contain keeps the full length
@@ -307,7 +312,7 @@ export default function ProductPage() {
             <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
               {gallery.map((g, i) => (
                 <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
-                  <img src={g.src} alt="" className={`h-full w-full ${isSconce ? 'object-cover' : 'object-contain p-1.5'}`} />
+                  <img src={g.src} alt="" className={`h-full w-full ${fillGallery ? 'object-cover' : 'object-contain p-1.5'}`} />
                 </button>
               ))}
             </div>
