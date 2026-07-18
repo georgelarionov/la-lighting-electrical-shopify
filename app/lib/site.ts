@@ -16,8 +16,9 @@ export const CONTACT = {
   addressLine1: '153 W Rosecrans Ave, Unit G7B',
   addressLine2: 'Gardena, CA 90248',
   addressFull: '153 W Rosecrans Ave, Unit G7B, Gardena, CA 90248',
-  mapHref:
-    'https://maps.google.com/?q=153+W+Rosecrans+Ave,+Unit+G7B,+Gardena,+CA+90248',
+  // Links to the Google Business Profile listing by CID (0x237ddaa7659a2c7c),
+  // so "Get directions" opens our named place card — not a bare address pin.
+  mapHref: 'https://maps.google.com/?cid=2557440575915306108',
   emailSupport: 'info@losangeleslightingelectrical.com',
   emailSales: 'sales@losangeleslightingelectrical.com',
   tagline: 'Ambient Lighting Design for Small Spaces',
