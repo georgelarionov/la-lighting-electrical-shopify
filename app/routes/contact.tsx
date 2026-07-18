@@ -11,7 +11,6 @@ import {
   ChevronDown,
   CheckCircle2,
 } from 'lucide-react';
-import showroom from '~/assets/contact-showroom.jpg?url';
 import {Reveal} from '~/components/Reveal';
 import {Button} from '~/components/ui/button';
 import {SmsConsent} from '~/components/SmsConsent';
@@ -221,21 +220,27 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* map / showroom */}
-      <section id="map" className="relative isolate overflow-hidden scroll-mt-20">
-        <img
-          src={showroom}
-          alt="Our Gardena showroom"
-          className="h-[52vh] min-h-[380px] w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-onyx/60 to-transparent sm:bg-gradient-to-r sm:from-onyx/70 sm:to-transparent" />
-        <div className="absolute inset-0 flex items-end sm:items-center">
-          <div className="container-page w-full pb-8 sm:pb-0">
-            <div className="max-w-sm rounded-lg bg-canvas p-7 shadow-product">
+      {/* map / showroom — live Google Maps place embed (keyless) */}
+      <section id="map" className="scroll-mt-20 border-t border-hairline">
+        <div className="container-page section-y">
+          <div className="grid items-stretch gap-8 lg:grid-cols-[1.6fr_1fr] lg:gap-12">
+            <div className="min-h-[360px] overflow-hidden rounded-lg border border-hairline">
+              <iframe
+                title="Map to our Gardena showroom"
+                // Official Google Maps "Embed a map" code for our Google
+                // Business Profile place (feature id 0x80c2cb3eab554d11:…) —
+                // pins the exact listing, keyless. Regenerate via Maps →
+                // Share → Embed a map if the listing location changes.
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3220.935943529053!2d-118.27609222358689!3d33.902820022821885!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2cb3eab554d11%3A0x237ddaa7659a2c7c!2sLos%20Angeles%20Lighting%20%26%20Electrical!5e0!3m2!1sen!2sus!4v1784401567292!5m2!1sen!2sus"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="h-full min-h-[360px] w-full"
+                style={{border: 0}}
+              />
+            </div>
+            <div className="flex flex-col justify-center rounded-lg bg-parchment p-7">
               <p className="type-eyebrow text-ink-subtle">Visit us</p>
-              <h2 className="type-display-sm mt-2 text-ink">
-                Gardena showroom
-              </h2>
+              <h2 className="type-display-sm mt-2 text-ink">Gardena showroom</h2>
               <div className="mt-4 flex flex-col gap-2 type-caption text-ink-muted">
                 <span className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 size-4 shrink-0" />{' '}
@@ -249,7 +254,7 @@ export default function Contact() {
                 href={CONTACT.mapHref}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-5 inline-flex h-11 items-center gap-2 rounded-sm bg-primary px-5 type-caption-strong text-primary-foreground transition-colors hover:bg-primary/90"
+                className="mt-5 inline-flex h-11 w-fit items-center gap-2 rounded-sm bg-primary px-5 type-caption-strong text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Get directions <ArrowRight className="size-4" />
               </a>

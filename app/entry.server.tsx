@@ -27,6 +27,8 @@ export default async function handleRequest(
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://www.youtube-nocookie.com',
+      // Google Maps place embed on the contact page (keyless ?output=embed).
+      'https://www.google.com',
     ],
     // Dev-only: let the Agentation toolbar POST annotations to its local MCP
     // sync server. These values are merged into (not replacing) Hydrogen's

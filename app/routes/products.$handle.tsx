@@ -177,11 +177,6 @@ const ICONS: Record<string, typeof Bolt> = {
 };
 // Reviews and the three purchase tiers are identical on every product (the
 // globally-shared blocks), so they stay in code — not per-product metafields.
-const REVIEWS = [
-  {n: 'Marina D.', r: 'Retail rollout · 1,200 ft', t: 'The continuous runs are flawless — not a single visible joint. Their team drew the whole layout before we ordered a thing.'},
-  {n: 'Anthony R.', r: 'Office TI · Culver City', t: 'Spec, supply and licensed install from one place. Passed Title 24 inspection first time.'},
-  {n: 'Priya S.', r: 'Restaurant · West Hollywood', t: '3000K up-and-down completely changed the room. Warm, even, zero glare on the tables.'},
-];
 const TIERS = [
   {id: 'fixture', t: 'Fixture only', s: 'You install it.', d: 'The configured fixture, shipped to your door with a clear install guide.', cta: 'Add to cart', tag: ''},
   {id: 'design', t: 'Fixture + Lighting design', s: 'Free photometric plan.', d: 'We return a layout, fixture count and spacing for your exact space — at no charge.', cta: 'Add design plan', tag: ''},
@@ -328,11 +323,6 @@ export default function ProductPage() {
               {content.subtitle}
             </p>
           )}
-
-          <div className="mt-4 flex items-center gap-3">
-            <div className="flex items-center gap-0.5 text-foreground">{[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-4 w-4" />)}</div>
-            <span className="text-[13px] text-muted-foreground">4.9 · <span className="underline-offset-2 hover:underline cursor-pointer">320 reviews</span></span>
-          </div>
 
           {quoteOnly ? (
             <div className="mt-6">
@@ -537,33 +527,8 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* reviews */}
-      <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
-        <Reveal className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="type-eyebrow">Reviews</p>
-            <h2 className="mt-3 font-heading text-[30px]">Specified by people who light rooms for a living</h2>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-0.5 text-foreground">{[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-5 w-5" />)}</div>
-            <span className="text-[14px] text-muted-foreground"><span className="font-medium text-foreground">4.9</span> · 320 reviews</span>
-          </div>
-        </Reveal>
-        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {REVIEWS.map((r, i) => (
-            <Reveal key={r.n} delay={i * 70}>
-              <figure className="flex h-full flex-col rounded-lg border border-border bg-parchment p-6">
-                <div className="flex items-center gap-0.5 text-foreground">{[0, 1, 2, 3, 4].map((j) => <Star key={j} className="h-3.5 w-3.5" />)}</div>
-                <blockquote className="mt-3 flex-1 text-[14px] leading-relaxed text-foreground/90">“{r.t}”</blockquote>
-                <figcaption className="mt-4 border-t border-border pt-4">
-                  <span className="block text-[13px] font-medium">{r.n}</span>
-                  <span className="mt-0.5 flex items-center gap-1.5 text-[11.5px] text-muted-foreground"><Check className="h-3 w-3 text-foreground" />Verified install · {r.r}</span>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      {/* reviews — removed until real Google Business Profile reviews exist
+          (no fabricated testimonials). Re-add from GBP/Places API in step E. */}
 
       {/* FAQ */}
       {content.faqs.length > 0 && (

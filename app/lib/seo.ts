@@ -26,7 +26,10 @@ export const ORG_LOGO = `${SITE_URL}/web-app-manifest-512x512.png`;
 export function localBusinessLd() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Electrician',
+    // Retail is the larger share of the business (~70%), install the rest, so
+    // lead with LightingStore and keep Electrician for the C-10 service side.
+    // schema.org allows an array of types on one entity — one NAP, one @id.
+    '@type': ['LightingStore', 'Electrician'],
     '@id': ORG_ID,
     name: COMPANY_NAME,
     url: SITE_URL,
@@ -42,6 +45,13 @@ export function localBusinessLd() {
       addressRegion: 'CA',
       postalCode: '90248',
       addressCountry: 'US',
+    },
+    // Exact pin from the Google Business Profile listing (taken from the Maps
+    // embed code — the same coordinates Google uses for the place).
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 33.90282,
+      longitude: -118.276092,
     },
     areaServed: [
       {'@type': 'City', name: 'Los Angeles'},

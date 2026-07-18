@@ -64,7 +64,6 @@ export const LEGAL_NAV: ReadonlyArray<{label: string; to: string}> = [
 export const TRUST_ITEMS: ReadonlyArray<string> = [
   'C-10 Licensed',
   'Fully Insured',
-  '4.9 ★ · 320 reviews',
   '1,000+ installations',
   'Same-week quotes',
 ];
