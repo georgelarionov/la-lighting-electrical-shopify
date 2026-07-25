@@ -207,26 +207,23 @@ export default function ProductPage() {
   const [active, setActive] = useState(0);
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
-  // The sconce's studio photos already carry their own grey backdrop, so
-  // contain-fitting them on the studio panel showed a picture-within-a-picture.
-  // Fill (cover) edge-to-edge with no padding for this product so each shot
-  // reads as one clean frame. Other products keep object-contain (e.g. the
-  // track light's transparent renders, which must float, never crop).
-  const isSconce = product.handle === 'led-cylinder-wall-sconce';
-  // ALS studio photos carry their own backdrop with wide margins, so contain-
-  // fitting them on the padded grey panel left a small picture-in-picture.
-  // Fill (cover) edge-to-edge like the sconce so each shot sits to the window.
-  const fillGallery =
-    isSconce || product.handle.startsWith('als-architectural-linear-system');
-  const galleryFit = fillGallery ? 'object-cover' : 'object-contain';
-  const framePad = fillGallery ? '' : 'p-6 sm:p-8';
-  // The magnetic-track rails are shot on a white studio backdrop and run long
-  // and horizontal. A white gallery panel lets them blend seamlessly (no grey
-  // panel showing behind the photo) while object-contain keeps the full length
-  // — including both ends — visible. Other products use the studio-grey panel.
-  const isWhiteBg =
-    product.handle === '6-6-ft-magnetic-track-surface-pendant' ||
-    product.handle === '6-6-ft-magnetic-track-recessed';
+  // Gallery fit, site-wide rule (no per-product allow-list). Product photos
+  // are room/lifestyle scenes with their own baked backdrop, so they fill the
+  // frame edge-to-edge (object-cover, no padding) — contain-on-a-padded-panel
+  // reads as a picture-in-picture. The ONLY exceptions are renders where the
+  // fixture's full extent must stay visible and cropping would clip it:
+  //   • magnetic track — long horizontal rails/connectors shot on white;
+  //     cover would crop the ends. Contain on a white panel blends seamlessly.
+  //   • track light — a transparent floating render that must never crop.
+  // New products are scenes by default → cover → no code change needed.
+  const noCrop =
+    product.handle.includes('magnetic-track') ||
+    product.handle === 'led-track-light';
+  const galleryFit = noCrop ? 'object-contain' : 'object-cover';
+  const framePad = noCrop ? 'p-6 sm:p-8' : '';
+  // Magnetic-track photos are on a white studio backdrop, so a white panel
+  // lets them blend; the track light keeps the studio-grey panel.
+  const isWhiteBg = product.handle.includes('magnetic-track');
   const galleryBg = isWhiteBg ? '#ffffff' : STUDIO_BG;
   // Configured-per-project products (e.g. the Magfinity magnetic track system)
   // are tagged `quote-only`: the buy box swaps price + add-to-cart for a
@@ -307,7 +304,7 @@ export default function ProductPage() {
             <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
               {gallery.map((g, i) => (
                 <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
-                  <img src={g.src} alt="" className={`h-full w-full ${fillGallery ? 'object-cover' : 'object-contain p-1.5'}`} />
+                  <img src={g.src} alt="" className={`h-full w-full ${noCrop ? 'object-contain p-1.5' : 'object-cover'}`} />
                 </button>
               ))}
             </div>
