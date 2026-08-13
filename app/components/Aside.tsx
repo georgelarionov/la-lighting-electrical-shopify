@@ -6,6 +6,7 @@ import {
   useId,
   useState,
 } from 'react';
+import {useLocation} from 'react-router';
 import {X} from 'lucide-react';
 import {cn} from '~/lib/utils';
 
@@ -97,6 +98,13 @@ const AsideContext = createContext<AsideContextValue | null>(null);
 
 Aside.Provider = function AsideProvider({children}: {children: ReactNode}) {
   const [type, setType] = useState<AsideType>('closed');
+  const {pathname} = useLocation();
+
+  // Any navigation dismisses the panel. Without this the cart drawer's own
+  // "View cart" link would leave the drawer sitting on top of the cart page.
+  useEffect(() => {
+    setType('closed');
+  }, [pathname]);
 
   return (
     <AsideContext.Provider

@@ -37,19 +37,27 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           )}
         </dd>
       </dl>
-      <div className="flex flex-col gap-5 py-5">
-        <CartDiscounts
-          discountCodes={cart?.discountCodes}
-          discountsHeadingId={discountsHeadingId}
-          discountCodeInputId={discountCodeInputId}
-        />
-        <CartGiftCard
-          giftCardCodes={cart?.appliedGiftCards}
-          giftCardHeadingId={giftCardHeadingId}
-          giftCardInputId={giftCardInputId}
-        />
+      {/* Code entry is page-only. The drawer exists to confirm an add and send
+          you back to browsing or on to checkout; two empty inputs there just
+          push the buttons down. Any applied code is still reflected in the
+          subtotal above, and listed in full on the cart page. */}
+      {layout === 'page' ? (
+        <div className="flex flex-col gap-5 py-5">
+          <CartDiscounts
+            discountCodes={cart?.discountCodes}
+            discountsHeadingId={discountsHeadingId}
+            discountCodeInputId={discountCodeInputId}
+          />
+          <CartGiftCard
+            giftCardCodes={cart?.appliedGiftCards}
+            giftCardHeadingId={giftCardHeadingId}
+            giftCardInputId={giftCardInputId}
+          />
+        </div>
+      ) : null}
+      <div className={layout === 'page' ? undefined : 'mt-5'}>
+        <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
       </div>
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
     </div>
   );
 }

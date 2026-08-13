@@ -369,7 +369,7 @@ export default function ProductPage() {
               </div>
               <div className="flex-1">
                 <AddToCartButton
-                  redirectTo="/cart"
+                  onClick={() => open('cart')}
                   lines={lines}
                   disabled={!canBuy}
                   className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
@@ -609,7 +609,7 @@ export default function ProductPage() {
             <>
               <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
               <AddToCartButton
-                redirectTo="/cart"
+                onClick={() => open('cart')}
                 lines={lines}
                 disabled={!canBuy}
                 className="press h-10 w-auto gap-2 rounded-sm px-5 text-[13.5px]"

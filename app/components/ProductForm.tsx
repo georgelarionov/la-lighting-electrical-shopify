@@ -100,7 +100,7 @@ export function ProductForm({
         );
       })}
       <AddToCartButton
-        redirectTo="/cart"
+        onClick={() => open('cart')}
         disabled={!selectedVariant || !selectedVariant.availableForSale}
         lines={
           selectedVariant

@@ -9,7 +9,6 @@ export function AddToCartButton({
   lines,
   onClick,
   className,
-  redirectTo,
 }: {
   analytics?: unknown;
   children: React.ReactNode;
@@ -17,13 +16,6 @@ export function AddToCartButton({
   lines: Array<OptimisticCartLineInput>;
   onClick?: () => void;
   className?: string;
-  /**
-   * Where the /cart action should send the browser afterwards. Set it on
-   * product pages so adding lands on the cart; leave it off ON the cart page —
-   * redirecting to the URL you are already on skips revalidation, so the new
-   * line silently never appears.
-   */
-  redirectTo?: string;
 }) {
   return (
     <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
@@ -36,9 +28,6 @@ export function AddToCartButton({
               type="hidden"
               value={JSON.stringify(analytics)}
             />
-            {redirectTo ? (
-              <input name="redirectTo" type="hidden" value={redirectTo} />
-            ) : null}
             <button
               type="submit"
               onClick={onClick}

@@ -1,8 +1,10 @@
-import {Link} from 'react-router';
-import {useId} from 'react';
+import {Await, Link} from 'react-router';
+import {Suspense, useId} from 'react';
+import {useOptimisticCart} from '@shopify/hydrogen';
 import type {CartApiQueryFragment, NavQuery} from 'storefrontapi.generated';
-import {Aside} from '~/components/Aside';
+import {Aside, useAside} from '~/components/Aside';
 import {QuoteAside} from '~/components/QuoteAside';
+import {CartMain} from '~/components/CartMain';
 import {Footer} from '~/components/Footer';
 import {Header} from '~/components/Header';
 import {
@@ -28,6 +30,7 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
+      <CartAside cart={cart} />
       <SearchAside />
       <QuoteAside />
       <Header
@@ -39,6 +42,62 @@ export function PageLayout({
       <main className="min-h-[60vh]">{children}</main>
       <Footer nav={nav} />
     </Aside.Provider>
+  );
+}
+
+/**
+ * The step between "add to cart" and the cart page.
+ *
+ * Adding from a product page used to redirect straight to /cart, which threw
+ * away where you were mid-browse. This confirms the add in place instead: the
+ * line appears immediately (the optimistic cart renders it before the server
+ * answers), and you either carry on, open the full cart, or check out. The
+ * header cart icon still goes to /cart — this drawer is the confirmation, not
+ * the cart itself.
+ */
+function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
+  return (
+    <Aside type="cart" heading="Added to cart">
+      <Suspense
+        fallback={<p className="type-body text-ink-subtle">Loading cart…</p>}
+      >
+        <Await resolve={cart}>
+          {(cart) => <CartDrawerBody cart={cart} />}
+        </Await>
+      </Suspense>
+    </Aside>
+  );
+}
+
+function CartDrawerBody({cart}: {cart: CartApiQueryFragment | null}) {
+  const {close} = useAside();
+  // The resolved promise still holds the pre-add cart until the root loader
+  // revalidates, so the count has to come from the optimistic cart — otherwise
+  // the drawer opens on the very first add with its buttons missing.
+  const optimistic = useOptimisticCart(cart);
+  if (!optimistic?.totalQuantity) {
+    return <CartMain cart={cart} layout="aside" />;
+  }
+  return (
+    <>
+      <CartMain cart={cart} layout="aside" />
+      <div className="mt-6 flex flex-col gap-3 border-t border-hairline pt-6">
+        <Link
+          to="/cart"
+          prefetch="intent"
+          className="press inline-flex h-11 items-center justify-center rounded-[2px] border border-hairline px-6 type-caption font-medium text-ink transition-colors hover:border-ink"
+        >
+          View cart
+        </Link>
+        <button
+          type="button"
+          onClick={close}
+          className="type-caption text-ink-subtle transition-colors hover:text-ink"
+        >
+          Continue shopping
+        </button>
+      </div>
+    </>
   );
 }
 
