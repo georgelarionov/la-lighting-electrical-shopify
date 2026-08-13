@@ -195,7 +195,16 @@ export default function ProductPage() {
 
   const [qty, setQty] = useState(1);
   const [fulfilment, setFulfilment] = useState<'buy' | 'install'>('buy');
-  const [active, setActive] = useState(0);
+  // Seeded from the selected variant's image so the first paint already shows
+  // the right finish. Setting it from an effect instead updated state inside a
+  // Suspense boundary mid-hydration, which React logs and recovers from by
+  // discarding the server render.
+  const [active, setActive] = useState(() => {
+    const id = selectedVariant?.image?.id;
+    const nodes = product.images?.nodes ?? [];
+    const i = id ? nodes.findIndex((n) => n.id === id) : -1;
+    return i >= 0 ? i : 0;
+  });
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
   // Gallery fit, site-wide rule (no per-product allow-list). Product photos
@@ -230,15 +239,40 @@ export default function ProductPage() {
     }).format(n);
   const unitAmount = Number(selectedVariant?.price?.amount ?? 0);
   const total = unitAmount * qty;
+  const compareAt = Number(selectedVariant?.compareAtPrice?.amount ?? 0);
+  const savePct = compareAt > unitAmount
+    ? Math.round(((compareAt - unitAmount) / compareAt) * 100)
+    : 0;
 
   // Real Shopify product media only — no mock fallback (an un-authored product
   // shows a neutral placeholder, never another product's photos).
   const gallery = (product.images?.nodes ?? []).map((n) => ({
+    id: n.id,
     src: n.url,
     alt: n.altText || product.title,
   }));
   const safeActive = gallery.length ? Math.min(active, gallery.length - 1) : 0;
   const heroImg = gallery[safeActive];
+  const atStart = safeActive === 0;
+  const atEnd = safeActive >= gallery.length - 1;
+  const step = (d: 1 | -1) =>
+    setActive((i) => Math.min(Math.max(i + d, 0), gallery.length - 1));
+
+  // Keeps the gallery on the chosen finish when the visitor switches it. The
+  // initial value is already seeded above, so this is a no-op on mount and
+  // React bails out rather than re-rendering.
+  //
+  // Shopify's own mechanism for "show me this colour" is the image assigned to
+  // the variant, so the gallery follows that rather than guessing colour from
+  // filenames — a product whose variants have no image simply stays put.
+  const variantImageId = selectedVariant?.image?.id;
+  useEffect(() => {
+    if (!variantImageId) return;
+    const i = gallery.findIndex((g) => g.id === variantImageId);
+    if (i >= 0) setActive(i);
+    // gallery is derived from product.images and stable for the route.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variantImageId]);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(false);
@@ -304,11 +338,22 @@ export default function ProductPage() {
             <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-sm bg-background/90 px-2.5 py-1 text-[11px] font-medium tracking-wide text-foreground backdrop-blur">
               <Shield className="h-3.5 w-3.5" /> C-10 licensed install available
             </div>
+            {gallery.length > 1 && (
+              <>
+                {/* Each arrow renders only when it has somewhere to go, so a
+                    disabled-looking control never sits over the photo. */}
+                {!atStart && (
+                  <GalleryArrow side="left" onClick={() => step(-1)} />
+                )}
+                {!atEnd && <GalleryArrow side="right" onClick={() => step(1)} />}
+              </>
+            )}
           </div>
           {gallery.length > 1 && (
             <div className="no-scrollbar mt-3 flex min-w-0 gap-3 overflow-x-auto">
               {gallery.map((g, i) => (
-                <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ${safeActive === i ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background' : 'opacity-70 hover:opacity-100'}`}>
+                <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} aria-current={safeActive === i}
+                  className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ring-inset transition ${safeActive === i ? 'ring-2 ring-foreground' : 'opacity-60 ring-1 ring-border hover:opacity-100'}`}>
                   <img src={g.src} alt="" className={`h-full w-full ${noCrop ? 'object-contain p-1.5' : 'object-cover'}`} />
                 </button>
               ))}
@@ -332,10 +377,15 @@ export default function ProductPage() {
               <p className="mt-1.5 text-[12.5px] text-muted-foreground">Configured to your space — get a free quote below.</p>
             </div>
           ) : (
-            <div className="mt-6 flex items-baseline gap-3">
+            <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-2">
               <span className="tnum font-heading text-[32px] leading-none">{money(unitAmount)}</span>
-              {selectedVariant?.compareAtPrice ? (
-                <s className="text-[15px] text-muted-foreground">{money(Number(selectedVariant.compareAtPrice.amount))}</s>
+              {compareAt > unitAmount ? (
+                <>
+                  <s className="text-[15px] text-muted-foreground">{money(compareAt)}</s>
+                  <span className="rounded-sm bg-foreground px-2 py-1 text-[11.5px] font-medium text-background">
+                    Save {money(compareAt - unitAmount)} ({savePct}%)
+                  </span>
+                </>
               ) : null}
               <span className="text-[12.5px] text-muted-foreground">per fixture</span>
             </div>
@@ -351,13 +401,6 @@ export default function ProductPage() {
               })
             }
           />
-
-          {/* spec readout */}
-          {content.highlights.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 rounded-md border border-border bg-parchment px-4 py-3 text-[12px] text-muted-foreground">
-              {content.highlights.slice(0, 4).map((s) => <span key={s} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-foreground" />{s}</span>)}
-            </div>
-          )}
 
           {/* qty + add — or a quote CTA for configured-per-project products */}
           {quoteOnly ? (
@@ -423,6 +466,16 @@ export default function ProductPage() {
               </div>
             </>
           )}
+          {content.highlights.length > 0 && (
+            <ul className="mt-5 grid list-none gap-2 rounded-md border border-border bg-parchment px-4 py-3.5 text-[12.5px] leading-snug text-muted-foreground">
+              {content.highlights.slice(0, 4).map((h) => (
+                <li key={h} className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground" />
+                  {h}
+                </li>
+              ))}
+            </ul>
+          )}
           <a href="#design" className="press mt-3 flex h-11 items-center justify-center gap-2 rounded-sm border border-onyx/25 text-[13.5px] hover:border-foreground">
             Book a free lighting plan <Arrow className="h-4 w-4" />
           </a>
@@ -437,11 +490,11 @@ export default function ProductPage() {
       </section>
       <div ref={sentinelRef} aria-hidden className="h-px w-full" />
 
-      {/* trust strip */}
-      {content.highlights.length > 0 && (
+      {/* Overflow of the buy-box list, not a repeat of it. */}
+      {content.highlights.length > 4 && (
         <div className="border-y border-border bg-parchment">
           <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5 py-4 text-[12px] tracking-wide text-muted-foreground sm:px-8">
-            {content.highlights.map((t, i) => <span key={t} className="flex items-center gap-2">{i > 0 && <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />}{t}</span>)}
+            {content.highlights.slice(4).map((t, i) => <span key={t} className="flex items-center gap-2">{i > 0 && <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />}{t}</span>)}
           </div>
         </div>
       )}
@@ -678,6 +731,29 @@ export default function ProductPage() {
 }
 
 /* ----------------------------- primitives ----------------------------- */
+function GalleryArrow({
+  side,
+  onClick,
+}: {
+  side: 'left' | 'right';
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={side === 'left' ? 'Previous image' : 'Next image'}
+      className={`press absolute top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-background/85 text-foreground shadow-sm backdrop-blur transition hover:bg-background ${
+        side === 'left' ? 'left-3' : 'right-3'
+      }`}
+    >
+      <Chevron
+        className={`h-5 w-5 ${side === 'left' ? 'rotate-90' : '-rotate-90'}`}
+      />
+    </button>
+  );
+}
+
 /** One half of the fulfilment choice. Radio semantics, not two loose buttons. */
 function FulfilmentOption({
   selected,
@@ -875,7 +951,7 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     encodedVariantExistence
     encodedVariantAvailability
-    images(first: 8) {
+    images(first: 20) {
       nodes { id url altText width height }
     }
     options {

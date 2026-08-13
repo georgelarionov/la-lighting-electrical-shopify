@@ -120,7 +120,10 @@ Aside.Provider = function AsideProvider({children}: {children: ReactNode}) {
   // Any navigation dismisses the panel. Without this the cart drawer's own
   // "View cart" link would leave the drawer sitting on top of the cart page.
   useEffect(() => {
-    setType('closed');
+    // Functional form so an already-closed panel is a genuine bail-out. A plain
+    // setType('closed') still schedules a render, and on mount that lands
+    // inside the layout's Suspense boundary before hydration finishes.
+    setType((t) => (t === 'closed' ? t : 'closed'));
   }, [pathname]);
 
   return (
