@@ -116,6 +116,13 @@ export const CART_QUERY_FRAGMENT = `#graphql
   fragment CartApiQuery on Cart {
     updatedAt
     id
+    # Carries the buyer's name. buyerIdentity has no name field, and its
+    # deliveryAddressPreferences was deprecated in 2025-01, so the name rides on
+    # the cart as an attribute and reaches the merchant on the order.
+    attributes {
+      key
+      value
+    }
     appliedGiftCards {
       id
       lastCharacters

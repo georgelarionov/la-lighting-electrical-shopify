@@ -115,6 +115,7 @@ export type CartApiQueryFragment = Pick<
   StorefrontAPI.Cart,
   'updatedAt' | 'id' | 'checkoutUrl' | 'totalQuantity' | 'note'
 > & {
+  attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
   appliedGiftCards: Array<
     Pick<StorefrontAPI.AppliedGiftCard, 'id' | 'lastCharacters'> & {
       amountUsed: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
@@ -261,7 +262,6 @@ export type CartApiQueryFragment = Pick<
       Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
     >;
   };
-  attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
   discountCodes: Array<
     Pick<StorefrontAPI.CartDiscountCode, 'code' | 'applicable'>
   >;

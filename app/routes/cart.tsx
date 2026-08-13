@@ -73,6 +73,15 @@ export async function action({request, context}: Route.ActionArgs) {
       break;
     }
     case CartForm.ACTIONS.BuyerIdentityUpdate: {
+      // The name has no home on buyerIdentity, so it travels as a cart
+      // attribute in the same request — one submit, one round trip, and the
+      // returned cart already carries both.
+      const customerName = formData.get('customerName');
+      if (typeof customerName === 'string') {
+        await cart.updateAttributes([
+          {key: 'Name', value: customerName.trim()},
+        ]);
+      }
       result = await cart.updateBuyerIdentity({
         ...inputs.buyerIdentity,
       });

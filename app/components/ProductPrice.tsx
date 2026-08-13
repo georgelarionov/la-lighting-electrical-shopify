@@ -11,13 +11,15 @@ export function ProductPrice({
   return (
     <div
       aria-label="Price"
-      className="type-tagline flex items-baseline gap-2.5 text-ink"
+      // Only ever rendered on a cart line. At the 21px display size it
+      // out-shouted the product title it belongs to.
+      className="type-body-strong flex items-baseline gap-2.5 text-ink"
       role="group"
     >
       {compareAtPrice ? (
         <>
           {price ? <Money data={price} /> : null}
-          <s className="type-body font-normal text-ink-subtle">
+          <s className="type-caption font-normal text-ink-subtle">
             <Money data={compareAtPrice} />
           </s>
         </>

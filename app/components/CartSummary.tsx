@@ -2,7 +2,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
-import {useFetcher} from 'react-router';
+import type {FetcherWithComponents} from 'react-router';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -11,10 +11,6 @@ type CartSummaryProps = {
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
   const summaryId = useId();
-  const discountsHeadingId = useId();
-  const discountCodeInputId = useId();
-  const giftCardHeadingId = useId();
-  const giftCardInputId = useId();
 
   return (
     <div
@@ -37,27 +33,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           )}
         </dd>
       </dl>
-      {/* Code entry is page-only. The drawer exists to confirm an add and send
-          you back to browsing or on to checkout; two empty inputs there just
-          push the buttons down. Any applied code is still reflected in the
-          subtotal above, and listed in full on the cart page. */}
       {layout === 'page' ? (
-        <div className="flex flex-col gap-5 py-5">
-          <CartDiscounts
-            discountCodes={cart?.discountCodes}
-            discountsHeadingId={discountsHeadingId}
-            discountCodeInputId={discountCodeInputId}
-          />
-          <CartGiftCard
-            giftCardCodes={cart?.appliedGiftCards}
-            giftCardHeadingId={giftCardHeadingId}
-            giftCardInputId={giftCardInputId}
-          />
+        <CheckoutDetails cart={cart} />
+      ) : (
+        <div className="mt-5">
+          <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
         </div>
-      ) : null}
-      <div className={layout === 'page' ? undefined : 'mt-5'}>
-        <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
-      </div>
+      )}
     </div>
   );
 }
@@ -76,259 +58,153 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   );
 }
 
-function CartDiscounts({
-  discountCodes,
-  discountsHeadingId,
-  discountCodeInputId,
+/**
+ * Who is buying, collected before the handoff to Shopify checkout.
+ *
+ * Email and phone go onto the cart's buyerIdentity, which is Shopify's own
+ * prefill mechanism — they arrive filled in at checkout. The name has no
+ * buyerIdentity field (and `deliveryAddressPreferences` was deprecated in
+ * 2025-01), so it rides along as a cart attribute: it reaches the merchant on
+ * the order, but it does not prefill the checkout name box. Putting it behind a
+ * partial delivery address would prefill it at the cost of pinning an
+ * incomplete address on the cart and disturbing delivery groups.
+ *
+ * One submit does both and then hands off, so nothing depends on the visitor
+ * blurring the last field before they click.
+ */
+function CheckoutDetails({
+  cart,
 }: {
-  discountCodes?: CartApiQueryFragment['discountCodes'];
-  discountsHeadingId: string;
-  discountCodeInputId: string;
+  cart: OptimisticCart<CartApiQueryFragment | null>;
 }) {
-  const codes: string[] =
-    discountCodes
-      ?.filter((discount) => discount.applicable)
-      ?.map(({code}) => code) || [];
+  const nameId = useId();
+  const emailId = useId();
+  const phoneId = useId();
+  const savedName =
+    cart?.attributes?.find((a) => a.key === 'Name')?.value ?? '';
+  const [name, setName] = useState(savedName);
+  const [email, setEmail] = useState(cart?.buyerIdentity?.email ?? '');
+  const [phone, setPhone] = useState(cart?.buyerIdentity?.phone ?? '');
 
-  return (
-    <section aria-label="Discounts">
-      {/* Have existing discount, display it with a remove option */}
-      <dl hidden={!codes.length} className="mb-3">
-        <div>
-          <dt id={discountsHeadingId} className="type-caption text-ink-subtle">
-            Applied discount
-          </dt>
-          <UpdateDiscountForm>
-            <div
-              className="mt-1 flex items-center justify-between gap-2"
-              role="group"
-              aria-labelledby={discountsHeadingId}
-            >
-              <code className="type-caption-strong text-ink">
-                {codes?.join(', ')}
-              </code>
-              <button
-                type="submit"
-                aria-label="Remove discount"
-                className="type-caption text-ink-subtle underline-offset-4 transition-colors hover:text-ink hover:underline"
-              >
-                Remove
-              </button>
-            </div>
-          </UpdateDiscountForm>
-        </div>
-      </dl>
-
-      {/* Show an input to apply a discount */}
-      <UpdateDiscountForm discountCodes={codes}>
-        <div className="flex gap-2">
-          <label htmlFor={discountCodeInputId} className="sr-only">
-            Discount code
-          </label>
-          <input
-            id={discountCodeInputId}
-            type="text"
-            name="discountCode"
-            placeholder="Discount code"
-            className="field-input flex-1"
-          />
-          <button
-            type="submit"
-            aria-label="Apply discount code"
-            className="inline-flex h-11 shrink-0 items-center rounded-[2px] border border-hairline px-4 type-caption-strong text-ink transition-colors hover:border-ink"
-          >
-            Apply
-          </button>
-        </div>
-      </UpdateDiscountForm>
-    </section>
-  );
-}
-
-function UpdateDiscountForm({
-  discountCodes,
-  children,
-}: {
-  discountCodes?: string[];
-  children: React.ReactNode;
-}) {
   return (
     <CartForm
       route="/cart"
-      action={CartForm.ACTIONS.DiscountCodesUpdate}
-      inputs={{
-        discountCodes: discountCodes || [],
-      }}
+      action={CartForm.ACTIONS.BuyerIdentityUpdate}
+      inputs={{buyerIdentity: {email: email || null, phone: phone || null}}}
     >
-      {children}
-    </CartForm>
-  );
-}
-
-function CartGiftCard({
-  giftCardCodes,
-  giftCardHeadingId,
-  giftCardInputId,
-}: {
-  giftCardCodes: CartApiQueryFragment['appliedGiftCards'] | undefined;
-  giftCardHeadingId: string;
-  giftCardInputId: string;
-}) {
-  const giftCardCodeInput = useRef<HTMLInputElement>(null);
-  const removeButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-  const previousCardIdsRef = useRef<string[]>([]);
-  const giftCardAddFetcher = useFetcher({key: 'gift-card-add'});
-  const [removedCardIndex, setRemovedCardIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (giftCardAddFetcher.data) {
-      if (giftCardCodeInput.current !== null) {
-        giftCardCodeInput.current.value = '';
-      }
-    }
-  }, [giftCardAddFetcher.data]);
-
-  useEffect(() => {
-    const currentCardIds = giftCardCodes?.map((card) => card.id) || [];
-
-    if (removedCardIndex !== null && giftCardCodes) {
-      const focusTargetIndex = Math.min(
-        removedCardIndex,
-        giftCardCodes.length - 1,
-      );
-      const focusTargetCard = giftCardCodes[focusTargetIndex];
-      const focusButton = focusTargetCard
-        ? removeButtonRefs.current.get(focusTargetCard.id)
-        : null;
-
-      if (focusButton) {
-        focusButton.focus();
-      } else if (giftCardCodeInput.current) {
-        giftCardCodeInput.current.focus();
-      }
-
-      setRemovedCardIndex(null);
-    }
-
-    previousCardIdsRef.current = currentCardIds;
-  }, [giftCardCodes, removedCardIndex]);
-
-  const handleRemoveClick = (cardId: string) => {
-    const index = previousCardIdsRef.current.indexOf(cardId);
-    if (index !== -1) {
-      setRemovedCardIndex(index);
-    }
-  };
-
-  return (
-    <section aria-label="Gift cards">
-      {giftCardCodes && giftCardCodes.length > 0 && (
-        <dl className="mb-3">
-          <dt id={giftCardHeadingId} className="type-caption text-ink-subtle">
-            Applied gift card(s)
-          </dt>
-          {giftCardCodes.map((giftCard) => (
-            <dd
-              key={giftCard.id}
-              className="mt-1 flex items-center gap-2 type-caption-strong text-ink"
-            >
-              <RemoveGiftCardForm
-                giftCardId={giftCard.id}
-                lastCharacters={giftCard.lastCharacters}
-                onRemoveClick={() => handleRemoveClick(giftCard.id)}
-                buttonRef={(el: HTMLButtonElement | null) => {
-                  if (el) {
-                    removeButtonRefs.current.set(giftCard.id, el);
-                  } else {
-                    removeButtonRefs.current.delete(giftCard.id);
-                  }
-                }}
-              >
-                <code>***{giftCard.lastCharacters}</code>
-                &nbsp;
-                <Money data={giftCard.amountUsed} />
-              </RemoveGiftCardForm>
-            </dd>
-          ))}
-        </dl>
+      {(fetcher: FetcherWithComponents<unknown>) => (
+        <div className="flex flex-col gap-4 pt-5">
+          <p className="type-caption-strong text-ink">Your details</p>
+          {/* Read by the /cart action alongside the buyer identity, so both
+              land in a single request. */}
+          <input type="hidden" name="customerName" value={name} />
+          <DetailField
+            id={nameId}
+            label="Name"
+            value={name}
+            onChange={setName}
+            autoComplete="name"
+          />
+          <DetailField
+            id={emailId}
+            label="Email"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            autoComplete="email"
+          />
+          <DetailField
+            id={phoneId}
+            label="Phone"
+            type="tel"
+            value={phone}
+            onChange={setPhone}
+            autoComplete="tel"
+          />
+          <CheckoutHandoff
+            fetcher={fetcher}
+            checkoutUrl={cart?.checkoutUrl}
+          />
+        </div>
       )}
-
-      <AddGiftCardForm fetcherKey="gift-card-add">
-        <div className="flex gap-2">
-          <label htmlFor={giftCardInputId} className="sr-only">
-            Gift card code
-          </label>
-          <input
-            id={giftCardInputId}
-            type="text"
-            name="giftCardCode"
-            placeholder="Gift card code"
-            ref={giftCardCodeInput}
-            className="field-input flex-1"
-          />
-          <button
-            type="submit"
-            disabled={giftCardAddFetcher.state !== 'idle'}
-            aria-label="Apply gift card code"
-            className="inline-flex h-11 shrink-0 items-center rounded-[2px] border border-hairline px-4 type-caption-strong text-ink transition-colors hover:border-ink disabled:opacity-50"
-          >
-            Apply
-          </button>
-        </div>
-      </AddGiftCardForm>
-    </section>
-  );
-}
-
-function AddGiftCardForm({
-  fetcherKey,
-  children,
-}: {
-  fetcherKey?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <CartForm
-      fetcherKey={fetcherKey}
-      route="/cart"
-      action={CartForm.ACTIONS.GiftCardCodesAdd}
-    >
-      {children}
     </CartForm>
   );
 }
 
-function RemoveGiftCardForm({
-  giftCardId,
-  lastCharacters,
-  children,
-  onRemoveClick,
-  buttonRef,
+function DetailField({
+  id,
+  label,
+  value,
+  onChange,
+  type = 'text',
+  autoComplete,
 }: {
-  giftCardId: string;
-  lastCharacters: string;
-  children: React.ReactNode;
-  onRemoveClick?: () => void;
-  buttonRef?: (el: HTMLButtonElement | null) => void;
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  autoComplete?: string;
 }) {
   return (
-    <CartForm
-      route="/cart"
-      action={CartForm.ACTIONS.GiftCardCodesRemove}
-      inputs={{
-        giftCardCodes: [giftCardId],
-      }}
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="type-caption text-ink-muted">
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        autoComplete={autoComplete}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-11 w-full rounded-[2px] border border-hairline bg-canvas px-3.5 type-body text-ink outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
+      />
+    </div>
+  );
+}
+
+/**
+ * Submits the details, then leaves for Shopify checkout once the cart has
+ * actually been updated. A plain link would race the save; a redirect from the
+ * action would be a cross-origin redirect out of a fetcher.
+ */
+function CheckoutHandoff({
+  fetcher,
+  checkoutUrl,
+}: {
+  fetcher: FetcherWithComponents<unknown>;
+  checkoutUrl?: string;
+}) {
+  const [leaving, setLeaving] = useState(false);
+  const submitted = useRef(false);
+
+  useEffect(() => {
+    if (!leaving) return;
+    // The click and the submission are not the same tick: on the render right
+    // after the click the fetcher is still idle, and leaving then would cancel
+    // the very POST we are waiting for. Only go once it has actually run.
+    if (fetcher.state !== 'idle') {
+      submitted.current = true;
+      return;
+    }
+    if (submitted.current && checkoutUrl) {
+      window.location.href = checkoutUrl;
+    }
+  }, [leaving, fetcher.state, checkoutUrl]);
+
+  if (!checkoutUrl) return null;
+
+  return (
+    <button
+      type="submit"
+      onClick={() => setLeaving(true)}
+      // Disabled by the fetcher only. Disabling on `leaving` flipped the button
+      // to disabled in the same commit as the click, and the browser dropped
+      // the submission it was supposed to trigger.
+      disabled={fetcher.state !== 'idle'}
+      className="mt-1 inline-flex h-12 w-full items-center justify-center rounded-[2px] bg-primary px-6 type-body-strong text-white transition-colors hover:bg-primary/90 disabled:opacity-70"
     >
-      {children}
-      <button
-        type="submit"
-        aria-label={`Remove gift card ending in ${lastCharacters}`}
-        onClick={onRemoveClick}
-        ref={buttonRef}
-        className="ml-auto type-caption text-ink-subtle underline-offset-4 transition-colors hover:text-ink hover:underline"
-      >
-        Remove
-      </button>
-    </CartForm>
+      {leaving ? 'Taking you to checkout…' : 'Continue to checkout'}
+    </button>
   );
 }
