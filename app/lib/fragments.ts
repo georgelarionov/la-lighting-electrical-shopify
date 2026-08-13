@@ -171,72 +171,42 @@ export const CART_QUERY_FRAGMENT = `#graphql
   }
 ` as const;
 
-const MENU_FRAGMENT = `#graphql
-  fragment MenuItem on MenuItem {
-    id
-    resourceId
-    tags
-    title
-    type
-    url
-  }
-  fragment ChildMenuItem on MenuItem {
-    ...MenuItem
-  }
-  fragment ParentMenuItem on MenuItem {
-    ...MenuItem
-    items {
-      ...ChildMenuItem
-    }
-  }
-  fragment Menu on Menu {
-    id
-    items {
-      ...ParentMenuItem
-    }
-  }
-` as const;
-
-export const HEADER_QUERY = `#graphql
-  fragment Shop on Shop {
-    id
-    name
-    description
-    primaryDomain {
-      url
-    }
-    brand {
-      logo {
+/**
+ * Category navigation — the single source for the header mega-menu and the
+ * footer "Shop" column.
+ *
+ * This replaces the skeleton's `menu(handle: "main-menu")` query: a Shopify
+ * navigation menu only yields a title and a URL, while a mega-menu that lets
+ * someone pick a fixture by sight needs the collection's own image. Collections
+ * are already what the merchant curates, so there is no second system to keep
+ * in sync. Display order and the plain-English blurbs live in
+ * `~/lib/site.ts` (`NAV_CATEGORIES`); anything the merchant adds later still
+ * shows up, just at the end of the list.
+ */
+export const NAV_QUERY = `#graphql
+  query Nav($country: CountryCode, $language: LanguageCode)
+    @inContext(language: $language, country: $country) {
+    collections(first: 25) {
+      nodes {
+        id
+        handle
+        title
         image {
           url
+          altText
+          width
+          height
+        }
+        # Presence probe only — buildNav drops categories with nothing live in
+        # them. The Storefront API hides DRAFT/unpublished products but still
+        # returns the collection, so without this a category whose whole
+        # contents are still drafts would advertise an empty page.
+        products(first: 1) {
+          nodes {
+            id
+          }
         }
       }
     }
   }
-  query Header(
-    $country: CountryCode
-    $headerMenuHandle: String!
-    $language: LanguageCode
-  ) @inContext(language: $language, country: $country) {
-    shop {
-      ...Shop
-    }
-    menu(handle: $headerMenuHandle) {
-      ...Menu
-    }
-  }
-  ${MENU_FRAGMENT}
-` as const;
-
-export const FOOTER_QUERY = `#graphql
-  query Footer(
-    $country: CountryCode
-    $footerMenuHandle: String!
-    $language: LanguageCode
-  ) @inContext(language: $language, country: $country) {
-    menu(handle: $footerMenuHandle) {
-      ...Menu
-    }
-  }
-  ${MENU_FRAGMENT}
 ` as const;

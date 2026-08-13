@@ -1,7 +1,6 @@
 import {useOptimisticCart} from '@shopify/hydrogen';
 import {Link} from 'react-router';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
-import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
 
@@ -97,7 +96,6 @@ function CartEmpty({
   hidden: boolean;
   layout?: CartMainProps['layout'];
 }) {
-  const {close} = useAside();
   return (
     <div hidden={hidden} className="py-6">
       <p className="type-body text-ink-muted">
@@ -105,7 +103,6 @@ function CartEmpty({
       </p>
       <Link
         to="/collections"
-        onClick={close}
         prefetch="viewport"
         className="mt-5 inline-flex h-11 items-center justify-center rounded-[2px] bg-primary px-6 type-caption-strong text-white transition-colors hover:bg-primary/90"
       >

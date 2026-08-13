@@ -26,9 +26,82 @@ export const CONTACT = {
   licenseLine: 'Licensed C-10 electrical contractor',
 } as const;
 
-/** Primary marketing navigation shown in the centered desktop header bar. */
-export const PRIMARY_NAV: ReadonlyArray<{label: string; to: string}> = [
-  {label: 'Catalog', to: '/collections'},
+/**
+ * Category navigation for the header mega-menu and the footer Shop column.
+ *
+ * Titles and images come from the Shopify collection itself (`NAV_QUERY`), so
+ * the merchant renames a category in admin and the nav follows. What lives here
+ * is nav-only microcopy and running order:
+ *
+ * - `blurb` — the same category said the way a customer would say it. Nobody
+ *   searches for "magnetic track"; they want "lights I can move later". The
+ *   brief calls this out explicitly, so every category carries one.
+ * - `featured` — the three systems the business leads with. They get image
+ *   cards at the top of the panel; the rest read as a compact list.
+ *
+ * A collection missing from this list is NOT hidden — it renders after the
+ * known ones, so a category added in admin can never silently vanish from the
+ * site. Only its blurb and placement are lost until someone adds it here.
+ */
+export const NAV_CATEGORIES: ReadonlyArray<{
+  handle: string;
+  blurb: string;
+  featured?: boolean;
+}> = [
+  {
+    handle: 'linear-lights',
+    blurb: 'Long, continuous lines of light — over islands, desks and counters.',
+    featured: true,
+  },
+  {
+    handle: 'magnetic-track-system',
+    blurb: 'One rail, fixtures that snap on and move whenever the room changes.',
+    featured: true,
+  },
+  {
+    handle: 'track-lighting',
+    blurb: 'Aimable spotlights on a rail — point the light exactly where it works.',
+    featured: true,
+  },
+  {handle: 'ring-pendant-lights', blurb: 'A floating circle over a table or desk'},
+  {handle: 'round-led-ceiling-lights', blurb: 'Even, glare-free discs of ceiling light'},
+  {handle: 'led-panel-lights', blurb: 'Flat panels that wash a room softly'},
+  {handle: 'wall-sconces', blurb: 'Up-and-down light for entries and facades'},
+  {handle: 'bollard-lights', blurb: 'Knee-high posts for paths and gardens'},
+];
+
+/**
+ * Catalog entry points phrased as the job, not the product.
+ *
+ * The brief is explicit that people shop without knowing the vocabulary — they
+ * know they have a kitchen island and a dark ceiling, not that they want a
+ * "magnetic track system". These lead with the room and hand off to the
+ * category that answers it, so the professional name is something you learn on
+ * arrival rather than something you must already know to search.
+ */
+export const CATALOG_SCENARIOS: ReadonlyArray<{label: string; to: string}> = [
+  {label: 'Over a kitchen island', to: '/collections/linear-lights'},
+  {label: 'A whole office ceiling', to: '/collections/led-panel-lights'},
+  {label: 'A layout I’ll rearrange', to: '/collections/magnetic-track-system'},
+  {label: 'Retail displays & galleries', to: '/collections/track-lighting'},
+  {label: 'Over a dining table', to: '/collections/ring-pendant-lights'},
+  {
+    label: 'Paths, entries & facades',
+    to: '/collections?cat=Wall+Sconce&cat=Bollard+Light',
+  },
+];
+
+/**
+ * Primary marketing navigation shown in the centered desktop header bar.
+ * `mega` marks the item that opens the category panel instead of navigating
+ * straight through (the link still works — the panel is additive).
+ */
+export const PRIMARY_NAV: ReadonlyArray<{
+  label: string;
+  to: string;
+  mega?: boolean;
+}> = [
+  {label: 'Catalog', to: '/collections', mega: true},
   {label: 'Projects', to: '/projects'},
   {label: 'Services', to: '/services'},
   {label: 'About', to: '/pages/about'},
@@ -36,19 +109,12 @@ export const PRIMARY_NAV: ReadonlyArray<{label: string; to: string}> = [
 ];
 
 /**
- * Full-screen mobile menu navigation — the desktop bar plus Blog (which the
- * tight centered desktop bar omits for space). Blog sits after Services, as in
- * the footer.
+ * Full-screen mobile menu navigation. Catalog is deliberately absent: on mobile
+ * it expands in place into the full category list, so listing it here too would
+ * put the same destination on screen twice. Blog appears only here — the tight
+ * centered desktop bar has no room for it.
  */
 export const MOBILE_NAV: ReadonlyArray<{label: string; to: string}> = [
-  ...PRIMARY_NAV.slice(0, 3),
-  {label: 'Blog', to: '/blog'},
-  ...PRIMARY_NAV.slice(3),
-];
-
-/** Footer link columns. */
-export const FOOTER_NAV: ReadonlyArray<{label: string; to: string}> = [
-  {label: 'Catalog', to: '/collections'},
   {label: 'Projects', to: '/projects'},
   {label: 'Services', to: '/services'},
   {label: 'Blog', to: '/blog'},
@@ -89,31 +155,25 @@ export const PROMISE_ITEMS: ReadonlyArray<{title: string; body: string}> = [
   },
 ];
 
-/** Footer link columns (Shop / Company). */
-export const FOOTER_COLUMNS: ReadonlyArray<{
-  heading: string;
-  links: ReadonlyArray<{label: string; to: string}>;
-}> = [
-  {
-    heading: 'Shop',
-    links: [
-      {label: 'Recessed', to: '/collections'},
-      {label: 'Linear systems', to: '/collections'},
-      {label: 'Pendants', to: '/collections'},
-      {label: 'Outdoor', to: '/collections'},
-      {label: 'Controls', to: '/collections'},
-    ],
-  },
-  {
-    heading: 'Company',
-    links: [
-      {label: 'About', to: '/pages/about'},
-      {label: 'Projects', to: '/projects'},
-      {label: 'Services', to: '/services'},
-      {label: 'Blog', to: '/blog'},
-      {label: 'Contacts', to: '/contact'},
-    ],
-  },
+/**
+ * Footer link columns. The Shop column is NOT here — it is built from the live
+ * collections (`NAV_CATEGORIES` + `NAV_QUERY`) so it can never drift from what
+ * the store actually sells, which is exactly how the previous hardcoded list
+ * ("Recessed", "Pendants", "Controls" — none of which exist) went wrong.
+ */
+export const FOOTER_SERVICES: ReadonlyArray<{label: string; to: string}> = [
+  {label: 'Free lighting design', to: '/services/lighting-design'},
+  {label: 'Licensed installation', to: '/services/installation'},
+  {label: 'Electrical work', to: '/services/electrical'},
+  {label: 'Lighting calculator', to: '/lighting-calculator'},
+  {label: 'All services', to: '/services'},
+];
+
+export const FOOTER_COMPANY: ReadonlyArray<{label: string; to: string}> = [
+  {label: 'About us', to: '/pages/about'},
+  {label: 'Projects', to: '/projects'},
+  {label: 'Blog', to: '/blog'},
+  {label: 'Contact', to: '/contact'},
 ];
 
 /** Social profiles (icon keys resolved in the Footer component). */

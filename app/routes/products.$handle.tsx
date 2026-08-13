@@ -270,8 +270,11 @@ export default function ProductPage() {
   const canBuy = Boolean(
     selectedVariant?.availableForSale && selectedVariant?.id,
   );
+  // selectedVariant is required, not decorative: useOptimisticCart builds the
+  // pending cart line from it, and without it the add is invisible until the
+  // server round trip lands.
   const lines = selectedVariant?.id
-    ? [{merchandiseId: selectedVariant.id, quantity: qty}]
+    ? [{merchandiseId: selectedVariant.id, quantity: qty, selectedVariant}]
     : [];
   const addLabel = tier === 'fixture' ? 'Add to cart' : 'Add to project';
 
@@ -368,9 +371,9 @@ export default function ProductPage() {
               </div>
               <div className="flex-1">
                 <AddToCartButton
+                  redirectTo="/cart"
                   lines={lines}
                   disabled={!canBuy}
-                  onClick={() => open('cart')}
                   className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
                 >
                   {canBuy ? <>{addLabel} · {money(total)}</> : 'Sold out'}
@@ -608,9 +611,9 @@ export default function ProductPage() {
             <>
               <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
               <AddToCartButton
+                redirectTo="/cart"
                 lines={lines}
                 disabled={!canBuy}
-                onClick={() => open('cart')}
                 className="press h-10 w-auto gap-2 rounded-sm px-5 text-[13.5px]"
               >
                 {canBuy ? 'Add to project' : 'Sold out'}

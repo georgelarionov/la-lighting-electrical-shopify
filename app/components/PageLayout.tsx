@@ -1,15 +1,10 @@
-import {Await, Link} from 'react-router';
-import {Suspense, useId} from 'react';
-import type {
-  CartApiQueryFragment,
-  FooterQuery,
-  HeaderQuery,
-} from 'storefrontapi.generated';
+import {Link} from 'react-router';
+import {useId} from 'react';
+import type {CartApiQueryFragment, NavQuery} from 'storefrontapi.generated';
 import {Aside} from '~/components/Aside';
 import {QuoteAside} from '~/components/QuoteAside';
 import {Footer} from '~/components/Footer';
 import {Header} from '~/components/Header';
-import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
@@ -18,8 +13,7 @@ import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
-  footer: Promise<FooterQuery | null>;
-  header: HeaderQuery;
+  nav: NavQuery;
   isLoggedIn: Promise<boolean>;
   publicStoreDomain: string;
   children?: React.ReactNode;
@@ -28,43 +22,23 @@ interface PageLayoutProps {
 export function PageLayout({
   cart,
   children = null,
-  footer,
-  header,
+  nav,
   isLoggedIn,
   publicStoreDomain,
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
-      <CartAside cart={cart} />
       <SearchAside />
       <QuoteAside />
-      {header && (
-        <Header
-          header={header}
-          cart={cart}
-          isLoggedIn={isLoggedIn}
-          publicStoreDomain={publicStoreDomain}
-        />
-      )}
-      <main className="min-h-[60vh]">{children}</main>
-      <Footer
-        footer={footer}
-        header={header}
+      <Header
+        nav={nav}
+        cart={cart}
+        isLoggedIn={isLoggedIn}
         publicStoreDomain={publicStoreDomain}
       />
+      <main className="min-h-[60vh]">{children}</main>
+      <Footer nav={nav} />
     </Aside.Provider>
-  );
-}
-
-function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
-  return (
-    <Aside type="cart" heading="Cart">
-      <Suspense fallback={<p className="type-body p-6 text-ink-subtle">Loading cart…</p>}>
-        <Await resolve={cart}>
-          {(cart) => <CartMain cart={cart} layout="aside" />}
-        </Await>
-      </Suspense>
-    </Aside>
   );
 }
 

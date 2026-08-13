@@ -2,6 +2,7 @@ import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import type {CartLayout, LineItemChildrenMap} from '~/components/CartMain';
 import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
+import {cn} from '~/lib/utils';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
@@ -46,7 +47,12 @@ export function CartLineItem({
                 close();
               }
             }}
-            className="size-20 shrink-0 overflow-hidden rounded-[2px] border border-hairline bg-parchment"
+            className={cn(
+              'shrink-0 overflow-hidden rounded-[2px] border border-hairline bg-parchment',
+              // The cart is its own page now, so give the product a real look
+              // at it; the drawer still needs the compact thumbnail.
+              layout === 'page' ? 'size-28 sm:size-32' : 'size-20',
+            )}
           >
             <Image
               alt={title}

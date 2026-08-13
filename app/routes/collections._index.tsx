@@ -1,20 +1,49 @@
-import React, {useState, useMemo} from 'react';
-import {Link, useLoaderData} from 'react-router';
+import React, {useMemo, useState} from 'react';
+import {Link, useLoaderData, useSearchParams} from 'react-router';
+import {Image} from '@shopify/hydrogen';
 import type {Route} from './+types/collections._index';
-import {seo} from '~/lib/seo';
+import {seo, SITE_URL} from '~/lib/seo';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
 import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
-import {COMPANY_NAME} from '~/lib/site';
+import {buildNav, type NavCategory} from '~/lib/nav';
+import {CATALOG_SCENARIOS, COMPANY_NAME} from '~/lib/site';
 import serviceImg from '~/assets/mp/catalog-service.jpg?url';
 
-export const meta: Route.MetaFunction = ({location}) => {
-  return seo({
-    title: `Catalog | ${COMPANY_NAME}`,
+/**
+ * `location.pathname` deliberately drops the query string, so every filtered
+ * view canonicalises back to /collections. The facets are a browsing tool, not
+ * an index surface — the per-category landings at /collections/<handle> own
+ * those keywords, and pointing both at them would just split the signal.
+ */
+export const meta: Route.MetaFunction = ({data, location}) => {
+  const base = seo({
+    title: `All Lighting — Full Catalog | ${COMPANY_NAME}`,
     description:
-      'Architectural lighting — pendants, linear, panels and connectors. Every fixture available as a part, a plan, or a fully installed result.',
+      'Every fixture we carry, in one place: linear lighting, magnetic track, track heads, ring pendants, panels, sconces and bollards. Buy the part, or have us design and install it.',
     url: location.pathname,
   });
+  const categories = data?.categories ?? [];
+  return [
+    ...base,
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Architectural lighting catalog',
+        url: `${SITE_URL}/collections`,
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: categories.map((c, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: c.title,
+            url: `${SITE_URL}${c.url}`,
+          })),
+        },
+      },
+    },
+  ];
 };
 
 // Data-driven catalog. The Storefront API only ever returns products that are
@@ -25,6 +54,7 @@ export const meta: Route.MetaFunction = ({location}) => {
 export async function loader({context}: Route.LoaderArgs) {
   const data = await context.storefront.query(CATALOG_QUERY).catch(() => null);
   const nodes = data?.products?.nodes ?? [];
+  const categories = buildNav(data);
 
   const products: CatalogProduct[] = nodes.map((p) => {
     const finishes = p.options
@@ -55,7 +85,7 @@ export async function loader({context}: Route.LoaderArgs) {
     Math.ceil(products.reduce((m, p) => Math.max(m, p.price), 0) / 10) * 10 ||
     200;
 
-  return {products, cats, ccts, finishes, maxPrice};
+  return {products, cats, ccts, finishes, maxPrice, categories};
 }
 
 type CatalogProduct = {
@@ -103,30 +133,80 @@ const has = (s: Set<string>) => s.size > 0;
 const intersects = (a: string[], s: Set<string>) => a.some((x) => s.has(x));
 
 export default function Catalog() {
-  const {products, cats: CATS, ccts: CCTS, finishes: FINISHES, maxPrice} =
-    useLoaderData<typeof loader>();
-  const [cats, setCats] = useState<Set<string>>(new Set());
-  const [ccts, setCcts] = useState<Set<string>>(new Set());
-  const [finishes, setFinishes] = useState<Set<string>>(new Set());
-  const [priceMax, setPriceMax] = useState(maxPrice);
-  const [sort, setSort] = useState(SORTS[0]);
+  const {
+    products,
+    cats: CATS,
+    ccts: CCTS,
+    finishes: FINISHES,
+    maxPrice,
+    categories,
+  } = useLoaderData<typeof loader>();
+
+  // Filter state lives in the URL, not in useState. A filtered view is then a
+  // real address: shareable, back-button correct, and rendered identically on
+  // the server (React Router hands us the same params during SSR), so a crawler
+  // or a pasted link sees the filtered grid instead of an empty one.
+  const [searchParams, setSearchParams] = useSearchParams();
+  // Keyed on the serialised query, not on the URLSearchParams object: React
+  // Router hands back a fresh instance each render, so an object dependency
+  // would rebuild these Sets every time and make the filter memo below a no-op.
+  const query = searchParams.toString();
+  const cats = useMemo(
+    () => new Set(new URLSearchParams(query).getAll('cat')),
+    [query],
+  );
+  const ccts = useMemo(
+    () => new Set(new URLSearchParams(query).getAll('cct')),
+    [query],
+  );
+  const finishes = useMemo(
+    () => new Set(new URLSearchParams(query).getAll('finish')),
+    [query],
+  );
+  const rawMax = Number(searchParams.get('max'));
+  const priceMax =
+    Number.isFinite(rawMax) && rawMax > 0 ? Math.min(rawMax, maxPrice) : maxPrice;
+  const sort = SORTS.includes(searchParams.get('sort') ?? '')
+    ? (searchParams.get('sort') as string)
+    : SORTS[0];
   const [drawer, setDrawer] = useState(false);
-  const toggle = (
-    setter: React.Dispatch<React.SetStateAction<Set<string>>>,
-    v: string,
-  ) =>
-    setter((prev) => {
-      const n = new Set(prev);
-      if (n.has(v)) n.delete(v);
-      else n.add(v);
-      return n;
+
+  const commit = (mutate: (p: URLSearchParams) => void) =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        mutate(next);
+        return next;
+      },
+      // Filtering shouldn't yank the viewport back to the top, and shouldn't
+      // bury the unfiltered catalog under a pile of history entries.
+      {preventScrollReset: true, replace: true},
+    );
+
+  const toggle = (key: string, v: string) =>
+    commit((p) => {
+      const current = p.getAll(key);
+      const updated = current.includes(v)
+        ? current.filter((x) => x !== v)
+        : [...current, v];
+      p.delete(key);
+      updated.forEach((x) => p.append(key, x));
     });
-  const clearAll = () => {
-    setCats(new Set());
-    setCcts(new Set());
-    setFinishes(new Set());
-    setPriceMax(maxPrice);
-  };
+
+  const setPriceMax = (v: number) =>
+    commit((p) => {
+      if (v >= maxPrice) p.delete('max');
+      else p.set('max', String(v));
+    });
+
+  const setSort = (v: string) =>
+    commit((p) => {
+      if (v === SORTS[0]) p.delete('sort');
+      else p.set('sort', v);
+    });
+
+  const clearAll = () =>
+    commit((p) => ['cat', 'cct', 'finish', 'max'].forEach((k) => p.delete(k)));
   const filtered = useMemo(() => {
     let r = products.filter(
       (p) =>
@@ -142,9 +222,9 @@ export default function Catalog() {
     return r;
   }, [products, cats, ccts, finishes, priceMax, sort]);
   const chips: {group: string; v: string; clear: () => void}[] = [
-    ...[...cats].map((v) => ({group: 'Category', v, clear: () => toggle(setCats, v)})),
-    ...[...ccts].map((v) => ({group: 'CCT', v, clear: () => toggle(setCcts, v)})),
-    ...[...finishes].map((v) => ({group: 'Finish', v, clear: () => toggle(setFinishes, v)})),
+    ...[...cats].map((v) => ({group: 'Category', v, clear: () => toggle('cat', v)})),
+    ...[...ccts].map((v) => ({group: 'CCT', v, clear: () => toggle('cct', v)})),
+    ...[...finishes].map((v) => ({group: 'Finish', v, clear: () => toggle('finish', v)})),
     ...(priceMax < maxPrice
       ? [{group: 'Price', v: `≤ ${fmt(priceMax)}`, clear: () => setPriceMax(maxPrice)}]
       : []),
@@ -153,13 +233,13 @@ export default function Catalog() {
     <div className="space-y-7">
       <FilterGroup title="Category">
         {CATS.map((c) => (
-          <CheckRow key={c} label={c} count={products.filter((p) => p.cat === c).length} checked={cats.has(c)} onClick={() => toggle(setCats, c)} />
+          <CheckRow key={c} label={c} count={products.filter((p) => p.cat === c).length} checked={cats.has(c)} onClick={() => toggle('cat', c)} />
         ))}
       </FilterGroup>
       {CCTS.length > 0 && (
         <FilterGroup title="Color temperature">
           <div className="flex flex-wrap gap-2">
-            {CCTS.map((c) => <Pill key={c} label={c} active={ccts.has(c)} onClick={() => toggle(setCcts, c)} />)}
+            {CCTS.map((c) => <Pill key={c} label={c} active={ccts.has(c)} onClick={() => toggle('cct', c)} />)}
           </div>
         </FilterGroup>
       )}
@@ -167,7 +247,7 @@ export default function Catalog() {
         <FilterGroup title="Finish">
           <div className="flex flex-wrap gap-2">
             {FINISHES.map((f) => (
-              <button key={f} onClick={() => toggle(setFinishes, f)} className={`press flex items-center gap-2 rounded-sm border px-2.5 py-1.5 text-[12.5px] ${finishes.has(f) ? 'border-foreground' : 'border-border hover:border-foreground/40'}`}>
+              <button key={f} onClick={() => toggle('finish', f)} className={`press flex items-center gap-2 rounded-sm border px-2.5 py-1.5 text-[12.5px] ${finishes.has(f) ? 'border-foreground' : 'border-border hover:border-foreground/40'}`}>
                 <span className="h-3.5 w-3.5 rounded-full border border-black/10" style={{background: finishHex(f)}} />{f}
               </button>
             ))}
@@ -188,12 +268,21 @@ export default function Catalog() {
       <section className="mx-auto max-w-[1320px] px-5 pb-8 pt-12 sm:px-8">
         <Reveal>
           <p className="type-eyebrow">Catalog</p>
-          <h1 className="mt-3 font-heading text-[38px] leading-[1.05] tracking-[-0.02em] sm:text-[52px]">The Catalog</h1>
-          <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-            Architectural lighting — pendants, linear, panels and the connectors that tie them together. Every fixture available as a part, a plan, or a fully installed result.
+          <h1 className="mt-3 font-heading text-[38px] leading-[1.05] tracking-[-0.02em] sm:text-[52px]">
+            Every light we make
+          </h1>
+          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground">
+            Ceiling lines, movable spotlights, floating rings, soft panels and
+            outdoor posts — {products.length} fixtures in all. You don’t need to
+            know the trade name for any of it: start from the room you’re
+            lighting, or just scroll. Buy the part, or have us design and
+            install the whole thing.
           </p>
         </Reveal>
       </section>
+
+      <ScenarioRow categories={categories} />
+      <CategoryHub categories={categories} />
 
       {/* main */}
       <div className="mx-auto max-w-[1320px] px-5 pb-24 sm:px-8">
@@ -277,6 +366,94 @@ export default function Catalog() {
 }
 
 /* ----------------------------- pieces ----------------------------- */
+
+/**
+ * The jargon-free door in. Someone who has never heard "magnetic track" still
+ * knows they have a kitchen island, so the first thing on the page is a row of
+ * rooms, not a row of product categories.
+ */
+function ScenarioRow({categories}: {categories: NavCategory[]}) {
+  // Same rule as the nav: never offer a door into an empty room. A scenario
+  // that points at a category with nothing published simply isn't shown, and
+  // comes back by itself once the products go live.
+  const live = new Set(categories.map((c) => c.url));
+  const scenarios = CATALOG_SCENARIOS.filter(
+    (s) => !s.to.startsWith('/collections/') || live.has(s.to),
+  );
+  if (scenarios.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-[1320px] px-5 pb-10 sm:px-8">
+      <Reveal>
+        <h2 className="text-[13px] font-medium">What are you lighting?</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {scenarios.map((s) => (
+            <Link
+              key={s.label}
+              to={s.to}
+              prefetch="intent"
+              className="press inline-flex items-center gap-1.5 rounded-sm border border-border bg-parchment px-3.5 py-2 text-[13px] text-foreground transition-colors hover:border-foreground/40"
+            >
+              {s.label}
+              <Arrow className="h-3.5 w-3.5 text-muted-foreground" />
+            </Link>
+          ))}
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+/**
+ * Hub → spoke. Every category landing page is linked from here in server-
+ * rendered HTML, which is what makes this page the catalog's index rather than
+ * just a grid: the facets below filter, these links actually go somewhere a
+ * search engine can rank.
+ */
+function CategoryHub({categories}: {categories: NavCategory[]}) {
+  if (categories.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-[1320px] px-5 pb-14 sm:px-8">
+      <Reveal>
+        <h2 className="text-[13px] font-medium">Browse by category</h2>
+        <ul className="mt-4 grid list-none grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
+          {categories.map((cat) => (
+            <li key={cat.handle}>
+              <Link
+                to={cat.url}
+                prefetch="intent"
+                className="lift group block"
+              >
+                <div
+                  className="img-zoom relative overflow-hidden rounded-lg bg-parchment"
+                  style={{aspectRatio: '16 / 10'}}
+                >
+                  {cat.image ? (
+                    <Image
+                      data={cat.image}
+                      sizes="(min-width: 1024px) 20rem, 45vw"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : (
+                    <PlaceholderImage aspect="" className="absolute inset-0 h-full w-full" />
+                  )}
+                </div>
+                <h3 className="mt-3 text-[14px] font-medium transition-colors group-hover:text-primary">
+                  {cat.title}
+                </h3>
+                {cat.blurb ? (
+                  <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">
+                    {cat.blurb}
+                  </p>
+                ) : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+    </section>
+  );
+}
+
 function ProductCard({p}: {p: CatalogProduct}) {
   // The magnetic-track fixtures are shot 16:9 on a near-white seamless with the
   // rail on the diagonal, so lots of white is baked into the pixels. object-fit
@@ -380,7 +557,26 @@ function Pill({label, active, onClick}: {label: string; active: boolean; onClick
 const CATALOG_QUERY = `#graphql
   query CatalogIndex($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 100) {
+    collections(first: 25) {
+      nodes {
+        handle
+        title
+        image {
+          url
+          altText
+          width
+          height
+        }
+        products(first: 1) {
+          nodes {
+            id
+          }
+        }
+      }
+    }
+    # ponytail: 250 is the Storefront page cap and the catalog is 35 products.
+    # If it ever passes 250 this silently truncates — paginate then.
+    products(first: 250) {
       nodes {
         handle
         title
