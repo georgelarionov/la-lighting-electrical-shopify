@@ -2,6 +2,7 @@ import {forwardRef, Suspense, useEffect} from 'react';
 import {Await, Link, NavLink, useAsyncValue} from 'react-router';
 import {
   type CartViewPayload,
+  Image,
   useAnalytics,
   useOptimisticCart,
 } from '@shopify/hydrogen';
@@ -9,10 +10,11 @@ import type {NavQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {ChevronDown, Menu as MenuIcon, ShoppingBag, X} from 'lucide-react';
 import {NavigationMenu} from 'radix-ui';
 import {useAside} from '~/components/Aside';
-import {CategoryMenuItem} from '~/components/CategoryMenu';
+import {MegaMenuItem} from '~/components/MegaMenu';
 import {Logo} from '~/components/Logo';
 import {Button} from '~/components/ui/button';
 import {buildNav, type NavCategory} from '~/lib/nav';
+import {SERVICES} from '~/lib/services-catalog';
 import {CONTACT, MOBILE_NAV, PRIMARY_NAV} from '~/lib/site';
 import {cn} from '~/lib/utils';
 
@@ -29,12 +31,58 @@ interface HeaderProps {
  * centered, "Request a Quote" + cart on the right. On mobile it collapses to
  * logo + cart + hamburger, which opens the full-screen MobileNav (VMWan).
  *
- * Catalog opens the category mega-menu (`CategoryMenu`) instead of navigating;
- * the panel itself carries the link through to /collections.
+ * Catalog and Services each open a mega-menu on hover; their triggers are real
+ * links, so clicking one still goes straight to /collections or /services.
  */
 export function Header({cart, nav}: HeaderProps) {
   const {open} = useAside();
   const categories = buildNav(nav);
+
+  const categoryItems = categories.map((c) => ({
+    key: c.handle,
+    title: c.title,
+    blurb: c.blurb,
+    url: c.url,
+    featured: c.featured,
+    thumb: c.image ? (
+      <Image
+        data={c.image}
+        sizes="(min-width: 1024px) 20rem, 30vw"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+    ) : undefined,
+  }));
+
+  // Services lead with the two the business actually sells first — the free
+  // plan and the turnkey install — rather than with a category list, because
+  // those are the two things a visitor is deciding between.
+  const serviceItems = SERVICES.map((s) => ({
+    key: s.id,
+    title: s.name,
+    blurb: s.blurb,
+    url: `/services/${s.id}`,
+    thumb: (
+      <img
+        src={s.img}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+    ),
+  }));
+  const FEATURED_SERVICES = ['lighting-design', 'installation', 'electrical'];
+  const serviceFeatured = FEATURED_SERVICES.map((id) =>
+    serviceItems.find((s) => s.key === id),
+  ).filter((s): s is (typeof serviceItems)[number] => Boolean(s));
+  // Titles only in the secondary list. The eight space/system services carry
+  // full sentences in the catalog, and repeating them here made the Services
+  // panel twice the height of the Catalog one for no extra information — the
+  // names ("Museum Track Lighting") already say what they are.
+  const serviceRest = serviceItems
+    .filter((s) => !FEATURED_SERVICES.includes(s.key))
+    .map((s) => ({...s, blurb: ''}));
+
   return (
     <header className="relative z-50">
       <UtilityBar />
@@ -57,22 +105,69 @@ export function Header({cart, nav}: HeaderProps) {
 
             {/* Primary nav — centered, desktop only */}
             <NavigationMenu.List className="hidden list-none items-center justify-center gap-7 md:flex">
-              {PRIMARY_NAV.map((item) =>
-                item.mega ? (
-                  <CategoryMenuItem
-                    key={item.to}
-                    label={item.label}
-                    categories={categories}
-                    onQuote={() => open('quote')}
-                  />
-                ) : (
+              {PRIMARY_NAV.map((item) => {
+                if (item.mega === 'catalog') {
+                  return (
+                    <MegaMenuItem
+                      key={item.to}
+                      label={item.label}
+                      href={item.to}
+                      featuredHeading="Shop by system"
+                      featured={categoryItems.filter((c) => c.featured)}
+                      restHeading="More categories"
+                      rest={categoryItems.filter((c) => !c.featured)}
+                      footerLabel={`Browse all ${categoryItems.length} categories`}
+                      footerHref="/collections"
+                      aside={
+                        <button
+                          type="button"
+                          onClick={() => open('quote')}
+                          className="group inline-flex items-center gap-2 text-left type-caption text-ink-subtle transition-colors hover:text-ink"
+                        >
+                          Not sure what you need?
+                          <span className="font-medium text-ink underline underline-offset-4 transition-colors group-hover:text-primary">
+                            Get a free lighting plan
+                          </span>
+                        </button>
+                      }
+                    />
+                  );
+                }
+                if (item.mega === 'services') {
+                  return (
+                    <MegaMenuItem
+                      key={item.to}
+                      label={item.label}
+                      href={item.to}
+                      featuredHeading="How we work"
+                      featured={serviceFeatured}
+                      restHeading="By space & system"
+                      rest={serviceRest}
+                      footerLabel="See all services"
+                      footerHref="/services"
+                      aside={
+                        <Link
+                          to="/lighting-calculator"
+                          prefetch="intent"
+                          className="group inline-flex items-center gap-2 type-caption text-ink-subtle transition-colors hover:text-ink"
+                        >
+                          Sizing a room yourself?
+                          <span className="font-medium text-ink underline underline-offset-4 transition-colors group-hover:text-primary">
+                            Try the lighting calculator
+                          </span>
+                        </Link>
+                      }
+                    />
+                  );
+                }
+                return (
                   <NavigationMenu.Item key={item.to}>
                     <NavigationMenu.Link asChild>
                       <HeaderNavLink to={item.to}>{item.label}</HeaderNavLink>
                     </NavigationMenu.Link>
                   </NavigationMenu.Item>
-                ),
-              )}
+                );
+              })}
             </NavigationMenu.List>
 
             {/* Actions — right */}

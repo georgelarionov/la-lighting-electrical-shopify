@@ -93,17 +93,18 @@ export const CATALOG_SCENARIOS: ReadonlyArray<{label: string; to: string}> = [
 
 /**
  * Primary marketing navigation shown in the centered desktop header bar.
- * `mega` marks the item that opens the category panel instead of navigating
- * straight through (the link still works — the panel is additive).
+ * `mega` marks the items that also open a panel on hover. They navigate on
+ * click like any other link — the panel is additive, never a replacement.
  */
 export const PRIMARY_NAV: ReadonlyArray<{
   label: string;
   to: string;
-  mega?: boolean;
+  /** Which mega-menu panel this item opens. The trigger stays a real link. */
+  mega?: 'catalog' | 'services';
 }> = [
-  {label: 'Catalog', to: '/collections', mega: true},
+  {label: 'Catalog', to: '/collections', mega: 'catalog'},
+  {label: 'Services', to: '/services', mega: 'services'},
   {label: 'Projects', to: '/projects'},
-  {label: 'Services', to: '/services'},
   {label: 'About', to: '/pages/about'},
   {label: 'Contacts', to: '/contact'},
 ];
@@ -115,8 +116,8 @@ export const PRIMARY_NAV: ReadonlyArray<{
  * centered desktop bar has no room for it.
  */
 export const MOBILE_NAV: ReadonlyArray<{label: string; to: string}> = [
-  {label: 'Projects', to: '/projects'},
   {label: 'Services', to: '/services'},
+  {label: 'Projects', to: '/projects'},
   {label: 'Blog', to: '/blog'},
   {label: 'About', to: '/pages/about'},
   {label: 'Contacts', to: '/contact'},

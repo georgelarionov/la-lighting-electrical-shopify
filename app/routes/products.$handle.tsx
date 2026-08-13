@@ -147,7 +147,6 @@ function buildContent(product: ProductFragment) {
 
 /* ----------------------------- icons ------------------------------ */
 type IP = {className?: string};
-const Star = ({className}: IP) => <svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>;
 const Check = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 6 9 17l-5-5" /></svg>;
 const Plus = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className={className}><path d="M12 5v14M5 12h14" /></svg>;
 const Minus = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className={className}><path d="M5 12h14" /></svg>;
@@ -173,7 +172,6 @@ const ICONS: Record<string, typeof Bolt> = {
   bolt: Bolt,
   shield: Shield,
   check: Check,
-  star: Star,
 };
 // Reviews and the three purchase tiers are identical on every product (the
 // globally-shared blocks), so they stay in code — not per-product metafields.

@@ -382,22 +382,37 @@ function ScenarioRow({categories}: {categories: NavCategory[]}) {
   );
   if (scenarios.length === 0) return null;
   return (
-    <section className="mx-auto max-w-[1320px] px-5 pb-10 sm:px-8">
+    <section className="mx-auto max-w-[1320px] px-5 pb-12 sm:px-8">
       <Reveal>
-        <h2 className="text-[13px] font-medium">What are you lighting?</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {scenarios.map((s) => (
-            <Link
-              key={s.label}
-              to={s.to}
-              prefetch="intent"
-              className="press inline-flex items-center gap-1.5 rounded-sm border border-border bg-parchment px-3.5 py-2 text-[13px] text-foreground transition-colors hover:border-foreground/40"
-            >
-              {s.label}
-              <Arrow className="h-3.5 w-3.5 text-muted-foreground" />
-            </Link>
-          ))}
+        {/* Staged as a short conversation: we ask, you answer. It reframes the
+            catalog from "know the product name" to "describe your room", which
+            is the whole point of these entry points. The rounded bubble is a
+            deliberate local exception to the 2–4px radius system — it is what
+            makes the exchange read as speech rather than as more filter chips. */}
+        <div className="relative inline-block rounded-2xl bg-parchment px-4 py-2.5">
+          <h2 className="text-[14px] font-medium text-foreground">
+            What are you lighting?
+          </h2>
+          <span
+            aria-hidden
+            className="absolute -bottom-1 left-5 size-3 rotate-45 rounded-[2px] bg-parchment"
+          />
         </div>
+
+        <ul className="mt-5 flex list-none flex-wrap gap-2.5">
+          {scenarios.map((s) => (
+            <li key={s.label}>
+              <Link
+                to={s.to}
+                prefetch="intent"
+                className="press group inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-[13.5px] text-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                {s.label}
+                <Arrow className="h-3.5 w-3.5 text-muted-foreground transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary" />
+              </Link>
+            </li>
+          ))}
+        </ul>
       </Reveal>
     </section>
   );
