@@ -173,13 +173,6 @@ const ICONS: Record<string, typeof Bolt> = {
   shield: Shield,
   check: Check,
 };
-// Reviews and the three purchase tiers are identical on every product (the
-// globally-shared blocks), so they stay in code — not per-product metafields.
-const TIERS = [
-  {id: 'fixture', t: 'Fixture only', s: 'You install it.', d: 'The configured fixture, shipped to your door with a clear install guide.', cta: 'Add to cart', tag: ''},
-  {id: 'design', t: 'Fixture + Lighting design', s: 'Free photometric plan.', d: 'We return a layout, fixture count and spacing for your exact space — at no charge.', cta: 'Add design plan', tag: ''},
-  {id: 'install', t: 'Fixture + Licensed install', s: 'Turnkey, to code.', d: 'C-10 electricians install everything to Title 24. You flip the switch.', cta: 'Get install quote', tag: 'Most popular'},
-] as const;
 // Prices render from the selected Shopify variant (variant currency) — see money() in the component.
 
 /* ============================ component ============================ */
@@ -201,7 +194,7 @@ export default function ProductPage() {
   });
 
   const [qty, setQty] = useState(1);
-  const [tier, setTier] = useState<(typeof TIERS)[number]['id']>('design');
+  const [fulfilment, setFulfilment] = useState<'buy' | 'install'>('buy');
   const [active, setActive] = useState(0);
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
@@ -274,7 +267,18 @@ export default function ProductPage() {
   const lines = selectedVariant?.id
     ? [{merchandiseId: selectedVariant.id, quantity: qty, selectedVariant}]
     : [];
-  const addLabel = tier === 'fixture' ? 'Add to cart' : 'Add to project';
+  // Install is priced per site, so it is a quote, never a cart line. Accessories
+  // opt out entirely: nobody books a C-10 crew to fit a $19 connector, and
+  // offering it there makes the whole choice look automated rather than meant.
+  const installable = product.productType !== 'Lighting Accessories';
+  const wantsInstall = installable && fulfilment === 'install';
+  const requestInstall = () =>
+    open('quote', {
+      productTitle: product.title,
+      variantTitle: configSummary || undefined,
+      quantity: qty,
+      path: `/products/${product.handle}`,
+    });
 
   return (
     <div className="w-full bg-background text-foreground font-body antialiased">
@@ -361,28 +365,74 @@ export default function ProductPage() {
               Request a free quote <Arrow className="h-4 w-4" />
             </QuoteButton>
           ) : (
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex items-center rounded-sm border border-border">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Minus className="h-4 w-4" /></button>
-                <span className="tnum w-8 text-center text-[15px]">{qty}</span>
-                <button onClick={() => setQty((q) => q + 1)} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Plus className="h-4 w-4" /></button>
+            <>
+              {/* The choice sits on the button it changes. As three cards at
+                  the foot of the page it only ever swapped one word on a
+                  control that was scrolled out of sight. */}
+              {installable && (
+                <fieldset className="mt-6">
+                  <legend className="text-[12px] font-medium text-muted-foreground">
+                    How do you want it?
+                  </legend>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <FulfilmentOption
+                      selected={!wantsInstall}
+                      onSelect={() => setFulfilment('buy')}
+                      title="Just the fixture"
+                      note="You install it"
+                    />
+                    <FulfilmentOption
+                      selected={wantsInstall}
+                      onSelect={() => setFulfilment('install')}
+                      title="With installation"
+                      note="Our C-10 crew"
+                    />
+                  </div>
+                </fieldset>
+              )}
+
+              <div className="mt-4 flex items-center gap-3">
+                <div className="flex items-center rounded-sm border border-border">
+                  <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Minus className="h-4 w-4" /></button>
+                  <span className="tnum w-8 text-center text-[15px]">{qty}</span>
+                  <button onClick={() => setQty((q) => q + 1)} className="press grid h-12 w-11 place-items-center text-foreground/70 hover:text-foreground"><Plus className="h-4 w-4" /></button>
+                </div>
+                <div className="flex-1">
+                  {wantsInstall ? (
+                    // No cart line: we cannot price an install before seeing
+                    // the site, so this opens the request instead of pretending
+                    // to sell something with a number attached.
+                    <button
+                      type="button"
+                      onClick={requestInstall}
+                      className="press inline-flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary text-[14px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      Request install quote <Arrow className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <AddToCartButton
+                      onClick={() => open('cart')}
+                      lines={lines}
+                      disabled={!canBuy}
+                      className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
+                    >
+                      {canBuy ? <>Add to cart · {money(total)}</> : 'Sold out'}
+                    </AddToCartButton>
+                  )}
+                </div>
               </div>
-              <div className="flex-1">
-                <AddToCartButton
-                  onClick={() => open('cart')}
-                  lines={lines}
-                  disabled={!canBuy}
-                  className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
-                >
-                  {canBuy ? <>{addLabel} · {money(total)}</> : 'Sold out'}
-                </AddToCartButton>
-              </div>
-            </div>
+            </>
           )}
           <a href="#design" className="press mt-3 flex h-11 items-center justify-center gap-2 rounded-sm border border-onyx/25 text-[13.5px] hover:border-foreground">
             Book a free lighting plan <Arrow className="h-4 w-4" />
           </a>
-          <p className="mt-3 text-center text-[11.5px] text-muted-foreground">{quoteOnly ? 'Free design consultation · Licensed installation in LA County' : 'Ships in 3–5 days · Licensed installation in LA County · or from $9/mo'}</p>
+          <p className="mt-3 text-center text-[11.5px] text-muted-foreground">
+            {quoteOnly
+              ? 'Free design consultation · Licensed installation in LA County'
+              : wantsInstall
+                ? 'Priced per site · C-10 licensed, to Title 24 · quoted within one business day'
+                : 'Ships in 3–5 days · you install it · or from $9/mo'}
+          </p>
         </div>
       </section>
       <div ref={sentinelRef} aria-hidden className="h-px w-full" />
@@ -395,31 +445,6 @@ export default function ProductPage() {
           </div>
         </div>
       )}
-
-      {/* three ways to buy */}
-      <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
-        <Reveal>
-          <p className="type-eyebrow">The LA difference</p>
-          <h2 className="mt-3 max-w-2xl font-heading text-[32px] leading-[1.1] sm:text-[40px]">Buy the fixture. Or buy the finished result.</h2>
-          <p className="mt-4 max-w-xl text-[15px] text-muted-foreground">Most lighting stores sell you a box. We can also design the layout and send a licensed crew to install it — all to California code.</p>
-        </Reveal>
-        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {TIERS.map((t, i) => (
-            <Reveal key={t.id} delay={i * 70}>
-              <button onClick={() => setTier(t.id)} className={`lift group relative flex h-full w-full flex-col rounded-lg border p-6 text-left ${tier === t.id ? 'border-foreground bg-background' : 'border-border bg-parchment hover:border-foreground/40'}`}>
-                {t.tag && <span className="absolute right-4 top-4 rounded-sm bg-onyx px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white">{t.tag}</span>}
-                <span className={`grid h-9 w-9 place-items-center rounded-full border text-[13px] ${tier === t.id ? 'border-foreground bg-foreground text-background' : 'border-border'}`}>{i + 1}</span>
-                <h3 className="mt-4 font-heading text-[20px] leading-tight">{t.t}</h3>
-                <p className="mt-1 text-[13px] font-medium text-foreground">{t.s}</p>
-                <p className="mt-2 flex-1 text-[13.5px] leading-relaxed text-muted-foreground">{t.d}</p>
-                <span className={`mt-5 inline-flex items-center gap-1.5 text-[13.5px] font-medium ${tier === t.id ? 'text-foreground' : 'text-foreground/70'}`}>
-                  {tier === t.id ? <><Check className="h-4 w-4" /> Selected</> : <>{t.cta} <Arrow className="h-4 w-4" /></>}
-                </span>
-              </button>
-            </Reveal>
-          ))}
-        </div>
-      </section>
 
       {/* feature rows + cards (per-product) */}
       {(content.features.length > 0 || content.featureCards.length > 0) && (
@@ -641,6 +666,38 @@ export default function ProductPage() {
 }
 
 /* ----------------------------- primitives ----------------------------- */
+/** One half of the fulfilment choice. Radio semantics, not two loose buttons. */
+function FulfilmentOption({
+  selected,
+  onSelect,
+  title,
+  note,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  title: string;
+  note: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={`press rounded-sm border px-3.5 py-2.5 text-left transition-colors ${
+        selected
+          ? 'border-foreground bg-background'
+          : 'border-border bg-parchment hover:border-foreground/40'
+      }`}
+    >
+      <span className="block text-[13.5px] font-medium">{title}</span>
+      <span className="mt-0.5 block text-[12px] text-muted-foreground">
+        {note}
+      </span>
+    </button>
+  );
+}
+
 function Field({label, value, children, tight}: {label: string; value?: string; children: React.ReactNode; tight?: boolean}) {
   return (
     <div className={tight ? '' : 'mt-5'}>
@@ -798,6 +855,7 @@ const PRODUCT_FRAGMENT = `#graphql
   fragment Product on Product {
     id
     title
+    productType
     vendor
     handle
     tags

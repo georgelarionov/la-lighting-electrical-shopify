@@ -11,9 +11,25 @@ import {X} from 'lucide-react';
 import {cn} from '~/lib/utils';
 
 type AsideType = 'search' | 'cart' | 'mobile' | 'quote' | 'closed';
+
+/**
+ * What the quote drawer was opened *about*. Set when the request starts from a
+ * product page, so the lead reaches sales naming the fixture instead of an
+ * anonymous "someone wants a quote".
+ */
+export type QuoteContext = {
+  productTitle: string;
+  /** Selected variant, e.g. "Black / 3000K". Omitted for single-variant items. */
+  variantTitle?: string;
+  quantity: number;
+  /** Product path, so the description links straight back to the item. */
+  path: string;
+};
+
 type AsideContextValue = {
   type: AsideType;
-  open: (mode: AsideType) => void;
+  quoteContext: QuoteContext | null;
+  open: (mode: AsideType, quoteContext?: QuoteContext) => void;
   close: () => void;
 };
 
@@ -98,6 +114,7 @@ const AsideContext = createContext<AsideContextValue | null>(null);
 
 Aside.Provider = function AsideProvider({children}: {children: ReactNode}) {
   const [type, setType] = useState<AsideType>('closed');
+  const [quoteContext, setQuoteContext] = useState<QuoteContext | null>(null);
   const {pathname} = useLocation();
 
   // Any navigation dismisses the panel. Without this the cart drawer's own
@@ -110,7 +127,14 @@ Aside.Provider = function AsideProvider({children}: {children: ReactNode}) {
     <AsideContext.Provider
       value={{
         type,
-        open: setType,
+        quoteContext,
+        open: (mode, context) => {
+          // Cleared on every open, not just when one is passed: otherwise the
+          // next quote from the header would inherit whichever product page the
+          // visitor happened to open a request from earlier.
+          setQuoteContext(context ?? null);
+          setType(mode);
+        },
         close: () => setType('closed'),
       }}
     >

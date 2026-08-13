@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Link, useFetcher} from 'react-router';
 import {CheckCircle2} from 'lucide-react';
-import {Aside} from '~/components/Aside';
+import {Aside, useAside} from '~/components/Aside';
 import {Button} from '~/components/ui/button';
 import {Input} from '~/components/ui/input';
 import {Textarea} from '~/components/ui/textarea';
@@ -15,8 +15,17 @@ import {CONTACT} from '~/lib/site';
  * Global "Request a quote" slide-over. Opened via useAside().open('quote')
  * (see QuoteButton). Posts to the /api/quote resource route so it works from
  * any page. Mirrors the homepage quote form + the required SMS opt-in.
+ *
+ * Two modes. Opened bare, it is the project enquiry: tell us about the space.
+ * Opened from a product page with a `quoteContext`, it becomes the install
+ * request for that fixture — the item is stated at the top and travels with the
+ * lead, the address of the job is asked for, and the free-text box and lighting
+ * preferences stop being the point (installing a known fixture is not a design
+ * brief). Sales should never receive one of these wondering what to quote.
  */
 export function QuoteAside() {
+  const {quoteContext} = useAside();
+  const forProduct = Boolean(quoteContext);
   const fetcher = useFetcher<HomeActionData>();
   const data = fetcher.data;
   const errors = data?.ok === false ? data.errors : undefined;
@@ -26,7 +35,10 @@ export function QuoteAside() {
   const [smsConsent, setSmsConsent] = useState(false);
 
   return (
-    <Aside type="quote" heading="Request a free quote">
+    <Aside
+      type="quote"
+      heading={forProduct ? 'Request an install quote' : 'Request a free quote'}
+    >
       {data?.ok ? (
         <div className="flex h-full flex-col items-center justify-center py-10 text-center">
           <CheckCircle2 className="size-12 text-primary" strokeWidth={1.75} />
@@ -44,22 +56,71 @@ export function QuoteAside() {
           action="/api/quote"
           className="flex flex-col gap-5"
         >
-          <p className="type-caption text-ink-muted">
-            Send the details and get a clear, no-obligation estimate — usually
-            within one business day.
-          </p>
+          {quoteContext ? (
+            <>
+              <input type="hidden" name="productTitle" value={quoteContext.productTitle} />
+              <input type="hidden" name="productVariant" value={quoteContext.variantTitle ?? ''} />
+              <input type="hidden" name="productQuantity" value={String(quoteContext.quantity)} />
+              <input type="hidden" name="productPath" value={quoteContext.path} />
+              <div className="rounded-[2px] border border-hairline bg-parchment p-4">
+                <p className="type-fine font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                  Installing
+                </p>
+                <p className="type-body-strong mt-1.5 text-ink">
+                  {quoteContext.productTitle}
+                </p>
+                <p className="type-caption mt-0.5 text-ink-muted">
+                  {[quoteContext.variantTitle, `Qty ${quoteContext.quantity}`]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </p>
+              </div>
+              <p className="type-caption text-ink-muted">
+                Install is priced per site, so we need to see the space. Send
+                your details and we come back with a fixed price — usually
+                within one business day.
+              </p>
+            </>
+          ) : (
+            <p className="type-caption text-ink-muted">
+              Send the details and get a clear, no-obligation estimate — usually
+              within one business day.
+            </p>
+          )}
           <QField id="qd-name" name="name" label="Full name" placeholder="Jane Smith" error={errors?.name} />
           <QField id="qd-email" name="email" type="email" label="Email" placeholder="jane@company.com" error={errors?.email} />
           <QField id="qd-phone" name="phone" type="tel" label="Phone (optional)" placeholder={CONTACT.phoneDisplay} error={errors?.phone} />
+          {forProduct ? (
+            <QField
+              id="qd-address"
+              name="address"
+              label="Job site address"
+              placeholder="Street, city, ZIP"
+              error={errors?.address}
+            />
+          ) : null}
           <div className="flex flex-col gap-2">
             <Label htmlFor="qd-message" className="type-caption-strong text-ink">
-              Project details
+              {forProduct ? (
+                <>
+                  Anything we should know{' '}
+                  <span className="type-caption font-normal text-ink-muted">
+                    (optional)
+                  </span>
+                </>
+              ) : (
+                'Project details'
+              )}
             </Label>
             <Textarea
               id="qd-message"
               name="message"
               rows={4}
-              placeholder="Tell us about the space, scope, and timeline"
+              placeholder={
+                forProduct
+                  ? 'Ceiling height, access, timeline…'
+                  : 'Tell us about the space, scope, and timeline'
+              }
               className="rounded-[2px] type-body"
               aria-invalid={Boolean(errors?.message)}
             />
@@ -68,7 +129,9 @@ export function QuoteAside() {
             ) : null}
           </div>
 
-          <LightingPreferences />
+          {/* Design wishes belong to a project enquiry. Someone asking us to
+              install a fixture they already picked has made those choices. */}
+          {forProduct ? null : <LightingPreferences />}
 
           <div className="flex items-start gap-3">
             <Checkbox
@@ -104,7 +167,11 @@ export function QuoteAside() {
             disabled={submitting || !consent || !smsConsent}
             className="mt-1 h-12 w-full type-body font-normal"
           >
-            {submitting ? 'Sending…' : 'Request a quote'}
+            {submitting
+              ? 'Sending…'
+              : forProduct
+                ? 'Request install quote'
+                : 'Request a quote'}
           </Button>
         </fetcher.Form>
       )}

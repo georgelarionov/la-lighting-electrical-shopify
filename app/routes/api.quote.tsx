@@ -23,7 +23,9 @@ export async function action({
       name: values.name,
       email: values.email,
       phone: values.phone,
-      source: 'Website — quote drawer',
+      source: values.product
+        ? 'Website — install request (product page)'
+        : 'Website — quote drawer',
       description: describeQuoteLead(values, {
         smsConsent: formData.get('smsConsent') === 'yes',
       }),

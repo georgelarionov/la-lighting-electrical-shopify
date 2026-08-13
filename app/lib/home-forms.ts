@@ -11,7 +11,7 @@
  */
 
 export type QuoteErrors = Partial<
-  Record<'name' | 'email' | 'phone' | 'message' | 'consent', string>
+  Record<'name' | 'email' | 'phone' | 'message' | 'address' | 'consent', string>
 >;
 
 export type HomeActionData = {
@@ -41,18 +41,37 @@ export function validateQuote(formData: FormData): {
     email: string;
     phone: string;
     message: string;
+    /** Job-site address — asked for (and required) on install requests only. */
+    address: string;
     // Optional lighting-plan preferences (design wishes, not Shopify variants).
     direction: string;
     dimming: string;
     shape: string;
     runLength: string;
+    /** Set when the request came from a product page. */
+    product?: {
+      title: string;
+      variant: string;
+      quantity: string;
+      path: string;
+    };
   };
 } {
   const name = str(formData.get('name'));
   const email = str(formData.get('email'));
   const phone = str(formData.get('phone'));
   const message = str(formData.get('message'));
+  const address = str(formData.get('address'));
   const consent = formData.get('consent');
+  const productTitle = str(formData.get('productTitle'));
+  const product = productTitle
+    ? {
+        title: productTitle,
+        variant: str(formData.get('productVariant')),
+        quantity: str(formData.get('productQuantity')) || '1',
+        path: str(formData.get('productPath')),
+      }
+    : undefined;
   const direction = str(formData.get('direction'));
   const dimming = str(formData.get('dimming'));
   const shape = str(formData.get('shape'));
@@ -62,14 +81,32 @@ export function validateQuote(formData: FormData): {
   if (!name) errors.name = 'Please enter your name.';
   if (!email) errors.email = 'Please enter your email.';
   else if (!EMAIL_RE.test(email)) errors.email = 'Please enter a valid email.';
-  if (!message) errors.message = 'Tell us a little about the project.';
+  // An install request already names the fixture, so free text is optional
+  // there; a bare project enquiry tells us nothing without it. The job-site
+  // address trades places with it — we cannot price an install without one.
+  if (product) {
+    if (!address) errors.address = 'Where is the job? Street, city and ZIP.';
+  } else if (!message) {
+    errors.message = 'Tell us a little about the project.';
+  }
   if (!consent) errors.consent = 'Please accept the Privacy Policy to continue.';
 
   const ok = Object.keys(errors).length === 0;
   return {
     ok,
     errors: ok ? undefined : errors,
-    values: {name, email, phone, message, direction, dimming, shape, runLength},
+    values: {
+      name,
+      email,
+      phone,
+      message,
+      address,
+      direction,
+      dimming,
+      shape,
+      runLength,
+      product,
+    },
   };
 }
 
@@ -82,6 +119,16 @@ export function describeQuoteLead(
   opts: {smsConsent: boolean; projectType?: string},
 ): string {
   const lines: string[] = [];
+  // Lead with the fixture: an install request is worthless to sales if they
+  // have to guess what is being installed.
+  if (values.product) {
+    const {title, variant, quantity, path} = values.product;
+    lines.push(
+      `Install request — ${title}${variant ? ` (${variant})` : ''} × ${quantity}`,
+    );
+    if (path) lines.push(`Product: ${path}`);
+  }
+  if (values.address) lines.push(`Job site: ${values.address}`);
   if (values.message) lines.push(values.message);
   if (opts.projectType) lines.push(`Project type: ${opts.projectType}`);
   const prefs = [
