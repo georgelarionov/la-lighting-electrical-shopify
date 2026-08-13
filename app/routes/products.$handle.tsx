@@ -414,7 +414,7 @@ export default function ProductPage() {
                       onClick={() => open('cart')}
                       lines={lines}
                       disabled={!canBuy}
-                      className="press h-12 w-auto flex-1 gap-2 rounded-sm text-[14px]"
+                      className="press h-12 w-full gap-2 rounded-sm text-[14px] sm:w-full"
                     >
                       {canBuy ? <>Add to cart · {money(total)}</> : 'Sold out'}
                     </AddToCartButton>
@@ -632,15 +632,27 @@ export default function ProductPage() {
             </QuoteButton>
           ) : (
             <>
-              <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
-              <AddToCartButton
-                onClick={() => open('cart')}
-                lines={lines}
-                disabled={!canBuy}
-                className="press h-10 w-auto gap-2 rounded-sm px-5 text-[13.5px]"
-              >
-                {canBuy ? 'Add to project' : 'Sold out'}
-              </AddToCartButton>
+              {wantsInstall ? (
+                <button
+                  type="button"
+                  onClick={requestInstall}
+                  className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-sm bg-primary px-5 text-[13.5px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Request install quote
+                </button>
+              ) : (
+                <>
+                  <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
+                  <AddToCartButton
+                    onClick={() => open('cart')}
+                    lines={lines}
+                    disabled={!canBuy}
+                    className="press h-10 w-auto gap-2 rounded-sm px-5 text-[13.5px]"
+                  >
+                    {canBuy ? 'Add to cart' : 'Sold out'}
+                  </AddToCartButton>
+                </>
+              )}
             </>
           )}
         </div>
