@@ -104,13 +104,13 @@ export function MegaMenuItem({
 
           <div className="lg:border-l lg:border-hairline lg:pl-12">
             <PanelHeading>{restHeading}</PanelHeading>
-            <ul className="mt-4 grid list-none grid-cols-2 gap-x-8 lg:grid-cols-1">
+            {/* No rules between rows: the divider sat directly under the item
+                you were pointing at, so hovering read as the link sprouting an
+                underline. Spacing separates them just as well. */}
+            <ul className="mt-4 grid list-none grid-cols-2 gap-x-8 gap-y-1 lg:grid-cols-1">
               {rest.map((item) => (
                 <li key={item.key}>
-                  <PanelLink
-                    to={item.url}
-                    className="group block border-b border-hairline py-2.5 last:border-0"
-                  >
+                  <PanelLink to={item.url} className="group block py-2">
                     <span className="type-caption font-medium text-ink transition-colors group-hover:text-primary">
                       {item.title}
                     </span>
@@ -141,6 +141,97 @@ export function MegaMenuItem({
         </div>
       </NavigationMenu.Content>
     </NavigationMenu.Item>
+  );
+}
+
+/**
+ * The same panel on mobile, as an in-place accordion inside the burger.
+ *
+ * Same content and the same order as the desktop panel — flagship items with
+ * their pictures, then the compact list — because a phone visitor deciding
+ * between magnetic track and a linear run needs the picture at least as much as
+ * a desktop one. `<details>` supplies the disclosure semantics, keyboard
+ * handling and no-JS reliability that a hand-rolled accordion only approximates.
+ */
+export function MobileMegaSection({
+  label,
+  href,
+  featured,
+  rest,
+  footerLabel,
+  onNavigate,
+}: {
+  label: string;
+  href: string;
+  featured: MegaItem[];
+  rest: MegaItem[];
+  footerLabel: string;
+  onNavigate: () => void;
+}) {
+  return (
+    <details className="group border-b border-white/12">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-white [&::-webkit-details-marker]:hidden">
+        {label}
+        <ChevronDown
+          className="size-6 shrink-0 text-white/60 transition-transform duration-200 group-open:rotate-180"
+          strokeWidth={1.75}
+        />
+      </summary>
+
+      <ul className="list-none pb-4">
+        {featured.map((item) => (
+          <li key={item.key}>
+            <Link
+              to={item.url}
+              prefetch="intent"
+              onClick={onNavigate}
+              className="flex items-center gap-3.5 border-t border-white/8 py-3"
+            >
+              <span
+                className="relative w-20 shrink-0 overflow-hidden rounded-sm bg-white/10"
+                style={{aspectRatio: '16 / 10'}}
+              >
+                {item.thumb}
+              </span>
+              <span className="min-w-0">
+                <span className="block type-body font-medium text-white">
+                  {item.title}
+                </span>
+                {item.blurb ? (
+                  <span className="mt-0.5 block type-caption text-body-muted">
+                    {item.blurb}
+                  </span>
+                ) : null}
+              </span>
+            </Link>
+          </li>
+        ))}
+
+        {rest.map((item) => (
+          <li key={item.key}>
+            <Link
+              to={item.url}
+              prefetch="intent"
+              onClick={onNavigate}
+              className="block border-t border-white/8 py-3 type-body font-medium text-white"
+            >
+              {item.title}
+            </Link>
+          </li>
+        ))}
+
+        <li>
+          <Link
+            to={href}
+            prefetch="intent"
+            onClick={onNavigate}
+            className="block border-t border-white/8 py-3 type-body font-medium text-sky"
+          >
+            {footerLabel} →
+          </Link>
+        </li>
+      </ul>
+    </details>
   );
 }
 

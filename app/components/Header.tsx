@@ -7,13 +7,17 @@ import {
   useOptimisticCart,
 } from '@shopify/hydrogen';
 import type {NavQuery, CartApiQueryFragment} from 'storefrontapi.generated';
-import {ChevronDown, Menu as MenuIcon, ShoppingBag, X} from 'lucide-react';
+import {Menu as MenuIcon, ShoppingBag, X} from 'lucide-react';
 import {NavigationMenu} from 'radix-ui';
 import {useAside} from '~/components/Aside';
-import {MegaMenuItem} from '~/components/MegaMenu';
+import {
+  MegaMenuItem,
+  MobileMegaSection,
+  type MegaItem,
+} from '~/components/MegaMenu';
 import {Logo} from '~/components/Logo';
 import {Button} from '~/components/ui/button';
-import {buildNav, type NavCategory} from '~/lib/nav';
+import {buildNav} from '~/lib/nav';
 import {SERVICES} from '~/lib/services-catalog';
 import {CONTACT, MOBILE_NAV, PRIMARY_NAV} from '~/lib/site';
 import {cn} from '~/lib/utils';
@@ -125,7 +129,7 @@ export function Header({cart, nav}: HeaderProps) {
                           className="group inline-flex items-center gap-2 text-left type-caption text-ink-subtle transition-colors hover:text-ink"
                         >
                           Not sure what you need?
-                          <span className="font-medium text-ink underline underline-offset-4 transition-colors group-hover:text-primary">
+                          <span className="font-medium text-ink transition-colors group-hover:text-primary">
                             Get a free lighting plan
                           </span>
                         </button>
@@ -152,7 +156,7 @@ export function Header({cart, nav}: HeaderProps) {
                           className="group inline-flex items-center gap-2 type-caption text-ink-subtle transition-colors hover:text-ink"
                         >
                           Sizing a room yourself?
-                          <span className="font-medium text-ink underline underline-offset-4 transition-colors group-hover:text-primary">
+                          <span className="font-medium text-ink transition-colors group-hover:text-primary">
                             Try the lighting calculator
                           </span>
                         </Link>
@@ -201,7 +205,13 @@ export function Header({cart, nav}: HeaderProps) {
           </div>
         </NavigationMenu.Root>
       </div>
-      <MobileNav cart={cart} categories={categories} />
+      <MobileNav
+        cart={cart}
+        categoryFeatured={categoryItems.filter((c) => c.featured)}
+        categoryRest={categoryItems.filter((c) => !c.featured)}
+        serviceFeatured={serviceFeatured}
+        serviceRest={serviceRest}
+      />
     </header>
   );
 }
@@ -289,8 +299,16 @@ function MobileMenuToggle() {
  */
 function MobileNav({
   cart,
-  categories,
-}: Pick<HeaderProps, 'cart'> & {categories: NavCategory[]}) {
+  categoryFeatured,
+  categoryRest,
+  serviceFeatured,
+  serviceRest,
+}: Pick<HeaderProps, 'cart'> & {
+  categoryFeatured: MegaItem[];
+  categoryRest: MegaItem[];
+  serviceFeatured: MegaItem[];
+  serviceRest: MegaItem[];
+}) {
   const {type, close, open} = useAside();
   const expanded = type === 'mobile';
 
@@ -345,49 +363,22 @@ function MobileNav({
 
       <div className="flex flex-1 flex-col justify-between gap-8 overflow-y-auto px-7 pb-10 pt-7">
         <nav className="flex flex-col" role="navigation" aria-label="Primary">
-          {/* Catalog expands in place. `<details>` gives the disclosure
-              semantics, keyboard handling and animation-free reliability that a
-              hand-rolled accordion would only approximate. */}
-          <details className="group border-b border-white/12">
-            <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.01em] text-white [&::-webkit-details-marker]:hidden">
-              Catalog
-              <ChevronDown
-                className="size-6 shrink-0 text-white/60 transition-transform duration-200 group-open:rotate-180"
-                strokeWidth={1.75}
-              />
-            </summary>
-            <ul className="list-none pb-4">
-              {categories.map((cat) => (
-                <li key={cat.handle}>
-                  <NavLink
-                    to={cat.url}
-                    prefetch="intent"
-                    onClick={close}
-                    className="block border-t border-white/8 py-3"
-                  >
-                    <span className="type-body font-medium text-white">
-                      {cat.title}
-                    </span>
-                    {cat.blurb ? (
-                      <span className="mt-0.5 block type-caption text-body-muted">
-                        {cat.blurb}
-                      </span>
-                    ) : null}
-                  </NavLink>
-                </li>
-              ))}
-              <li>
-                <NavLink
-                  to="/collections"
-                  prefetch="intent"
-                  onClick={close}
-                  className="block border-t border-white/8 py-3 type-body font-medium text-sky"
-                >
-                  Browse all products →
-                </NavLink>
-              </li>
-            </ul>
-          </details>
+          <MobileMegaSection
+            label="Catalog"
+            href="/collections"
+            featured={categoryFeatured}
+            rest={categoryRest}
+            footerLabel="Browse all products"
+            onNavigate={close}
+          />
+          <MobileMegaSection
+            label="Services"
+            href="/services"
+            featured={serviceFeatured}
+            rest={serviceRest}
+            footerLabel="See all services"
+            onNavigate={close}
+          />
 
           {MOBILE_NAV.map((item) => (
             <NavLink

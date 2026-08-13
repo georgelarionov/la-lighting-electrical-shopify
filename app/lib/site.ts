@@ -110,13 +110,12 @@ export const PRIMARY_NAV: ReadonlyArray<{
 ];
 
 /**
- * Full-screen mobile menu navigation. Catalog is deliberately absent: on mobile
- * it expands in place into the full category list, so listing it here too would
- * put the same destination on screen twice. Blog appears only here — the tight
- * centered desktop bar has no room for it.
+ * Full-screen mobile menu navigation. Catalog and Services are deliberately
+ * absent: on mobile both expand in place into their full lists, so listing them
+ * here too would put the same destination on screen twice. Blog appears only
+ * here — the tight centered desktop bar has no room for it.
  */
 export const MOBILE_NAV: ReadonlyArray<{label: string; to: string}> = [
-  {label: 'Services', to: '/services'},
   {label: 'Projects', to: '/projects'},
   {label: 'Blog', to: '/blog'},
   {label: 'About', to: '/pages/about'},
