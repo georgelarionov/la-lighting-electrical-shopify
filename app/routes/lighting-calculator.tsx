@@ -42,27 +42,6 @@ const Shield = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke=
 const Lock = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>;
 
 /* count-up hook */
-function useCountUp(target: number, run: boolean, dur = 950) {
-  const [v, setV] = useState(run ? 0 : target);
-  useEffect(() => {
-    if (!run) {
-      setV(target);
-      return;
-    }
-    let raf = 0;
-    let start: number | null = null;
-    const tick = (t: number) => {
-      if (start === null) start = t;
-      const p = Math.min(1, (t - start) / dur);
-      const eased = 0.5 - Math.cos(Math.PI * p) / 2;
-      setV(Math.round(target * eased));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, run, dur]);
-  return v;
-}
 
 const SPACES = [
   {id: 'Office', img: IMG.office},
@@ -95,7 +74,6 @@ const STEPS = [
 const SPACE_I = 0;
 const TIMELINE_I = 5;
 const CONTACT_I = 6;
-const fmt = (n: number) => '$' + n.toLocaleString('en-US');
 const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const phoneOk = (p: string) => p.replace(/\D/g, '').length >= 10;
 const stag = (i: number) => ({animationDelay: `${140 + i * 55}ms`});
@@ -170,10 +148,6 @@ export default function LightingDesignCalculator() {
     const turnaround = a.timeline === 'ASAP' ? '3–5 days' : a.timeline === 'Just exploring' ? 'when you’re ready' : 'on your timeline';
     return {fixtures, watts, low, high, rec, turnaround};
   }, [a]);
-  const onResult = step === CONTACT_I;
-  const fCount = useCountUp(est.fixtures, onResult);
-  const fWatts = useCountUp(est.watts, onResult);
-  const fLow = useCountUp(est.low, onResult);
   const formValid = form.name.trim().length > 1 && emailOk(form.email) && phoneOk(form.phone);
   const submit = () => {
     setTouched(true);
@@ -270,13 +244,13 @@ export default function LightingDesignCalculator() {
       case 'contact':
         return (
           <div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <EstCard label="Est. fixtures" value={String(fCount)} delay={0} />
-              <EstCard label="Est. load" value={`${fWatts}W`} delay={1} />
-              <EstCard label="Est. budget" value={`${fmt(fLow)}+`} delay={2} />
-            </div>
-            <p className="fade-up mt-3 text-[12.5px] text-muted-foreground" style={stag(3)}>
-              Ballpark for <span className="font-medium text-foreground">{a.space || 'your space'}</span> · approach: <span className="font-medium text-foreground">{est.rec}</span> · turnaround {est.turnaround}. Your exact plan is free.
+            {/* The fixture-count / load / budget tiles are gone: quoting a
+                number on the step that asks for contact details invited an
+                argument about a figure we had not yet earned the right to
+                give. The recommendation and turnaround stay — they say what
+                happens next without pricing the job sight unseen. */}
+            <p className="fade-up text-[12.5px] text-muted-foreground" style={stag(0)}>
+              Approach: <span className="font-medium text-foreground">{est.rec}</span> · turnaround {est.turnaround}. Your exact plan is free.
             </p>
             <div className="mt-7 space-y-3">
               <FormField label="Full name" value={form.name} onChange={(v) => setForm((f) => ({...f, name: v}))} delay={4} placeholder="Jane Doe" error={touched && form.name.trim().length <= 1 ? 'Please enter your name' : ''} />
@@ -379,14 +353,6 @@ function Choice({label, on, onClick, delay = 0}: {label: string; on: boolean; on
     <button onClick={onClick} style={stag(delay)} className={`press fade-up inline-flex items-center gap-2 rounded-sm border px-3.5 py-2.5 text-[13.5px] ${on ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/40'}`}>
       {on && <Check className="h-3.5 w-3.5" />}{label}
     </button>
-  );
-}
-function EstCard({label, value, delay = 0}: {label: string; value: string; delay?: number}) {
-  return (
-    <div className="fade-up rounded-lg border border-border bg-parchment p-4" style={stag(delay)}>
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="tnum mt-1 font-heading text-[24px] leading-none">{value}</p>
-    </div>
   );
 }
 function FormField({label, value, onChange, placeholder, type = 'text', error, delay = 0}: {label: string; value: string; onChange: (v: string) => void; placeholder: string; type?: string; error?: string; delay?: number}) {
