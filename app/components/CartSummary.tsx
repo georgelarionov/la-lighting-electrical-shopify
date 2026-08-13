@@ -2,7 +2,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
-import type {FetcherWithComponents} from 'react-router';
+import {Link, type FetcherWithComponents} from 'react-router';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -36,27 +36,21 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
       {layout === 'page' ? (
         <CheckoutDetails cart={cart} />
       ) : (
-        <div className="mt-5">
-          <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
-        </div>
+        // In the drawer the cart page leads. That is where the buyer's details
+        // are collected, so it is the path we want by default; the express jump
+        // straight to Shopify sits below it (see PageLayout).
+        <Link
+          to="/cart"
+          prefetch="intent"
+          className="mt-5 inline-flex h-12 w-full items-center justify-center rounded-[2px] bg-primary px-6 type-body-strong text-white transition-colors hover:bg-primary/90"
+        >
+          View cart
+        </Link>
       )}
     </div>
   );
 }
 
-function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
-  if (!checkoutUrl) return null;
-
-  return (
-    <a
-      href={checkoutUrl}
-      target="_self"
-      className="inline-flex h-12 w-full items-center justify-center rounded-[2px] bg-primary px-6 type-body-strong text-white transition-colors hover:bg-primary/90"
-    >
-      Continue to checkout
-    </a>
-  );
-}
 
 /**
  * Who is buying, collected before the handoff to Shopify checkout.

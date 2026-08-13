@@ -82,13 +82,18 @@ function CartDrawerBody({cart}: {cart: CartApiQueryFragment | null}) {
     <>
       <CartMain cart={cart} layout="aside" />
       <div className="mt-6 flex flex-col gap-3 border-t border-hairline pt-6">
-        <Link
-          to="/cart"
-          prefetch="intent"
-          className="press inline-flex h-11 items-center justify-center rounded-[2px] border border-hairline px-6 type-caption font-medium text-ink transition-colors hover:border-ink"
-        >
-          View cart
-        </Link>
+        {/* Skips the cart page entirely. Named for what it does — the buyer
+            details step lives on the cart page, so this is the shortcut past
+            it, not the same button under another word. */}
+        {optimistic?.checkoutUrl ? (
+          <a
+            href={optimistic.checkoutUrl}
+            target="_self"
+            className="press inline-flex h-11 items-center justify-center rounded-[2px] border border-hairline px-6 type-caption font-medium text-ink transition-colors hover:border-ink"
+          >
+            Fast Checkout
+          </a>
+        ) : null}
         <button
           type="button"
           onClick={close}
