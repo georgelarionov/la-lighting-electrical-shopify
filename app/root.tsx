@@ -169,6 +169,20 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <body>
         {children}
         {import.meta.env.DEV && <Agentation />}
+        {/* Zoho SalesIQ chat widget (hosts allowlisted in app/entry.server.tsx CSP). */}
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html:
+              'window.$zoho=window.$zoho||{};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}',
+          }}
+        />
+        <script
+          id="zsiqscript"
+          nonce={nonce}
+          src="https://salesiq.zohopublic.com/widget?wc=siqe0146aeba4dbaea7a91acb2ab0de53c8d29d3ae6b6f30c76bc63cf9305eb0038175d48a764ff876149fb01523e75409d"
+          defer
+        />
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
       </body>

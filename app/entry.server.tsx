@@ -7,6 +7,13 @@ import {
 } from '@shopify/hydrogen';
 import type {EntryContext} from 'react-router';
 
+const ZOHO_HOSTS = [
+  'https://*.zoho.com',
+  'https://*.zohopublic.com',
+  'https://*.zohostatic.com',
+  'https://*.zohocdn.com',
+];
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
@@ -29,14 +36,25 @@ export default async function handleRequest(
       'https://www.youtube-nocookie.com',
       // Google Maps place embed on the contact page (keyless ?output=embed).
       'https://www.google.com',
+      // Zoho SalesIQ renders its chat window in an iframe.
+      'https://salesiq.zohopublic.com',
     ],
-    // Dev-only: let the Agentation toolbar POST annotations to its local MCP
-    // sync server. These values are merged into (not replacing) Hydrogen's
-    // default connect-src. `import.meta.env.DEV` compiles to `false` in the
-    // Oxygen prod build, so production CSP is never loosened.
-    ...(import.meta.env.DEV
-      ? {connectSrc: ['http://localhost:4747', 'ws://localhost:4747']}
-      : {}),
+    // Zoho SalesIQ chat widget (loaded in app/root.tsx). Hydrogen merges these
+    // into its defaults, so nothing existing is dropped. default-src covers the
+    // widget's script/img/font loads; connect-src covers its XHR + websocket.
+    defaultSrc: ZOHO_HOSTS,
+    styleSrc: ['https://*.zohostatic.com', 'https://*.zohocdn.com'],
+    connectSrc: [
+      ...ZOHO_HOSTS,
+      'wss://*.zoho.com',
+      'wss://*.zohopublic.com',
+      // Dev-only: let the Agentation toolbar POST annotations to its local MCP
+      // sync server. `import.meta.env.DEV` compiles to `false` in the Oxygen
+      // prod build, so production CSP is never loosened.
+      ...(import.meta.env.DEV
+        ? ['http://localhost:4747', 'ws://localhost:4747']
+        : []),
+    ],
   });
 
   const body = await renderToReadableStream(
