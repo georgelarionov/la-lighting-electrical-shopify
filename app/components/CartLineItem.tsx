@@ -30,6 +30,13 @@ export function CartLineItem({
 }) {
   const {id, merchandise} = line;
   const {product, title, image, selectedOptions} = merchandise;
+  // Choices that aren't variants (the PDP's connector picker) ride on the line
+  // as attributes. They read as part of the configuration, so show them on the
+  // same line as the options rather than inventing a second row for them.
+  // Shopify's convention is that an underscore-prefixed key is internal.
+  const attributes = (line.attributes ?? []).filter(
+    (attribute) => !attribute.key.startsWith('_') && attribute.value,
+  );
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
   const lineItemChildren = childrenMap[id];
@@ -79,11 +86,16 @@ export function CartLineItem({
           >
             {product.title}
           </Link>
-          {selectedOptions.length ? (
+          {selectedOptions.length || attributes.length ? (
             <p className="type-caption mt-0.5 text-ink-subtle">
-              {selectedOptions
-                .map((option) => `${option.name}: ${option.value}`)
-                .join(' · ')}
+              {[
+                ...selectedOptions.map(
+                  (option) => `${option.name}: ${option.value}`,
+                ),
+                ...attributes.map(
+                  (attribute) => `${attribute.key}: ${attribute.value}`,
+                ),
+              ].join(' · ')}
             </p>
           ) : null}
           <div className="mt-2">
