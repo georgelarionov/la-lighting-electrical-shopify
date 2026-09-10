@@ -160,23 +160,6 @@ const Ruler = ({className}: IP) => <svg viewBox="0 0 24 24" fill="none" stroke="
 /* --------------------------- data (globally shared) ------ */
 // Body-color swatch fallbacks when a Shopify option has no configured swatch.
 const COLOR_HEX: Record<string, string> = {black: '#1c1a17', white: '#f3f1ec'};
-// The buy-box choice chip. Shared by the real Shopify variant options and by
-// the connector picker below them so the two groups are pixel-identical —
-// a visitor cannot tell (and should not care) which side of the variant
-// boundary a given choice lives on.
-const CHIP_BASE =
-  'press rounded-sm border px-3 py-2.5 text-center text-[13px]';
-const chipState = (selected: boolean) =>
-  selected
-    ? 'border-foreground bg-foreground/[0.03] ring-1 ring-foreground'
-    : 'border-border hover:border-foreground/40';
-// Junction pieces for the modular architectural linear system: an L turns a
-// corner, a T branches, an X crosses, a Y splits at an angle. They are NOT
-// fixture variants — a connector does not change the fixture in the box — so
-// they ride along as a cart-line attribute instead of multiplying an already
-// 18-cell variant grid by four. Selecting one is optional (a straight run
-// needs none), which is why there is no default and a second click clears it.
-const CONNECTORS = ['L-con', 'X-con', 'T-con', 'Y-con'];
 // Soft studio-grey backdrop shared by the gallery slideshow AND the feature
 // rows — lighter toward the top centre, subtly deeper at the edges, so studio
 // product renders (shot on a flat cool-grey seamless) read as one continuous
@@ -212,10 +195,6 @@ export default function ProductPage() {
 
   const [qty, setQty] = useState(1);
   const [fulfilment, setFulfilment] = useState<'buy' | 'install'>('buy');
-  // Only the modular linear system is built from connectable segments; a panel
-  // or a track head has nothing to join, so the group stays off everywhere else.
-  const hasConnectors = product.handle.includes('architectural-linear-system');
-  const [connector, setConnector] = useState<string | null>(null);
   // Seeded from the selected variant's image so the first paint already shows
   // the right finish. Setting it from an effect instead updated state inside a
   // Suspense boundary mid-hydration, which React logs and recovers from by
@@ -308,33 +287,19 @@ export default function ProductPage() {
     return () => io.disconnect();
   }, []);
 
-  const configSummary = [
-    ...(selectedVariant?.selectedOptions
+  const configSummary =
+    selectedVariant?.selectedOptions
       ?.filter((o) => o.name !== 'Title')
-      .map((o) => o.value) ?? []),
-    ...(connector ? [connector] : []),
-  ].join(' · ');
+      .map((o) => o.value)
+      .join(' · ') ?? '';
   const canBuy = Boolean(
     selectedVariant?.availableForSale && selectedVariant?.id,
   );
   // selectedVariant is required, not decorative: useOptimisticCart builds the
   // pending cart line from it, and without it the add is invisible until the
   // server round trip lands.
-  //
-  // The connector is not part of the merchandise id, so it travels as a line
-  // attribute — it survives into checkout and onto the order, which is the
-  // only place it actually has to be right.
   const lines = selectedVariant?.id
-    ? [
-        {
-          merchandiseId: selectedVariant.id,
-          quantity: qty,
-          selectedVariant,
-          ...(connector
-            ? {attributes: [{key: 'Connectors', value: connector}]}
-            : {}),
-        },
-      ]
+    ? [{merchandiseId: selectedVariant.id, quantity: qty, selectedVariant}]
     : [];
   // Install is priced per site, so it is a quote, never a cart line. Accessories
   // opt out entirely: nobody books a C-10 crew to fit a $19 connector, and
@@ -436,27 +401,6 @@ export default function ProductPage() {
               })
             }
           />
-
-          {/* connectors — sits directly under the variant options and looks
-              identical to them, but is carried on the cart line rather than
-              the variant (see CONNECTORS above). */}
-          {hasConnectors && (
-            <Field label="Connectors" value={connector ?? 'Optional'}>
-              <div className="grid grid-cols-4 gap-2">
-                {CONNECTORS.map((name) => (
-                  <SelChip
-                    key={name}
-                    active={connector === name}
-                    onClick={() =>
-                      setConnector((cur) => (cur === name ? null : name))
-                    }
-                  >
-                    {name}
-                  </SelChip>
-                ))}
-              </div>
-            </Field>
-          )}
 
           {/* qty + add — or a quote CTA for configured-per-project products */}
           {quoteOnly ? (
@@ -855,12 +799,7 @@ function Field({label, value, children, tight}: {label: string; value?: string; 
 }
 function SelChip({active, onClick, children}: {active: boolean; onClick: () => void; children: React.ReactNode}) {
   return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(CHIP_BASE, chipState(active))}
-    >
+    <button onClick={onClick} className={`press rounded-sm border px-2 py-2.5 text-center ${active ? 'border-foreground bg-foreground/[0.03] ring-1 ring-foreground' : 'border-border hover:border-foreground/40'}`}>
       {children}
     </button>
   );
@@ -903,8 +842,10 @@ function ProductOptions({
                   swatch,
                 } = value;
                 const chipClass = cn(
-                  CHIP_BASE,
-                  chipState(selected),
+                  'press rounded-sm border px-3 py-2.5 text-center text-[13px]',
+                  selected
+                    ? 'border-foreground bg-foreground/[0.03] ring-1 ring-foreground'
+                    : 'border-border hover:border-foreground/40',
                   !available && 'opacity-40',
                   !exists && 'cursor-not-allowed',
                 );
