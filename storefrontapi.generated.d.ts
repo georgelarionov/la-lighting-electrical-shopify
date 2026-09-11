@@ -289,9 +289,6 @@ export type CartApiMutationFragment = Pick<
   buyerIdentity: {
     customer?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Customer, 'id'>>;
   };
-  discountCodes: Array<
-    Pick<StorefrontAPI.CartDiscountCode, 'code' | 'applicable'>
-  >;
 };
 
 export type NavQueryVariables = StorefrontAPI.Exact<{

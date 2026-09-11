@@ -511,7 +511,7 @@ function ProductCard({p}: {p: CatalogProduct}) {
             <h3 className="mt-1 truncate text-[14px] font-medium">{p.name}</h3>
           </div>
           <span className="tnum shrink-0 text-[13.5px] text-muted-foreground">
-            From {fmt(b2b ? b2bAmount(p.price) : p.price)}
+            From {fmt(b2b ? b2bAmount(p.price, b2b) : p.price)}
             {b2b && <s className="ml-1.5 text-[12px] opacity-60">{fmt(p.price)}</s>}
           </span>
         </div>

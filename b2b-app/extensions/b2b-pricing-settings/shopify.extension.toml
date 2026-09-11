@@ -1,0 +1,14 @@
+api_version = "2026-01"
+[[extensions]]
+# Change the merchant-facing name of the extension in locales/en.default.json
+name = "t:name"
+description = "t:description"
+handle = "b2b-pricing-settings"
+uid = "f45206c4-68ae-7a5b-823c-c40129c2cb56bb312d69"
+type = "ui_extension"
+# Only 1 target can be specified for each Admin block extension
+[[extensions.targeting]]
+module = "./src/DiscountFunctionSettings.jsx"
+target = "admin.discount-details.function-settings.render"
+
+

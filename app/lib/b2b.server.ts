@@ -1,49 +1,41 @@
 import type {CartQueryDataReturn, HydrogenContext} from '@shopify/hydrogen';
-import {CUSTOMER_TAGS_QUERY} from '~/graphql/customer-account/CustomerTagsQuery';
-import {B2B} from '~/lib/b2b';
+import {CUSTOMER_B2B_QUERY} from '~/graphql/customer-account/CustomerB2BQuery';
 
 type Ctx = Pick<HydrogenContext, 'customerAccount' | 'session' | 'cart'>;
 
 /**
- * Whether the current visitor is a signed-in `b2b`-tagged customer. The tag
- * lookup is one Customer Account API call, cached in the session for the life
- * of the login (cleared on logout and on the next sign-in).
+ * The signed-in customer's "B2B discount %" (0 when none / signed out). One
+ * Customer Account API call per login, cached in the session (cleared on
+ * logout and on the next sign-in, see account_.authorize).
  */
-export async function isB2B({customerAccount, session}: Ctx): Promise<boolean> {
-  if (!(await customerAccount.isLoggedIn())) return false;
-  const cached = session.get('b2b') as boolean | undefined;
-  if (typeof cached === 'boolean') return cached;
+export async function getB2BPercent({customerAccount, session}: Ctx): Promise<number> {
+  if (!(await customerAccount.isLoggedIn())) return 0;
+  const cached = session.get('b2b') as number | undefined;
+  if (typeof cached === 'number') return cached;
   // Never let a Customer Account API hiccup take the whole page down (this
-  // runs in the root loader): an unreadable tag list is simply "not B2B".
-  const b2b = await customerAccount
-    .query(CUSTOMER_TAGS_QUERY)
-    .then(({data}) => Boolean(data?.customer?.tags?.includes(B2B.tag)))
-    .catch(() => false);
-  session.set('b2b', b2b);
-  return b2b;
+  // runs in the root loader): an unreadable field is simply "retail".
+  const percent = await customerAccount
+    .query(CUSTOMER_B2B_QUERY)
+    .then(({data}) => Number(data?.customer?.metafield?.value ?? 0))
+    .then((n) => (n > 0 && n <= 100 ? n : 0))
+    .catch(() => 0);
+  session.set('b2b', percent);
+  return percent;
 }
 
 /**
- * Runs after every cart mutation: for a B2B customer, make sure the cart is
- * tied to their login (so Shopify can check discount eligibility) and carries
- * the B2B code. Both are no-ops once set, so this costs nothing on repeat.
+ * Runs after every cart mutation: a cart started as a guest and then signed
+ * in has no customer on it, so the B2B discount function (which reads the
+ * customer's percent off the cart) would see nobody. Tie it to the login;
+ * a no-op once set. Hydrogen already does this for carts created after login.
  */
-export async function applyB2BToCart(
+export async function attachCustomerToCart(
   ctx: Ctx,
   result: CartQueryDataReturn,
 ): Promise<CartQueryDataReturn> {
   const cart = result?.cart;
-  if (!cart || !(await isB2B(ctx))) return result;
-
-  if (!cart.buyerIdentity?.customer) {
-    const customerAccessToken = await ctx.customerAccount.getAccessToken();
-    if (customerAccessToken) {
-      result = await ctx.cart.updateBuyerIdentity({customerAccessToken});
-    }
-  }
-  const codes = cart.discountCodes?.map((d) => d.code) ?? [];
-  if (!codes.some((c) => c.toUpperCase() === B2B.code)) {
-    result = await ctx.cart.updateDiscountCodes([...codes, B2B.code]);
-  }
-  return result;
+  if (!cart || cart.buyerIdentity?.customer) return result;
+  const customerAccessToken = await ctx.customerAccount.getAccessToken();
+  if (!customerAccessToken) return result;
+  return ctx.cart.updateBuyerIdentity({customerAccessToken});
 }

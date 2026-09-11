@@ -1,0 +1,7 @@
+{
+  "name": "B2B pricing settings",
+  "description": "Explains where the per-customer B2B percent comes from",
+  "title": "Percent off per customer",
+  "body": "Each signed-in customer gets the percent set in the \"B2B discount %\" field on their customer page (Customers → open a customer → B2B discount %). Empty or 0 means retail prices.",
+  "hint": "To manage a group at once, build a customer segment on that field (for example: B2B discount % = 20) and bulk-edit it."
+}

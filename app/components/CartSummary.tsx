@@ -3,7 +3,7 @@ import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
 import {Link, type FetcherWithComponents} from 'react-router';
-import {B2B} from '~/lib/b2b';
+import {useB2B} from '~/lib/b2b';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -12,6 +12,7 @@ type CartSummaryProps = {
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
   const summaryId = useId();
+  const b2b = useB2B();
 
   return (
     <div
@@ -34,11 +35,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           )}
         </dd>
       </dl>
-      {cart?.discountCodes?.some(
-        (d) => d.applicable && d.code.toUpperCase() === B2B.code,
-      ) && (
+      {b2b > 0 && (
         <p className="mt-3 type-caption text-ink-muted">
-          B2B pricing applied — {B2B.percent}% off, already in the subtotal.
+          B2B pricing — {b2b}% off, already in the line prices above.
         </p>
       )}
       {layout === 'page' ? (

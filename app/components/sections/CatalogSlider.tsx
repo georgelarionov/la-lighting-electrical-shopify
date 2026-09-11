@@ -104,7 +104,7 @@ function ProductCard({
 }) {
   const b2b = useB2B();
   const list = product?.priceRange?.minVariantPrice;
-  const price = money(b2b && list ? b2bMoney(list) : list);
+  const price = money(b2b && list ? b2bMoney(list, b2b) : list);
   const inner = (
     <>
       <div className="overflow-hidden rounded-lg border border-hairline bg-parchment">

@@ -239,10 +239,11 @@ export default function ProductPage() {
       minimumFractionDigits: n % 1 === 0 ? 0 : 2,
     }).format(n);
   // A signed-in B2B customer sees their price; the list price is struck
-  // through beside it (the discount code lands on the cart, see ~/lib/b2b.ts).
+  // through beside it (Shopify applies the same percent in the cart, see
+  // ~/lib/b2b.tsx).
   const b2b = useB2B();
   const listAmount = Number(selectedVariant?.price?.amount ?? 0);
-  const unitAmount = b2b ? b2bAmount(listAmount) : listAmount;
+  const unitAmount = b2b ? b2bAmount(listAmount, b2b) : listAmount;
   const total = unitAmount * qty;
   const compareAt = b2b
     ? listAmount

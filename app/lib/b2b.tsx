@@ -6,33 +6,27 @@ import type {RootLoader} from '~/root';
 /**
  * B2B pricing, the Basic-plan way (no Shopify Plus, so no companies/catalogs):
  *
- *  1. The merchant tags a customer `b2b` in admin (Customers → Tags).
- *  2. Admin holds a discount code `B2B` — 20% off all products — that only the
- *     "B2B customers" segment (`customer_tags CONTAINS 'b2b'`) may use.
- *  3. Once that customer signs in, the storefront shows the discounted price
- *     everywhere and quietly keeps the code on the cart, so checkout matches.
- *
- * ponytail: PERCENT must equal the discount's percentage in admin (Discounts →
- * "B2B pricing"). Shopify's number is the one that gets charged; this one only
- * draws the preview on product pages.
+ *  1. The merchant types a percent into the customer's "B2B discount %" field
+ *     in admin (metafield custom.b2b_discount; 0 or empty = retail).
+ *  2. The la-lighting-b2b app's discount function (b2b-app/) reads that field
+ *     from the cart's signed-in customer and takes the percent off every line,
+ *     so cart totals and checkout are Shopify's own numbers.
+ *  3. The storefront reads the same field once per login (root loader → `b2b`)
+ *     and previews the discounted price on product pages, list price struck
+ *     through. No codes, no tier tables: the number on the customer is the
+ *     segment.
  */
-export const B2B = {
-  tag: 'b2b',
-  code: 'B2B',
-  percent: 20,
-} as const;
-
-export function b2bAmount(amount: number) {
-  return Math.round(amount * (1 - B2B.percent / 100) * 100) / 100;
+export function b2bAmount(amount: number, percent: number) {
+  return Math.round(amount * (1 - percent / 100) * 100) / 100;
 }
 
-export function b2bMoney<T extends {amount: string}>(money: T): T {
-  return {...money, amount: String(b2bAmount(Number(money.amount)))};
+export function b2bMoney<T extends {amount: string}>(money: T, percent: number): T {
+  return {...money, amount: String(b2bAmount(Number(money.amount), percent))};
 }
 
-/** True when the signed-in customer carries the `b2b` tag (root loader). */
-export function useB2B(): boolean {
-  return Boolean(useRouteLoaderData<RootLoader>('root')?.b2b);
+/** The signed-in customer's B2B percent (0 when retail or signed out). */
+export function useB2B(): number {
+  return useRouteLoaderData<RootLoader>('root')?.b2b ?? 0;
 }
 
 /**
@@ -44,7 +38,7 @@ export function B2BMoney({data}: {data: MoneyV2}) {
   if (!b2b) return <Money data={data} />;
   return (
     <>
-      <Money data={b2bMoney(data)} />{' '}
+      <Money data={b2bMoney(data, b2b)} />{' '}
       <s className="font-normal opacity-60">
         <Money data={data} />
       </s>

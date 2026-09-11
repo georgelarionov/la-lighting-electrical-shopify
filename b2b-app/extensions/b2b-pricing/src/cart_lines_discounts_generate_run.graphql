@@ -1,0 +1,19 @@
+query CartInput {
+  cart {
+    buyerIdentity {
+      customer {
+        # Percent off for this customer, set by the merchant on the customer
+        # page in admin (definition custom.b2b_discount, 0-100).
+        metafield(namespace: "custom", key: "b2b_discount") {
+          value
+        }
+      }
+    }
+    lines {
+      id
+    }
+  }
+  discount {
+    discountClasses
+  }
+}

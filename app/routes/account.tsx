@@ -9,7 +9,7 @@ import type {Route} from './+types/account';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
 import {PageHeader} from '~/components/PageHeader';
 import {cn} from '~/lib/utils';
-import {B2B, useB2B} from '~/lib/b2b';
+import {useB2B} from '~/lib/b2b';
 
 export function shouldRevalidate() {
   return true;
@@ -94,8 +94,8 @@ function B2BNotice() {
   if (!b2b) return null;
   return (
     <p className="mt-4 type-caption text-ink-muted">
-      B2B pricing is active on your account: {B2B.percent}% off list prices,
-      applied automatically in the cart and at checkout.
+      B2B pricing is active on your account: {b2b}% off list prices, applied
+      automatically in the cart and at checkout.
     </p>
   );
 }

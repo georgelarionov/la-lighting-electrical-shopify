@@ -190,8 +190,8 @@ export const CART_QUERY_FRAGMENT = `#graphql
 
 /**
  * Returned by every cart mutation. Hydrogen's default is id/quantity/checkoutUrl
- * only; the two extra fields let the /cart action see whether a B2B customer's
- * cart already carries their login and discount code without another query.
+ * only; buyerIdentity.customer lets the /cart action see whether the cart is
+ * already tied to the signed-in customer without another query.
  */
 export const CART_MUTATE_FRAGMENT = `#graphql
   fragment CartApiMutation on Cart {
@@ -202,10 +202,6 @@ export const CART_MUTATE_FRAGMENT = `#graphql
       customer {
         id
       }
-    }
-    discountCodes {
-      code
-      applicable
     }
   }
 ` as const;

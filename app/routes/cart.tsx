@@ -8,7 +8,7 @@ import {CartMain} from '~/components/CartMain';
 import {PageHeader} from '~/components/PageHeader';
 import {COMPANY_NAME} from '~/lib/site';
 import {seo} from '~/lib/seo';
-import {applyB2BToCart} from '~/lib/b2b.server';
+import {attachCustomerToCart} from '~/lib/b2b.server';
 
 export const meta: Route.MetaFunction = ({location}) => {
   return seo({
@@ -92,9 +92,9 @@ export async function action({request, context}: Route.ActionArgs) {
       throw new Error(`${action} cart action is not defined`);
   }
 
-  // B2B customers: keep the cart tied to their login and carrying the B2B
-  // discount code, whatever the mutation above was.
-  result = await applyB2BToCart(context, result);
+  // Signed-in customers: keep the cart tied to their login, whatever the
+  // mutation above was (the B2B discount function reads the customer off it).
+  result = await attachCustomerToCart(context, result);
 
   const cartId = result?.cart?.id;
   const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();

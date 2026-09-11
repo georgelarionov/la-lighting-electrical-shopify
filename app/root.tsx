@@ -14,7 +14,7 @@ import {
 import type {Route} from './+types/root';
 import {seo, localBusinessLd} from '~/lib/seo';
 import {NAV_QUERY} from '~/lib/fragments';
-import {isB2B} from '~/lib/b2b.server';
+import {getB2BPercent} from '~/lib/b2b.server';
 import tailwindStyles from '~/styles/tailwind.css?url';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
@@ -126,9 +126,9 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
     storefront.query(NAV_QUERY, {cache: storefront.CacheLong()}),
     // Both drive first paint (the header's Sign in/Account link and every
     // price on the page), so they are not deferred. isLoggedIn is a session
-    // read; the B2B tag lookup is one call per login, then session-cached.
+    // read; the B2B percent is one call per login, then session-cached.
     customerAccount.isLoggedIn(),
-    isB2B(context),
+    getB2BPercent(context),
   ]);
 
   return {nav, isLoggedIn, b2b};

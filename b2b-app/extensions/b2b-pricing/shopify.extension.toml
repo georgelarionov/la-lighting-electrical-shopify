@@ -1,0 +1,20 @@
+api_version = "2026-07"
+
+[[extensions]]
+name = "B2B pricing"
+handle = "b2b-pricing"
+type = "function"
+uid = "091e0132-a578-b108-d25f-28c728d5c2b193b7b351"
+description = "Percent off per customer from the custom.b2b_discount metafield"
+
+  [[extensions.targeting]]
+  target = "cart.lines.discounts.generate.run"
+  input_query = "src/cart_lines_discounts_generate_run.graphql"
+  export = "cart-lines-discounts-generate-run"
+
+  [extensions.ui]
+  handle = "b2b-pricing-settings"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"
