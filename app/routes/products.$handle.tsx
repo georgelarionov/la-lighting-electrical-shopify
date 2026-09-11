@@ -2,6 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import {useLoaderData, Link, useNavigate} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {seo} from '~/lib/seo';
+import {b2bAmount, useB2B} from '~/lib/b2b';
 import {
   getSelectedProductOptions,
   getProductOptions,
@@ -237,9 +238,15 @@ export default function ProductPage() {
       currency,
       minimumFractionDigits: n % 1 === 0 ? 0 : 2,
     }).format(n);
-  const unitAmount = Number(selectedVariant?.price?.amount ?? 0);
+  // A signed-in B2B customer sees their price; the list price is struck
+  // through beside it (the discount code lands on the cart, see ~/lib/b2b.ts).
+  const b2b = useB2B();
+  const listAmount = Number(selectedVariant?.price?.amount ?? 0);
+  const unitAmount = b2b ? b2bAmount(listAmount) : listAmount;
   const total = unitAmount * qty;
-  const compareAt = Number(selectedVariant?.compareAtPrice?.amount ?? 0);
+  const compareAt = b2b
+    ? listAmount
+    : Number(selectedVariant?.compareAtPrice?.amount ?? 0);
   const savePct = compareAt > unitAmount
     ? Math.round(((compareAt - unitAmount) / compareAt) * 100)
     : 0;
@@ -383,7 +390,9 @@ export default function ProductPage() {
                 <>
                   <s className="text-[15px] text-muted-foreground">{money(compareAt)}</s>
                   <span className="rounded-sm bg-foreground px-2 py-1 text-[11.5px] font-medium text-background">
-                    Save {money(compareAt - unitAmount)} ({savePct}%)
+                    {b2b
+                      ? `B2B price · ${savePct}% off`
+                      : `Save ${money(compareAt - unitAmount)} (${savePct}%)`}
                   </span>
                 </>
               ) : null}

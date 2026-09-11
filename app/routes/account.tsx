@@ -9,6 +9,7 @@ import type {Route} from './+types/account';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
 import {PageHeader} from '~/components/PageHeader';
 import {cn} from '~/lib/utils';
+import {B2B, useB2B} from '~/lib/b2b';
 
 export function shouldRevalidate() {
   return true;
@@ -50,6 +51,7 @@ export default function AccountLayout() {
       <PageHeader title={heading} border={false} />
       <div className="container-page">
         <AccountMenu />
+        <B2BNotice />
       </div>
       <div className="container-page section-y account-shell">
         <Outlet context={{customer}} />
@@ -83,6 +85,18 @@ function AccountMenu() {
       </NavLink>
       <Logout />
     </nav>
+  );
+}
+
+/** Tells a B2B customer their pricing is on — otherwise they only see it on prices. */
+function B2BNotice() {
+  const b2b = useB2B();
+  if (!b2b) return null;
+  return (
+    <p className="mt-4 type-caption text-ink-muted">
+      B2B pricing is active on your account: {B2B.percent}% off list prices,
+      applied automatically in the cart and at checkout.
+    </p>
   );
 }
 

@@ -87,7 +87,17 @@ export function CartLineItem({
             </p>
           ) : null}
           <div className="mt-2">
-            <ProductPrice price={line?.cost?.totalAmount} />
+            {/* Struck-through pre-discount total when a code (B2B, a sale)
+                has actually been applied by Shopify. */}
+            <ProductPrice
+              price={line?.cost?.totalAmount}
+              compareAtPrice={
+                line?.cost?.subtotalAmount?.amount &&
+                line.cost.subtotalAmount.amount !== line.cost.totalAmount?.amount
+                  ? line.cost.subtotalAmount
+                  : null
+              }
+            />
           </div>
           <CartLineQuantity line={line} />
         </div>

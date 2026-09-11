@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
-import {Image, Money, Pagination} from '@shopify/hydrogen';
+import {Image, Pagination} from '@shopify/hydrogen';
+import {B2BMoney} from '~/lib/b2b';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
 
 type SearchItems = RegularSearchReturn['result']['items'];
@@ -149,7 +150,7 @@ function SearchResultsProducts({
                   </p>
                   {price && (
                     <span className="type-caption text-ink-subtle">
-                      <Money data={price} />
+                      <B2BMoney data={price} />
                     </span>
                   )}
                 </div>

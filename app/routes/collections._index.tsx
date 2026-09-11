@@ -3,6 +3,7 @@ import {Link, useLoaderData, useSearchParams} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import type {Route} from './+types/collections._index';
 import {seo, SITE_URL} from '~/lib/seo';
+import {b2bAmount, useB2B} from '~/lib/b2b';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
 import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
@@ -470,6 +471,7 @@ function CategoryHub({categories}: {categories: NavCategory[]}) {
 }
 
 function ProductCard({p}: {p: CatalogProduct}) {
+  const b2b = useB2B();
   // The magnetic-track fixtures are shot 16:9 on a near-white seamless with the
   // rail on the diagonal, so lots of white is baked into the pixels. object-fit
   // can't remove that (covering a square from 16:9 only overflows horizontally,
@@ -508,7 +510,10 @@ function ProductCard({p}: {p: CatalogProduct}) {
             <p className="type-eyebrow !text-[10px]">{p.type}</p>
             <h3 className="mt-1 truncate text-[14px] font-medium">{p.name}</h3>
           </div>
-          <span className="tnum shrink-0 text-[13.5px] text-muted-foreground">From {fmt(p.price)}</span>
+          <span className="tnum shrink-0 text-[13.5px] text-muted-foreground">
+            From {fmt(b2b ? b2bAmount(p.price) : p.price)}
+            {b2b && <s className="ml-1.5 text-[12px] opacity-60">{fmt(p.price)}</s>}
+          </span>
         </div>
         <div className="mt-2 flex items-center gap-2">
           <div className="flex items-center gap-1">

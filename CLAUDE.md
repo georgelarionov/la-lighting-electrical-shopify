@@ -64,6 +64,15 @@ The Shopify MCP "AI Toolkit" tools (`validate_graphql_codeblocks`, `search_docs_
 1. It **cannot create metaobject *definitions*** (bare merchant types are reserved → `NOT_AUTHORIZED`) and cannot even list them. Those are created by the merchant in **Admin UI** (Settings → Custom data → Metaobjects). But the token **can** create metaobject **entries** (`metaobjectUpsert`) and reference them — so bulk content-seeding is scriptable.
 2. Creating a `custom`-namespace metafield definition must **omit `access.admin`** (Shopify defaults it to `PUBLIC_READ_WRITE`, which is required; setting it explicitly errors) — pass only `access:{storefront:PUBLIC_READ}`. Pin new defs (`metafieldDefinitionPin`) or they only show under "View all" on the product editor page.
 
+## B2B pricing (Basic plan — no Shopify Plus B2B)
+
+The store is on **Basic**, so native B2B (companies/catalogs/price lists) is unavailable. B2B pricing is a **customer tag + segment-gated discount code**, see `app/lib/b2b.tsx` (constants `B2B = {tag:'b2b', code:'B2B', percent:20}`, `useB2B()`, `<B2BMoney>`) and `app/lib/b2b.server.ts` (`isB2B`, `applyB2BToCart`):
+
+- **Admin:** tag the customer `b2b` (Customers → Tags). Segment "B2B customers" = `customer_tags CONTAINS 'b2b'`; discount code **`B2B`** ("B2B pricing (tag: b2b)", 20 % off all products) is restricted to that segment. **`B2B.percent` in code must match the discount's percentage** — the code only draws the preview; Shopify's number is what gets charged.
+- **Storefront:** the root loader exposes `isLoggedIn` + `b2b` (tag lookup via Customer Account API `customer { tags }`, cached in the session as `b2b`; cleared on logout and in `account_.authorize`). Prices on PDP/catalog/cards/search/home slider render the B2B price with the list price struck through. The `/cart` action ends with `applyB2BToCart`, which ties the cart to the login (`buyerIdentity.customerAccessToken`) and adds the `B2B` code — so checkout matches. Cart mutations return `CART_MUTATE_FRAGMENT` (adds `buyerIdentity.customer` + `discountCodes`) for that check.
+- **Sign-in** is the header user icon → `/account/login` (Shopify customer accounts, email code). Locally it needs `npx shopify hydrogen dev --customer-account-push` and the printed `*.tryhydrogen.dev` URL — plain `localhost:3000` returns 400 on `/account/login`.
+- Per-product B2B prices (not a flat %) would need a Shopify Functions discount app — out of scope for now.
+
 ## Imports (Cursor rule, enforced)
 
 This is React Router 7, not Remix. Import routing primitives (`useLoaderData`, `Link`, `Form`, `useNavigation`, etc.) from **`react-router`**. Never import from `@remix-run/*`, and **never from `react-router-dom`**. Replace `@remix-run/dev` → `@react-router/dev`, `@remix-run/fs-routes` → `@react-router/fs-routes`, etc. Match the patterns already in the code.

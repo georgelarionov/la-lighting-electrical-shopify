@@ -7,7 +7,7 @@ import {
   useOptimisticCart,
 } from '@shopify/hydrogen';
 import type {NavQuery, CartApiQueryFragment} from 'storefrontapi.generated';
-import {Menu as MenuIcon, ShoppingBag, X} from 'lucide-react';
+import {Menu as MenuIcon, ShoppingBag, UserRound, X} from 'lucide-react';
 import {NavigationMenu} from 'radix-ui';
 import {useAside} from '~/components/Aside';
 import {
@@ -25,7 +25,7 @@ import {cn} from '~/lib/utils';
 interface HeaderProps {
   nav: NavQuery;
   cart: Promise<CartApiQueryFragment | null>;
-  isLoggedIn: Promise<boolean>;
+  isLoggedIn: boolean;
   publicStoreDomain: string;
 }
 
@@ -38,7 +38,7 @@ interface HeaderProps {
  * Catalog and Services each open a mega-menu on hover; their triggers are real
  * links, so clicking one still goes straight to /collections or /services.
  */
-export function Header({cart, nav}: HeaderProps) {
+export function Header({cart, nav, isLoggedIn}: HeaderProps) {
   const {open} = useAside();
   const categories = buildNav(nav);
 
@@ -182,7 +182,16 @@ export function Header({cart, nav}: HeaderProps) {
               >
                 Request a Quote
               </Button>
+              <AccountLink
+                isLoggedIn={isLoggedIn}
+                className="hidden md:inline-flex"
+                pill
+              />
               <CartToggle cart={cart} className="hidden md:inline-flex" pill />
+              <AccountLink
+                isLoggedIn={isLoggedIn}
+                className="text-ink hover:text-primary md:hidden"
+              />
               <CartToggle
                 cart={cart}
                 className="text-ink hover:text-primary md:hidden"
@@ -213,6 +222,45 @@ export function Header({cart, nav}: HeaderProps) {
         serviceRest={serviceRest}
       />
     </header>
+  );
+}
+
+/**
+ * Sign in / Account, next to the cart. Signing in is how a B2B customer gets
+ * their prices (see ~/lib/b2b.ts), so it sits where the cart is, on every
+ * viewport. `/account/login` starts the Shopify customer-account flow.
+ */
+function AccountLink({
+  isLoggedIn,
+  className,
+  pill,
+}: {
+  isLoggedIn: boolean;
+  className?: string;
+  pill?: boolean;
+}) {
+  return (
+    <Link
+      to={isLoggedIn ? '/account' : '/account/login'}
+      prefetch="intent"
+      aria-label={isLoggedIn ? 'Account' : 'Sign in'}
+      title={isLoggedIn ? 'Account' : 'Sign in'}
+      className={cn(
+        'relative inline-flex items-center justify-center transition-colors',
+        pill
+          ? 'size-9 rounded-sm bg-parchment text-ink hover:bg-parchment/70'
+          : 'size-10',
+        className,
+      )}
+    >
+      <UserRound className="size-5" strokeWidth={1.75} />
+      {isLoggedIn && (
+        <span
+          aria-hidden
+          className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-primary"
+        />
+      )}
+    </Link>
   );
 }
 

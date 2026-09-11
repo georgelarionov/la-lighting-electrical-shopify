@@ -14,6 +14,7 @@ import {
 import type {Route} from './+types/root';
 import {seo, localBusinessLd} from '~/lib/seo';
 import {NAV_QUERY} from '~/lib/fragments';
+import {isB2B} from '~/lib/b2b.server';
 import tailwindStyles from '~/styles/tailwind.css?url';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
@@ -117,16 +118,20 @@ export async function loader(args: Route.LoaderArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const {storefront} = context;
+  const {storefront, customerAccount} = context;
 
-  const [nav] = await Promise.all([
+  const [nav, isLoggedIn, b2b] = await Promise.all([
     // Category chrome for the header mega-menu and the footer Shop column.
     // Long-cached: collections change on merchandising time, not per request.
     storefront.query(NAV_QUERY, {cache: storefront.CacheLong()}),
-    // Add other queries here, so that they are loaded in parallel
+    // Both drive first paint (the header's Sign in/Account link and every
+    // price on the page), so they are not deferred. isLoggedIn is a session
+    // read; the B2B tag lookup is one call per login, then session-cached.
+    customerAccount.isLoggedIn(),
+    isB2B(context),
   ]);
 
-  return {nav};
+  return {nav, isLoggedIn, b2b};
 }
 
 /**
@@ -135,11 +140,10 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
-  const {customerAccount, cart} = context;
+  const {cart} = context;
 
   return {
     cart: cart.get(),
-    isLoggedIn: customerAccount.isLoggedIn(),
   };
 }
 

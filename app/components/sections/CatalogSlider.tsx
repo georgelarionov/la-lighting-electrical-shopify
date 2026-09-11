@@ -5,6 +5,7 @@ import {ArrowLeft, ArrowRight} from 'lucide-react';
 import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {ArrowLink} from '~/components/ArrowLink';
 import {cn} from '~/lib/utils';
+import {b2bMoney, useB2B} from '~/lib/b2b';
 
 export type FeaturedProduct = {
   id: string;
@@ -101,7 +102,9 @@ function ProductCard({
   product: FeaturedProduct | null;
   eager: boolean;
 }) {
-  const price = money(product?.priceRange?.minVariantPrice);
+  const b2b = useB2B();
+  const list = product?.priceRange?.minVariantPrice;
+  const price = money(b2b && list ? b2bMoney(list) : list);
   const inner = (
     <>
       <div className="overflow-hidden rounded-lg border border-hairline bg-parchment">
@@ -124,7 +127,10 @@ function ProductCard({
         {product?.title ?? 'Lighting fixture'}
       </h3>
       {price ? (
-        <p className="type-body mt-0.5 text-ink-muted">From {price}</p>
+        <p className="type-body mt-0.5 text-ink-muted">
+          From {price}
+          {b2b && <s className="ml-1.5 type-caption opacity-60">{money(list)}</s>}
+        </p>
       ) : null}
     </>
   );

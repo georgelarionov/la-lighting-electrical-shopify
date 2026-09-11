@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
-import {Image, Money} from '@shopify/hydrogen';
+import {Image} from '@shopify/hydrogen';
+import {B2BMoney} from '~/lib/b2b';
 import {ArrowRight} from 'lucide-react';
 import type {
   ProductItemFragment,
@@ -49,7 +50,7 @@ export function ProductItem({
         </h4>
         <div className="mt-auto flex items-center justify-between pt-3">
           <span className="type-caption font-medium text-ink">
-            <Money data={product.priceRange.minVariantPrice} />
+            <B2BMoney data={product.priceRange.minVariantPrice} />
           </span>
           <ArrowRight className="size-4 text-ink-subtle transition-transform group-hover:translate-x-1 group-hover:text-primary" />
         </div>

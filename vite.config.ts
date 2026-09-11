@@ -35,6 +35,8 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['.tryhydrogen.dev'],
+    // `hydrogen dev --customer-account-push` (needed to test sign-in locally)
+    // tunnels through Cloudflare and forwards that host, not tryhydrogen.dev.
+    allowedHosts: ['.tryhydrogen.dev', '.trycloudflare.com'],
   },
 });

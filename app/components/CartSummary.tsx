@@ -3,6 +3,7 @@ import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
 import {Link, type FetcherWithComponents} from 'react-router';
+import {B2B} from '~/lib/b2b';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -33,6 +34,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           )}
         </dd>
       </dl>
+      {cart?.discountCodes?.some(
+        (d) => d.applicable && d.code.toUpperCase() === B2B.code,
+      ) && (
+        <p className="mt-3 type-caption text-ink-muted">
+          B2B pricing applied — {B2B.percent}% off, already in the subtotal.
+        </p>
+      )}
       {layout === 'page' ? (
         <CheckoutDetails cart={cart} />
       ) : (

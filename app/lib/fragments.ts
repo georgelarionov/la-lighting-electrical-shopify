@@ -12,6 +12,11 @@ export const CART_QUERY_FRAGMENT = `#graphql
       value
     }
     cost {
+      # Before line-level discounts (the B2B code, a sale): struck through in
+      # the cart when it differs from totalAmount.
+      subtotalAmount {
+        ...Money
+      }
       totalAmount {
         ...Money
       }
@@ -68,6 +73,11 @@ export const CART_QUERY_FRAGMENT = `#graphql
       value
     }
     cost {
+      # Before line-level discounts (the B2B code, a sale): struck through in
+      # the cart when it differs from totalAmount.
+      subtotalAmount {
+        ...Money
+      }
       totalAmount {
         ...Money
       }
@@ -170,6 +180,28 @@ export const CART_QUERY_FRAGMENT = `#graphql
     attributes {
       key
       value
+    }
+    discountCodes {
+      code
+      applicable
+    }
+  }
+` as const;
+
+/**
+ * Returned by every cart mutation. Hydrogen's default is id/quantity/checkoutUrl
+ * only; the two extra fields let the /cart action see whether a B2B customer's
+ * cart already carries their login and discount code without another query.
+ */
+export const CART_MUTATE_FRAGMENT = `#graphql
+  fragment CartApiMutation on Cart {
+    id
+    totalQuantity
+    checkoutUrl
+    buyerIdentity {
+      customer {
+        id
+      }
     }
     discountCodes {
       code

@@ -16,7 +16,7 @@ import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
   nav: NavQuery;
-  isLoggedIn: Promise<boolean>;
+  isLoggedIn: boolean;
   publicStoreDomain: string;
   children?: React.ReactNode;
 }
