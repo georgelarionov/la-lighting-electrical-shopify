@@ -6,10 +6,11 @@ export default async () => {
 };
 
 /**
- * The B2B pricing discount has nothing to configure here: the percent lives
- * on each customer (metafield "B2B discount %"), so this block only tells the
- * merchant where the number comes from. The admin page around it still owns
- * title, active dates and combinations.
+ * The B2B pricing discount has nothing to configure here: groups live on the
+ * shop ("B2B groups"), the customer's group/percent on the customer, and
+ * per-variant prices on the variant — all plain metafields — so this block
+ * only tells the merchant where each one is edited. The admin page around it
+ * still owns title, active dates and combinations.
  */
 function App() {
   const {i18n} = shopify;

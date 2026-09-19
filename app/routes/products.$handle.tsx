@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import {useLoaderData, Link, useNavigate} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {seo} from '~/lib/seo';
-import {b2bAmount, useB2B} from '~/lib/b2b';
+import {b2bPrice, useB2B} from '~/lib/b2b';
 import {
   getSelectedProductOptions,
   getProductOptions,
@@ -238,14 +238,16 @@ export default function ProductPage() {
       currency,
       minimumFractionDigits: n % 1 === 0 ? 0 : 2,
     }).format(n);
-  // A signed-in B2B customer sees their price; the list price is struck
-  // through beside it (Shopify applies the same percent in the cart, see
-  // ~/lib/b2b.tsx).
+  // A signed-in B2B customer sees their price for this variant (group/customer
+  // percent, or the variant's own fixed B2B price); the list price is struck
+  // through beside it. Shopify applies the same rule in the cart, see
+  // ~/lib/b2b.tsx.
   const b2b = useB2B();
   const listAmount = Number(selectedVariant?.price?.amount ?? 0);
-  const unitAmount = b2b ? b2bAmount(listAmount, b2b) : listAmount;
+  const unitAmount = b2bPrice(listAmount, selectedVariant?.b2bPrices?.value, b2b);
+  const isB2BPrice = unitAmount < listAmount;
   const total = unitAmount * qty;
-  const compareAt = b2b
+  const compareAt = isB2BPrice
     ? listAmount
     : Number(selectedVariant?.compareAtPrice?.amount ?? 0);
   const savePct = compareAt > unitAmount
@@ -391,7 +393,7 @@ export default function ProductPage() {
                 <>
                   <s className="text-[15px] text-muted-foreground">{money(compareAt)}</s>
                   <span className="rounded-sm bg-foreground px-2 py-1 text-[11.5px] font-medium text-background">
-                    {b2b
+                    {isB2BPrice
                       ? `B2B price · ${savePct}% off`
                       : `Save ${money(compareAt - unitAmount)} (${savePct}%)`}
                   </span>
@@ -938,6 +940,8 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
   fragment ProductVariant on ProductVariant {
     availableForSale
     compareAtPrice { amount currencyCode }
+    # Per-group / per-customer B2B prices for this variant, see ~/lib/b2b.tsx.
+    b2bPrices: metafield(namespace: "custom", key: "b2b_prices") { value }
     id
     image { __typename id url altText width height }
     price { amount currencyCode }

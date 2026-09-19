@@ -4,28 +4,28 @@
     "target": "cart.lines.discounts.generate.run",
     "input": {
       "shop": {
-        "groups": null
+        "groups": {
+          "jsonValue": {
+            "contractor": 25
+          }
+        }
       },
       "cart": {
-        "buyerIdentity": null,
+        "buyerIdentity": {
+          "customer": {
+            "id": "gid://shopify/Customer/9588593000471",
+            "group": {
+              "value": "nobody"
+            },
+            "discount": null
+          }
+        },
         "lines": [
           {
             "id": "gid://shopify/CartLine/0",
             "cost": {
               "amountPerQuantity": {
                 "amount": "45.00"
-              }
-            },
-            "merchandise": {
-              "__typename": "ProductVariant",
-              "prices": null
-            }
-          },
-          {
-            "id": "gid://shopify/CartLine/1",
-            "cost": {
-              "amountPerQuantity": {
-                "amount": "80.00"
               }
             },
             "merchandise": {

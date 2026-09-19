@@ -1,7 +1,7 @@
 {
   "name": "B2B pricing settings",
-  "description": "Explains where the per-customer B2B percent comes from",
-  "title": "Percent off per customer",
-  "body": "Each signed-in customer gets the percent set in the \"B2B discount %\" field on their customer page (Customers → open a customer → B2B discount %). Empty or 0 means retail prices.",
-  "hint": "To manage a group at once, build a customer segment on that field (for example: B2B discount % = 20) and bulk-edit it."
+  "description": "Explains where B2B groups, percents and per-variant prices are edited",
+  "title": "B2B pricing is configured in custom data, not here",
+  "body": "Groups: Settings → Custom data → Shop → \"B2B groups\" — JSON of group → percent off everything, e.g. {\"contractor\": 25, \"wholesale\": 35}. Customers: open a customer and set \"B2B group\" (a key from that JSON) and/or \"B2B discount %\" (this customer's own percent, beats the group's). Empty = retail prices.",
+  "hint": "Per-variant prices: open a product → variant → \"B2B prices\" — JSON per group key or per customer ID (the number in the customer's admin URL): a fixed price (number) or a percent off (\"30%\"), e.g. {\"contractor\": 12.5, \"wholesale\": \"30%\", \"9588593000471\": 11}. These beat the customer/group percent."
 }

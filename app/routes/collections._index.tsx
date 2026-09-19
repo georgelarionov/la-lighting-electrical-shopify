@@ -3,7 +3,7 @@ import {Link, useLoaderData, useSearchParams} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import type {Route} from './+types/collections._index';
 import {seo, SITE_URL} from '~/lib/seo';
-import {b2bAmount, useB2B} from '~/lib/b2b';
+import {b2bPrice, useB2B} from '~/lib/b2b';
 import {Reveal} from '~/components/Reveal';
 import {QuoteButton} from '~/components/QuoteButton';
 import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
@@ -471,7 +471,10 @@ function CategoryHub({categories}: {categories: NavCategory[]}) {
 }
 
 function ProductCard({p}: {p: CatalogProduct}) {
-  const b2b = useB2B();
+  // ponytail: the card's "From" applies only the customer/group percent — the
+  // catalog query has no variants, so a variant's fixed B2B price shows on the
+  // PDP. Add `variants { price b2bPrices }` to CATALOG_QUERY if cards must match.
+  const b2bFrom = b2bPrice(p.price, undefined, useB2B());
   // The magnetic-track fixtures are shot 16:9 on a near-white seamless with the
   // rail on the diagonal, so lots of white is baked into the pixels. object-fit
   // can't remove that (covering a square from 16:9 only overflows horizontally,
@@ -511,8 +514,8 @@ function ProductCard({p}: {p: CatalogProduct}) {
             <h3 className="mt-1 truncate text-[14px] font-medium">{p.name}</h3>
           </div>
           <span className="tnum shrink-0 text-[13.5px] text-muted-foreground">
-            From {fmt(b2b ? b2bAmount(p.price, b2b) : p.price)}
-            {b2b && <s className="ml-1.5 text-[12px] opacity-60">{fmt(p.price)}</s>}
+            From {fmt(b2bFrom)}
+            {b2bFrom < p.price && <s className="ml-1.5 text-[12px] opacity-60">{fmt(p.price)}</s>}
           </span>
         </div>
         <div className="mt-2 flex items-center gap-2">

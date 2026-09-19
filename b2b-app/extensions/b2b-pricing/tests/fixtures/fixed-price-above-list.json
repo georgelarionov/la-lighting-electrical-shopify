@@ -7,7 +7,15 @@
         "groups": null
       },
       "cart": {
-        "buyerIdentity": null,
+        "buyerIdentity": {
+          "customer": {
+            "id": "gid://shopify/Customer/9588593000471",
+            "group": null,
+            "discount": {
+              "value": "20"
+            }
+          }
+        },
         "lines": [
           {
             "id": "gid://shopify/CartLine/0",
@@ -18,19 +26,11 @@
             },
             "merchandise": {
               "__typename": "ProductVariant",
-              "prices": null
-            }
-          },
-          {
-            "id": "gid://shopify/CartLine/1",
-            "cost": {
-              "amountPerQuantity": {
-                "amount": "80.00"
+              "prices": {
+                "jsonValue": {
+                  "9588593000471": 60
+                }
               }
-            },
-            "merchandise": {
-              "__typename": "ProductVariant",
-              "prices": null
             }
           }
         ]

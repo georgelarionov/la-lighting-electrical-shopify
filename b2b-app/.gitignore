@@ -33,4 +33,6 @@ shared/types/graphql
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?extensions/*/manifest.json
+*.sw?
+
+extensions/*/manifest.json

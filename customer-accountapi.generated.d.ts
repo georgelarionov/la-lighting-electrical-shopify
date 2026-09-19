@@ -74,8 +74,11 @@ export type CustomerB2BQueryVariables = CustomerAccountAPI.Exact<{
 }>;
 
 export type CustomerB2BQuery = {
-  customer: {
-    metafield?: CustomerAccountAPI.Maybe<
+  customer: Pick<CustomerAccountAPI.Customer, 'id'> & {
+    group?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.Metafield, 'value'>
+    >;
+    discount?: CustomerAccountAPI.Maybe<
       Pick<CustomerAccountAPI.Metafield, 'value'>
     >;
   };
@@ -516,7 +519,7 @@ export type CustomerUpdateMutation = {
 };
 
 interface GeneratedQueryTypes {
-  '#graphql\n  query CustomerB2B {\n    customer {\n      metafield(namespace: "custom", key: "b2b_discount") {\n        value\n      }\n    }\n  }\n': {
+  '#graphql\n  query CustomerB2B {\n    customer {\n      id\n      group: metafield(namespace: "custom", key: "b2b_group") {\n        value\n      }\n      discount: metafield(namespace: "custom", key: "b2b_discount") {\n        value\n      }\n    }\n  }\n': {
     return: CustomerB2BQuery;
     variables: CustomerB2BQueryVariables;
   };

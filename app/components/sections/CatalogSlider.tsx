@@ -104,7 +104,9 @@ function ProductCard({
 }) {
   const b2b = useB2B();
   const list = product?.priceRange?.minVariantPrice;
-  const price = money(b2b && list ? b2bMoney(list, b2b) : list);
+  const b2bList = list ? b2bMoney(list, undefined, b2b) : list;
+  const price = money(b2bList);
+  const isB2BPrice = !!list && b2bList?.amount !== list.amount;
   const inner = (
     <>
       <div className="overflow-hidden rounded-lg border border-hairline bg-parchment">
@@ -129,7 +131,7 @@ function ProductCard({
       {price ? (
         <p className="type-body mt-0.5 text-ink-muted">
           From {price}
-          {b2b && <s className="ml-1.5 type-caption opacity-60">{money(list)}</s>}
+          {isB2BPrice && <s className="ml-1.5 type-caption opacity-60">{money(list)}</s>}
         </p>
       ) : null}
     </>

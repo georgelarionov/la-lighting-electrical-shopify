@@ -3,10 +3,15 @@
     "export": "cart-lines-discounts-generate-run",
     "target": "cart.lines.discounts.generate.run",
     "input": {
+      "shop": {
+        "groups": null
+      },
       "cart": {
         "buyerIdentity": {
           "customer": {
-            "metafield": {
+            "id": "gid://shopify/Customer/9588593000471",
+            "group": null,
+            "discount": {
               "value": "20"
             }
           }

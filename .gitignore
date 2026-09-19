@@ -147,3 +147,4 @@ vite.config.ts.timestamp-*
 .shopify
 .mf
 /.react-router/
+.claude/settings.local.json

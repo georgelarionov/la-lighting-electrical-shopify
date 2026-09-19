@@ -3,6 +3,16 @@
 /* eslint-disable */
 import * as StorefrontAPI from '@shopify/hydrogen/storefront-api-types';
 
+export type B2BGroupsQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type B2BGroupsQuery = {
+  shop: {
+    metafield?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
+  };
+};
+
 export type MoneyFragment = Pick<
   StorefrontAPI.MoneyV2,
   'currencyCode' | 'amount'
@@ -843,6 +853,7 @@ export type ProductVariantFragment = Pick<
   compareAtPrice?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
   >;
+  b2bPrices?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   image?: StorefrontAPI.Maybe<
     {__typename: 'Image'} & Pick<
       StorefrontAPI.Image,
@@ -887,6 +898,9 @@ export type ProductFragment = Pick<
               compareAtPrice?: StorefrontAPI.Maybe<
                 Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
               >;
+              b2bPrices?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.Metafield, 'value'>
+              >;
               image?: StorefrontAPI.Maybe<
                 {__typename: 'Image'} & Pick<
                   StorefrontAPI.Image,
@@ -924,6 +938,7 @@ export type ProductFragment = Pick<
       compareAtPrice?: StorefrontAPI.Maybe<
         Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
       >;
+      b2bPrices?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       image?: StorefrontAPI.Maybe<
         {__typename: 'Image'} & Pick<
           StorefrontAPI.Image,
@@ -948,6 +963,7 @@ export type ProductFragment = Pick<
       compareAtPrice?: StorefrontAPI.Maybe<
         Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
       >;
+      b2bPrices?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
       image?: StorefrontAPI.Maybe<
         {__typename: 'Image'} & Pick<
           StorefrontAPI.Image,
@@ -1126,6 +1142,9 @@ export type ProductQuery = {
                   compareAtPrice?: StorefrontAPI.Maybe<
                     Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
                   >;
+                  b2bPrices?: StorefrontAPI.Maybe<
+                    Pick<StorefrontAPI.Metafield, 'value'>
+                  >;
                   image?: StorefrontAPI.Maybe<
                     {__typename: 'Image'} & Pick<
                       StorefrontAPI.Image,
@@ -1163,6 +1182,9 @@ export type ProductQuery = {
           compareAtPrice?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
           >;
+          b2bPrices?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value'>
+          >;
           image?: StorefrontAPI.Maybe<
             {__typename: 'Image'} & Pick<
               StorefrontAPI.Image,
@@ -1186,6 +1208,9 @@ export type ProductQuery = {
         > & {
           compareAtPrice?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+          >;
+          b2bPrices?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value'>
           >;
           image?: StorefrontAPI.Maybe<
             {__typename: 'Image'} & Pick<
@@ -1527,6 +1552,10 @@ export type PredictiveSearchQuery = {
 };
 
 interface GeneratedQueryTypes {
+  '#graphql\n  query B2BGroups {\n    shop {\n      metafield(namespace: "custom", key: "b2b_groups") {\n        value\n      }\n    }\n  }\n': {
+    return: B2BGroupsQuery;
+    variables: B2BGroupsQueryVariables;
+  };
   '#graphql\n  query Nav($country: CountryCode, $language: LanguageCode)\n    @inContext(language: $language, country: $country) {\n    collections(first: 25) {\n      nodes {\n        id\n        handle\n        title\n        image {\n          url\n          altText\n          width\n          height\n        }\n        # Presence probe only — buildNav drops categories with nothing live in\n        # them. The Storefront API hides DRAFT/unpublished products but still\n        # returns the collection, so without this a category whose whole\n        # contents are still drafts would advertise an empty page.\n        products(first: 1) {\n          nodes {\n            id\n          }\n        }\n      }\n    }\n  }\n': {
     return: NavQuery;
     variables: NavQueryVariables;
@@ -1575,7 +1604,7 @@ interface GeneratedQueryTypes {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
   };
-  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    productType\n    vendor\n    handle\n    tags\n    descriptionHtml\n    description\n    encodedVariantExistence\n    encodedVariantAvailability\n    images(first: 20) {\n      nodes { id url altText width height }\n    }\n    options {\n      name\n      optionValues {\n        name\n        firstSelectableVariant { ...ProductVariant }\n        swatch { color image { previewImage { url } } }\n      }\n    }\n    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    adjacentVariants(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    seo { description title }\n\n    # ---- Content-manager–editable PDP content (namespace: custom) ----\n    eyebrow: metafield(namespace: "custom", key: "eyebrow") { value }\n    subtitle: metafield(namespace: "custom", key: "subtitle") { value }\n    highlights: metafield(namespace: "custom", key: "highlights") { value }\n    features: metafield(namespace: "custom", key: "features") {\n      references(first: 6) { nodes { ...PdpMetaobject } }\n    }\n    featureCards: metafield(namespace: "custom", key: "feature_cards") {\n      references(first: 6) { nodes { ...PdpMetaobject } }\n    }\n    specs: metafield(namespace: "custom", key: "specs") {\n      references(first: 40) { nodes { ...PdpMetaobject } }\n    }\n    faqs: metafield(namespace: "custom", key: "faqs") {\n      references(first: 20) { nodes { ...PdpMetaobject } }\n    }\n    crossSell: metafield(namespace: "custom", key: "cross_sell") {\n      references(first: 8) {\n        nodes {\n          ... on Product {\n            id\n            title\n            handle\n            featuredImage { url altText }\n            priceRange { minVariantPrice { amount currencyCode } }\n          }\n        }\n      }\n    }\n    downloads: metafield(namespace: "custom", key: "downloads") {\n      references(first: 8) {\n        nodes {\n          ... on GenericFile { id url alt mimeType }\n          ... on MediaImage { id image { url altText } }\n        }\n      }\n    }\n  }\n  fragment PdpMetaobject on Metaobject {\n    id\n    type\n    fields {\n      key\n      value\n      reference {\n        ... on MediaImage { image { url altText } }\n      }\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice { amount currencyCode }\n    id\n    image { __typename id url altText width height }\n    price { amount currencyCode }\n    product { title handle }\n    selectedOptions { name value }\n    sku\n    title\n    unitPrice { amount currencyCode }\n  }\n\n\n': {
+  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    productType\n    vendor\n    handle\n    tags\n    descriptionHtml\n    description\n    encodedVariantExistence\n    encodedVariantAvailability\n    images(first: 20) {\n      nodes { id url altText width height }\n    }\n    options {\n      name\n      optionValues {\n        name\n        firstSelectableVariant { ...ProductVariant }\n        swatch { color image { previewImage { url } } }\n      }\n    }\n    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    adjacentVariants(selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    seo { description title }\n\n    # ---- Content-manager–editable PDP content (namespace: custom) ----\n    eyebrow: metafield(namespace: "custom", key: "eyebrow") { value }\n    subtitle: metafield(namespace: "custom", key: "subtitle") { value }\n    highlights: metafield(namespace: "custom", key: "highlights") { value }\n    features: metafield(namespace: "custom", key: "features") {\n      references(first: 6) { nodes { ...PdpMetaobject } }\n    }\n    featureCards: metafield(namespace: "custom", key: "feature_cards") {\n      references(first: 6) { nodes { ...PdpMetaobject } }\n    }\n    specs: metafield(namespace: "custom", key: "specs") {\n      references(first: 40) { nodes { ...PdpMetaobject } }\n    }\n    faqs: metafield(namespace: "custom", key: "faqs") {\n      references(first: 20) { nodes { ...PdpMetaobject } }\n    }\n    crossSell: metafield(namespace: "custom", key: "cross_sell") {\n      references(first: 8) {\n        nodes {\n          ... on Product {\n            id\n            title\n            handle\n            featuredImage { url altText }\n            priceRange { minVariantPrice { amount currencyCode } }\n          }\n        }\n      }\n    }\n    downloads: metafield(namespace: "custom", key: "downloads") {\n      references(first: 8) {\n        nodes {\n          ... on GenericFile { id url alt mimeType }\n          ... on MediaImage { id image { url altText } }\n        }\n      }\n    }\n  }\n  fragment PdpMetaobject on Metaobject {\n    id\n    type\n    fields {\n      key\n      value\n      reference {\n        ... on MediaImage { image { url altText } }\n      }\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice { amount currencyCode }\n    # Per-group / per-customer B2B prices for this variant, see ~/lib/b2b.tsx.\n    b2bPrices: metafield(namespace: "custom", key: "b2b_prices") { value }\n    id\n    image { __typename id url altText width height }\n    price { amount currencyCode }\n    product { title handle }\n    selectedOptions { name value }\n    sku\n    title\n    unitPrice { amount currencyCode }\n  }\n\n\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };

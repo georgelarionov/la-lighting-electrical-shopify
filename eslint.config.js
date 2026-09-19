@@ -32,6 +32,8 @@ export default [
       '**/*.generated.d.ts',
       '**/.react-router/',
       '**/packages/hydrogen/dist/',
+      // Separate npm project with its own toolchain (vitest, not jest).
+      'b2b-app/',
     ],
   },
   ...fixupConfigRules(

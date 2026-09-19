@@ -1,16 +1,44 @@
 query CartInput {
+  shop {
+    # Group → percent off everything, e.g. {"contractor": 25}. Edited by the
+    # merchant in Settings → Custom data → Shop → "B2B groups".
+    groups: metafield(namespace: "custom", key: "b2b_groups") {
+      jsonValue
+    }
+  }
   cart {
     buyerIdentity {
       customer {
-        # Percent off for this customer, set by the merchant on the customer
-        # page in admin (definition custom.b2b_discount, 0-100).
-        metafield(namespace: "custom", key: "b2b_discount") {
+        # Per-customer variant prices are keyed by this ID's number.
+        id
+        # A key from shop.groups (customer page → "B2B group").
+        group: metafield(namespace: "custom", key: "b2b_group") {
+          value
+        }
+        # This customer's own percent, beats the group's (0-100).
+        discount: metafield(namespace: "custom", key: "b2b_discount") {
           value
         }
       }
     }
     lines {
       id
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          # {"contractor": 12.5, "wholesale": "30%", "9588593000471": 11}:
+          # a fixed price (number) or percent off (string) per group key or
+          # customer ID. Beats both percents.
+          prices: metafield(namespace: "custom", key: "b2b_prices") {
+            jsonValue
+          }
+        }
+      }
     }
   }
   discount {
