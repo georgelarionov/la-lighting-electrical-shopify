@@ -24,6 +24,9 @@ export type QuoteContext = {
   quantity: number;
   /** Product path, so the description links straight back to the item. */
   path: string;
+  /** 'install' (default) asks for the job site; 'pricing' is a price request
+   *  for parts or a layout — no address, sales quotes the order. */
+  kind?: 'install' | 'pricing';
 };
 
 type AsideContextValue = {

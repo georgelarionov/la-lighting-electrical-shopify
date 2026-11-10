@@ -54,6 +54,7 @@ export function validateQuote(formData: FormData): {
       variant: string;
       quantity: string;
       path: string;
+      kind: 'install' | 'pricing';
     };
   };
 } {
@@ -70,6 +71,10 @@ export function validateQuote(formData: FormData): {
         variant: str(formData.get('productVariant')),
         quantity: str(formData.get('productQuantity')) || '1',
         path: str(formData.get('productPath')),
+        kind:
+          formData.get('kind') === 'pricing'
+            ? ('pricing' as const)
+            : ('install' as const),
       }
     : undefined;
   const direction = str(formData.get('direction'));
@@ -84,9 +89,9 @@ export function validateQuote(formData: FormData): {
   // An install request already names the fixture, so free text is optional
   // there; a bare project enquiry tells us nothing without it. The job-site
   // address trades places with it — we cannot price an install without one.
-  if (product) {
+  if (product?.kind === 'install') {
     if (!address) errors.address = 'Where is the job? Street, city and ZIP.';
-  } else if (!message) {
+  } else if (!product && !message) {
     errors.message = 'Tell us a little about the project.';
   }
   if (!consent) errors.consent = 'Please accept the Privacy Policy to continue.';
@@ -122,9 +127,9 @@ export function describeQuoteLead(
   // Lead with the fixture: an install request is worthless to sales if they
   // have to guess what is being installed.
   if (values.product) {
-    const {title, variant, quantity, path} = values.product;
+    const {title, variant, quantity, path, kind} = values.product;
     lines.push(
-      `Install request — ${title}${variant ? ` (${variant})` : ''} × ${quantity}`,
+      `${kind === 'pricing' ? 'Pricing request' : 'Install request'} — ${title}${variant ? ` (${variant})` : ''} × ${quantity}`,
     );
     if (path) lines.push(`Product: ${path}`);
   }

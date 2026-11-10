@@ -393,6 +393,7 @@ export function BuildAShape({
                   variantTitle: `${finish} · ${cct}`,
                   quantity: 1,
                   path,
+                  kind: 'pricing',
                 })
               }
               className="mt-4 self-start text-[13.5px] font-medium text-primary underline-offset-4 hover:underline"
@@ -583,7 +584,7 @@ export function AlsShipping({
 
   return (
     <section className="border-t border-border bg-background">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-10 px-5 py-16 sm:px-8 md:py-20 lg:grid-cols-2 lg:gap-16">
+      <div className={cn('mx-auto grid max-w-[1280px] grid-cols-1 gap-10 px-5 py-16 sm:px-8 md:py-20', TIERS.length > 0 && 'lg:grid-cols-2 lg:gap-16')}>
         <div>
           <h2 className="type-display-sm">Shipping and volume pricing</h2>
           <ul className="mt-6 space-y-3 text-[15px]">

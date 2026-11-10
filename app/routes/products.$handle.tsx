@@ -407,15 +407,16 @@ export default function ProductPage() {
   // [MOCK: C09] volume tier on the selected quantity (ALS only).
   const tier = als ? tierFor(qty) : null;
   const upcoming = als ? nextTier(qty) : null;
-  const buyTotal = tier ? Math.round(total * (100 - tier.pct)) / 100 : total;
+  const tierSave = tier ? total - Math.round(total * (100 - tier.pct)) / 100 : 0;
   const alsPrices = als ? sizePrices(als.parts) : {};
   const alsFrom = Math.min(...Object.values(alsPrices));
-  const quoteAbout = (quantity: number) =>
+  const quoteAbout = (quantity: number, kind: 'install' | 'pricing' = 'install') =>
     open('quote', {
-      productTitle: product.title,
-      variantTitle: configSummary || undefined,
+      productTitle: lengthPending ? 'ALS sections' : product.title,
+      variantTitle: (lengthPending ? `${alsFinish} · ${alsCct}` : configSummary) || undefined,
       quantity,
       path: `/products/${product.handle}`,
+      kind,
     });
   const scrollToOptions = () =>
     document.getElementById('options')?.scrollIntoView({behavior: 'smooth', block: 'center'});
@@ -469,7 +470,7 @@ export default function ProductPage() {
             {heroImg ? (
               // ALS frames are square with the cables at the top; crop from the
               // top so the drop (the whole point: it hangs) survives 3:2.
-              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className={`h-full w-full ${galleryFit}`} style={{animation: 'fadeIn .5s var(--ease-out)', objectPosition: als ? '50% 0' : undefined}} />
+              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className={`h-full w-full ${galleryFit}`} style={{animation: 'fadeIn .5s var(--ease-out)', objectPosition: als ? (RENDERING.has(heroImg.frame) ? '50% 0' : '50% 30%') : undefined}} />
             ) : (
               <PlaceholderImage aspect="" className="h-full w-full" />
             )}
@@ -503,7 +504,7 @@ export default function ProductPage() {
               {gallery.map((g, i) => (
                 <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} aria-current={safeActive === i}
                   className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ring-inset transition ${safeActive === i ? 'ring-2 ring-foreground' : 'opacity-60 ring-1 ring-border hover:opacity-100'}`}>
-                  <img src={g.src} alt="" className={`h-full w-full ${noCrop ? 'object-contain p-1.5' : 'object-cover'}`} style={als ? {objectPosition: '50% 0'} : undefined} />
+                  <img src={g.src} alt="" className={`h-full w-full ${noCrop ? 'object-contain p-1.5' : 'object-cover'}`} style={als ? {objectPosition: RENDERING.has(g.frame) ? '50% 0' : '50% 30%'} : undefined} />
                 </button>
               ))}
             </div>
@@ -540,6 +541,11 @@ export default function ProductPage() {
                   Build a shape ↓
                 </a>
               </div>
+              {(lengthPending || canBuy) && (
+                <p className="mt-3 flex items-start gap-1.5 text-[13px] font-medium text-foreground">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {ALS_COPY.ship}
+                </p>
+              )}
               <ul className="mt-4 flex flex-wrap gap-1.5 text-[12.5px]">
                 {[
                   lengthPending ? '2,600–10,400 lm' : OUTPUT[alsSize]?.lm,
@@ -561,9 +567,6 @@ export default function ProductPage() {
                   <Shield className="h-3.5 w-3.5 text-foreground" /> UL Listed · In use since 2019 · 4th generation
                 </p>
               </Mock>
-              {(lengthPending || canBuy) && (
-                <p className="mt-3 text-[12.5px] text-muted-foreground">{ALS_COPY.ship}</p>
-              )}
             </div>
           ) : quoteOnly ? (
             <div className="mt-6">
@@ -607,12 +610,11 @@ export default function ProductPage() {
                   ? {'Color Temperature': 'Use one light color for every section in a shape.'}
                   : undefined
               }
-              onSelect={(query) =>
-                void navigate(`?${query}`, {
-                  replace: true,
-                  preventScrollReset: true,
-                })
-              }
+              onSelect={(query, option) => {
+                const q = new URLSearchParams(query);
+                if (lengthPending && option !== 'Size') q.delete('Size');
+                void navigate(`?${q}`, {replace: true, preventScrollReset: true});
+              }}
             />
             {als && (
               <p className="mt-4 text-[12.5px] text-muted-foreground">
@@ -681,14 +683,14 @@ export default function ProductPage() {
                       {lengthPending
                         ? 'Choose a length'
                         : canBuy
-                          ? <>Add to cart · {money(buyTotal)}</>
+                          ? <>Add to cart · {money(total)}</>
                           : 'Sold out'}
                     </AddToCartButton>
                   )}
                 </div>
               </div>
               {als && !lengthPending && !canBuy && (
-                <button type="button" onClick={() => quoteAbout(qty)} className="mt-3 text-[13px] font-medium text-primary underline-offset-4 hover:underline">
+                <button type="button" onClick={() => quoteAbout(qty, 'pricing')} className="mt-3 text-[13px] font-medium text-primary underline-offset-4 hover:underline">
                   Ask about lead time →
                 </button>
               )}
@@ -697,7 +699,7 @@ export default function ProductPage() {
                   <p className="tnum text-[12.5px] text-muted-foreground">
                     {tier ? (
                       <>
-                        {qty} × {money(Math.round(unitAmount * (100 - tier.pct)) / 100)} per section · You save {money(total - buyTotal)}
+                        {qty} × {money(Math.round(unitAmount * (100 - tier.pct)) / 100)} per section · You save {money(tierSave)} in cart
                         {upcoming && <> · Add {upcoming.min - qty} more for {upcoming.pct}% off each</>}
                       </>
                     ) : qty === 1 ? (
@@ -849,7 +851,7 @@ export default function ProductPage() {
 
       {als && (
         <div id="volume" className="scroll-mt-24">
-          <AlsShipping prices={alsPrices} quote={() => quoteAbout(20)} />
+          <AlsShipping prices={alsPrices} quote={() => quoteAbout(20, 'pricing')} />
         </div>
       )}
 
@@ -862,6 +864,7 @@ export default function ProductPage() {
               variantTitle: `${alsFinish} · ${alsCct}`,
               quantity: 1,
               path: `/products/${product.handle}`,
+              kind: 'pricing',
             })
           }
           install={() => quoteAbout(qty)}
@@ -998,7 +1001,7 @@ export default function ProductPage() {
                 </button>
               ) : (
                 <>
-                  <span className="tnum hidden font-heading text-[18px] sm:block">{money(buyTotal)}</span>
+                  <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
                   <AddToCartButton
                     onClick={() => open('cart')}
                     lines={lines}
@@ -1122,7 +1125,7 @@ function ProductOptions({
   hints,
 }: {
   productOptions: MappedProductOptions[];
-  onSelect: (variantUriQuery: string) => void;
+  onSelect: (variantUriQuery: string, option: string) => void;
   /** Display names for option names ("Body Color" → "Finish"). */
   labels?: Record<string, string>;
   /** Small muted note after a value ("3000K" → "warm"). */
@@ -1207,7 +1210,7 @@ function ProductOptions({
                     disabled={!exists}
                     aria-pressed={selected}
                     onClick={() => {
-                      if (!selected) onSelect(variantUriQuery);
+                      if (!selected) onSelect(variantUriQuery, option.name);
                     }}
                     className={chipClass}
                   >

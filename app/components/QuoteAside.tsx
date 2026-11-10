@@ -26,6 +26,8 @@ import {CONTACT} from '~/lib/site';
 export function QuoteAside() {
   const {quoteContext} = useAside();
   const forProduct = Boolean(quoteContext);
+  const pricing = quoteContext?.kind === 'pricing';
+  const install = forProduct && !pricing;
   const fetcher = useFetcher<HomeActionData>();
   const data = fetcher.data;
   const errors = data?.ok === false ? data.errors : undefined;
@@ -37,7 +39,7 @@ export function QuoteAside() {
   return (
     <Aside
       type="quote"
-      heading={forProduct ? 'Request an install quote' : 'Request a free quote'}
+      heading={install ? 'Request an install quote' : pricing ? 'Request pricing' : 'Request a free quote'}
     >
       {data?.ok ? (
         <div className="flex h-full flex-col items-center justify-center py-10 text-center">
@@ -62,9 +64,10 @@ export function QuoteAside() {
               <input type="hidden" name="productVariant" value={quoteContext.variantTitle ?? ''} />
               <input type="hidden" name="productQuantity" value={String(quoteContext.quantity)} />
               <input type="hidden" name="productPath" value={quoteContext.path} />
+              <input type="hidden" name="kind" value={pricing ? 'pricing' : 'install'} />
               <div className="rounded-[2px] border border-hairline bg-parchment p-4">
                 <p className="type-fine font-semibold uppercase tracking-[0.14em] text-ink-subtle">
-                  Installing
+                  {pricing ? 'Pricing for' : 'Installing'}
                 </p>
                 <p className="type-body-strong mt-1.5 text-ink">
                   {quoteContext.productTitle}
@@ -76,9 +79,9 @@ export function QuoteAside() {
                 </p>
               </div>
               <p className="type-caption text-ink-muted">
-                Install is priced per site, so we need to see the space. Send
-                your details and we come back with a fixed price — usually
-                within one business day.
+                {pricing
+                  ? "Tell us what you need. We'll email you a price for the whole order."
+                  : 'Install is priced per site, so we need to see the space. Send your details and we come back with a fixed price — usually within one business day.'}
               </p>
             </>
           ) : (
@@ -90,7 +93,7 @@ export function QuoteAside() {
           <QField id="qd-name" name="name" label="Full name" placeholder="Jane Smith" error={errors?.name} />
           <QField id="qd-email" name="email" type="email" label="Email" placeholder="jane@company.com" error={errors?.email} />
           <QField id="qd-phone" name="phone" type="tel" label="Phone (optional)" placeholder={CONTACT.phoneDisplay} error={errors?.phone} />
-          {forProduct ? (
+          {install ? (
             <QField
               id="qd-address"
               name="address"
@@ -103,7 +106,7 @@ export function QuoteAside() {
             <Label htmlFor="qd-message" className="type-caption-strong text-ink">
               {forProduct ? (
                 <>
-                  Anything we should know{' '}
+                  {pricing ? 'Other parts, sizes or layout' : 'Anything we should know'}{' '}
                   <span className="type-caption font-normal text-ink-muted">
                     (optional)
                   </span>
@@ -118,7 +121,9 @@ export function QuoteAside() {
               rows={4}
               placeholder={
                 forProduct
-                  ? 'Ceiling height, access, timeline…'
+                  ? pricing
+                    ? 'e.g. 6 × 4 ft sections, 4 × L connectors, or the room size'
+                    : 'Ceiling height, access, timeline…'
                   : 'Tell us about the space, scope, and timeline'
               }
               className="rounded-[2px] type-body"
@@ -169,7 +174,7 @@ export function QuoteAside() {
           >
             {submitting
               ? 'Sending…'
-              : forProduct
+              : install
                 ? 'Request install quote'
                 : 'Request a quote'}
           </Button>
