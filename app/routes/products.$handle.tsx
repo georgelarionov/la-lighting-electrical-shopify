@@ -25,6 +25,35 @@ import {PlaceholderImage} from '~/components/sections/PlaceholderImage';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {cn} from '~/lib/utils';
 import {COMPANY_NAME, CONTACT} from '~/lib/site';
+import {
+  ALS_COPY,
+  ALS_HANDLE,
+  DEFAULT_CCT,
+  DEFAULT_FINISH,
+  FAQS as ALS_FAQS,
+  FIRST_FRAME,
+  FRAME_CAPTION,
+  GALLERY_ORDER,
+  OUTPUT,
+  RENDERING,
+  SPEC_EXTRA,
+  SPEC_OVERRIDES,
+  VARIANT_FRAME,
+  frameIndex,
+  nextTier,
+  tierFor,
+  type Size,
+} from '~/lib/als';
+import {
+  AlsHelp,
+  AlsProof,
+  AlsShipping,
+  BuildAShape,
+  Mock,
+  PendantGlyph,
+  Tag,
+  sizePrices,
+} from '~/components/als/AlsBlocks';
 // hero + serviceImg back the two globally-shared marketing blocks (final CTA
 // background, lighting-design section). Per-product imagery now comes from
 // Shopify media/metafields, so the other mockup imports are gone.
@@ -35,7 +64,11 @@ export const meta: Route.MetaFunction = ({data, location}) => {
   // ponytail: canonical is now handled inside seo() via url — dropped the raw
   // {rel:'canonical'} descriptor (which was also malformed: rel/href without tagName).
   return seo({
-    title: `${data?.product.title ?? 'Product'} | ${COMPANY_NAME}`,
+    // The merchant-authored SEO title wins; it is written for the SERP
+    // (marketing/.../reports/demand.md §3) and already fits in 60 chars.
+    title:
+      data?.product.seo?.title ||
+      `${data?.product.title ?? 'Product'} | ${COMPANY_NAME}`,
     description: data?.product.seo?.description ?? '',
     url: location.pathname,
     type: 'product',
@@ -47,15 +80,49 @@ export async function loader(args: Route.LoaderArgs) {
   const {handle} = params;
   if (!handle) throw new Error('Expected product handle to be defined');
 
-  const [{product}] = await Promise.all([
+  // ALS sells by the section: a shopper who lands without a length sees
+  // "From $149" and must pick one (release R1). Finish/CCT always resolve to
+  // a full combination so a partial ?Size= never falls back to the first
+  // variant.
+  const isAls = handle === ALS_HANDLE;
+  const url = new URL(request.url);
+  const lengthChosen = url.searchParams.has('Size');
+  const get = (n: string, d: string) => url.searchParams.get(n) ?? d;
+  const selectedOptions = isAls
+    ? [
+        {name: 'Size', value: get('Size', '2 ft')},
+        {name: 'Body Color', value: get('Body Color', DEFAULT_FINISH)},
+        {name: 'Color Temperature', value: get('Color Temperature', DEFAULT_CCT)},
+      ]
+    : getSelectedProductOptions(request);
+
+  const [{product}, parts] = await Promise.all([
     context.storefront.query(PRODUCT_QUERY, {
-      variables: {handle, selectedOptions: getSelectedProductOptions(request)},
+      variables: {handle, selectedOptions},
     }),
+    isAls ? context.storefront.query(ALS_PARTS_QUERY) : null,
   ]);
 
   if (!product?.id) throw new Response(null, {status: 404});
   redirectIfHandleIsLocalized(request, {handle, data: product});
-  return {product, content: buildContent(product)};
+  return {
+    product,
+    content: buildContent(product),
+    als: parts
+      ? {
+          lengthChosen,
+          parts: {
+            sections: parts.als?.variants.nodes ?? [],
+            connectors: {
+              L: parts.l?.variants.nodes ?? [],
+              T: parts.t?.variants.nodes ?? [],
+              X: parts.x?.variants.nodes ?? [],
+              Y: parts.y?.variants.nodes ?? [],
+            },
+          },
+        }
+      : null,
+  };
 }
 
 /* --------- content-manager metafields → clean render model ---------- */
@@ -178,7 +245,7 @@ const ICONS: Record<string, typeof Bolt> = {
 
 /* ============================ component ============================ */
 export default function ProductPage() {
-  const {product, content} = useLoaderData<typeof loader>();
+  const {product, content, als} = useLoaderData<typeof loader>();
   const {open} = useAside();
   const navigate = useNavigate();
 
@@ -188,24 +255,63 @@ export default function ProductPage() {
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
-  useSelectedOptionInUrlParam(selectedVariant?.selectedOptions ?? []);
+  // An ALS visitor who hasn't picked a length keeps a clean URL (the ad's
+  // landing state), so the defaults aren't written into it.
+  const lengthPending = !!als && !als.lengthChosen;
+  useSelectedOptionInUrlParam(
+    lengthPending ? [] : (selectedVariant?.selectedOptions ?? []),
+  );
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
+  const optionValue = (name: string) =>
+    selectedVariant?.selectedOptions?.find((o) => o.name === name)?.value ?? '';
+  const alsSize = optionValue('Size') as Size;
+  const alsFinish = optionValue('Body Color') || DEFAULT_FINISH;
+  const alsCct = optionValue('Color Temperature') || DEFAULT_CCT;
 
   const [qty, setQty] = useState(1);
   const [fulfilment, setFulfilment] = useState<'buy' | 'install'>('buy');
+
+  // Real Shopify product media only — no mock fallback (an un-authored product
+  // shows a neutral placeholder, never another product's photos). ALS: the
+  // creative brief's order, minus the flush-mounted renders (C13).
+  const gallery = (
+    als
+      ? GALLERY_ORDER.flatMap((n) =>
+          (product.images?.nodes ?? []).filter((g) => frameIndex(g.url) === n),
+        )
+      : (product.images?.nodes ?? [])
+  ).map((n) => ({
+    id: n.id,
+    src: n.url,
+    alt: n.altText || product.title,
+    frame: frameIndex(n.url),
+  }));
+  // ALS: the assembled shape until a length is picked, then that length's
+  // studio frame. ponytail: frame map in code until variant images are
+  // assigned in Shopify at release.
+  const alsFrame = lengthPending
+    ? FIRST_FRAME
+    : (VARIANT_FRAME[`${alsSize}|${alsFinish}`] ?? FIRST_FRAME);
+
   // Seeded from the selected variant's image so the first paint already shows
   // the right finish. Setting it from an effect instead updated state inside a
   // Suspense boundary mid-hydration, which React logs and recovers from by
   // discarding the server render.
   const [active, setActive] = useState(() => {
+    if (als) return Math.max(0, gallery.findIndex((g) => g.frame === alsFrame));
     const id = selectedVariant?.image?.id;
-    const nodes = product.images?.nodes ?? [];
-    const i = id ? nodes.findIndex((n) => n.id === id) : -1;
+    const i = id ? gallery.findIndex((n) => n.id === id) : -1;
     return i >= 0 ? i : 0;
   });
+  useEffect(() => {
+    if (!als) return;
+    const i = gallery.findIndex((g) => g.frame === alsFrame);
+    if (i >= 0) setActive(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alsFrame]);
   const [specOpen, setSpecOpen] = useState(true);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
   // Gallery fit, site-wide rule (no per-product allow-list). Product photos
@@ -254,13 +360,6 @@ export default function ProductPage() {
     ? Math.round(((compareAt - unitAmount) / compareAt) * 100)
     : 0;
 
-  // Real Shopify product media only — no mock fallback (an un-authored product
-  // shows a neutral placeholder, never another product's photos).
-  const gallery = (product.images?.nodes ?? []).map((n) => ({
-    id: n.id,
-    src: n.url,
-    alt: n.altText || product.title,
-  }));
   const safeActive = gallery.length ? Math.min(active, gallery.length - 1) : 0;
   const heroImg = gallery[safeActive];
   const atStart = safeActive === 0;
@@ -277,7 +376,7 @@ export default function ProductPage() {
   // filenames — a product whose variants have no image simply stays put.
   const variantImageId = selectedVariant?.image?.id;
   useEffect(() => {
-    if (!variantImageId) return;
+    if (!variantImageId || als) return;
     const i = gallery.findIndex((g) => g.id === variantImageId);
     if (i >= 0) setActive(i);
     // gallery is derived from product.images and stable for the route.
@@ -303,8 +402,34 @@ export default function ProductPage() {
       .map((o) => o.value)
       .join(' · ') ?? '';
   const canBuy = Boolean(
-    selectedVariant?.availableForSale && selectedVariant?.id,
+    selectedVariant?.availableForSale && selectedVariant?.id && !lengthPending,
   );
+  // [MOCK: C09] volume tier on the selected quantity (ALS only).
+  const tier = als ? tierFor(qty) : null;
+  const upcoming = als ? nextTier(qty) : null;
+  const buyTotal = tier ? Math.round(total * (100 - tier.pct)) / 100 : total;
+  const alsPrices = als ? sizePrices(als.parts) : {};
+  const alsFrom = Math.min(...Object.values(alsPrices));
+  const quoteAbout = (quantity: number) =>
+    open('quote', {
+      productTitle: product.title,
+      variantTitle: configSummary || undefined,
+      quantity,
+      path: `/products/${product.handle}`,
+    });
+  const scrollToOptions = () =>
+    document.getElementById('options')?.scrollIntoView({behavior: 'smooth', block: 'center'});
+  const specs = als
+    ? [
+        ...content.specs.flatMap((s) => {
+          if (!(s.label in SPEC_OVERRIDES)) return [s];
+          const v = SPEC_OVERRIDES[s.label];
+          return v === null ? [] : [{label: s.label, value: v}];
+        }),
+        ...SPEC_EXTRA,
+      ]
+    : content.specs;
+  const faqs = als ? ALS_FAQS : content.faqs;
   // selectedVariant is required, not decorative: useOptimisticCart builds the
   // pending cart line from it, and without it the add is invisible until the
   // server round trip lands.
@@ -314,7 +439,8 @@ export default function ProductPage() {
   // Install is priced per site, so it is a quote, never a cart line. Accessories
   // opt out entirely: nobody books a C-10 crew to fit a $19 connector, and
   // offering it there makes the whole choice look automated rather than meant.
-  const installable = product.productType !== 'Lighting Accessories';
+  // ALS: install lives lower on the page (owner: fewer buttons at the buy box).
+  const installable = product.productType !== 'Lighting Accessories' && !als;
   const wantsInstall = installable && fulfilment === 'install';
   const requestInstall = () =>
     open('quote', {
@@ -341,13 +467,26 @@ export default function ProductPage() {
         <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <div className={`img-zoom group relative overflow-hidden rounded-md ${framePad}`} style={{aspectRatio: '3 / 2', background: galleryBg}}>
             {heroImg ? (
-              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className={`h-full w-full ${galleryFit}`} style={{animation: 'fadeIn .5s var(--ease-out)'}} />
+              // ALS frames are square with the cables at the top; crop from the
+              // top so the drop (the whole point: it hangs) survives 3:2.
+              <img key={safeActive} src={heroImg.src} alt={heroImg.alt} className={`h-full w-full ${galleryFit}`} style={{animation: 'fadeIn .5s var(--ease-out)', objectPosition: als ? '50% 0' : undefined}} />
             ) : (
               <PlaceholderImage aspect="" className="h-full w-full" />
             )}
-            <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-sm bg-background/90 px-2.5 py-1 text-[11px] font-medium tracking-wide text-foreground backdrop-blur">
-              <Shield className="h-3.5 w-3.5" /> C-10 licensed install available
-            </div>
+            {als ? (
+              <>
+                {heroImg && RENDERING.has(heroImg.frame) && (
+                  <span className="absolute left-4 top-4"><Tag>Rendering</Tag></span>
+                )}
+                {heroImg && FRAME_CAPTION[heroImg.frame] && (
+                  <span className="absolute bottom-4 left-4"><Tag dark>{FRAME_CAPTION[heroImg.frame]}</Tag></span>
+                )}
+              </>
+            ) : (
+              <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-sm bg-background/90 px-2.5 py-1 text-[11px] font-medium tracking-wide text-foreground backdrop-blur">
+                <Shield className="h-3.5 w-3.5" /> C-10 licensed install available
+              </div>
+            )}
             {gallery.length > 1 && (
               <>
                 {/* Each arrow renders only when it has somewhere to go, so a
@@ -364,7 +503,7 @@ export default function ProductPage() {
               {gallery.map((g, i) => (
                 <button key={g.src} onClick={() => setActive(i)} style={{background: galleryBg}} aria-current={safeActive === i}
                   className={`press relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-sm ring-inset transition ${safeActive === i ? 'ring-2 ring-foreground' : 'opacity-60 ring-1 ring-border hover:opacity-100'}`}>
-                  <img src={g.src} alt="" className={`h-full w-full ${noCrop ? 'object-contain p-1.5' : 'object-cover'}`} />
+                  <img src={g.src} alt="" className={`h-full w-full ${noCrop ? 'object-contain p-1.5' : 'object-cover'}`} style={als ? {objectPosition: '50% 0'} : undefined} />
                 </button>
               ))}
             </div>
@@ -373,15 +512,60 @@ export default function ProductPage() {
 
         {/* configurator / buy box */}
         <div className="flex min-w-0 flex-col">
-          {content.eyebrow && <p className="type-eyebrow">{content.eyebrow}</p>}
-          <h1 className="mt-3 font-heading text-[40px] leading-[1.05] tracking-[-0.02em] sm:text-[46px]">{product.title}</h1>
-          {content.subtitle && (
+          {(als ? ALS_COPY.eyebrow : content.eyebrow) && (
+            <p className="type-eyebrow">{als ? ALS_COPY.eyebrow : content.eyebrow}</p>
+          )}
+          <h1 className="mt-3 font-heading text-[34px] leading-[1.05] tracking-[-0.02em] sm:text-[40px]">
+            {als ? ALS_COPY.title : product.title}
+          </h1>
+          {(als ? ALS_COPY.subtitle : content.subtitle) && (
             <p className="mt-4 max-w-md whitespace-pre-line text-[15px] leading-relaxed text-muted-foreground">
-              {content.subtitle}
+              {als ? ALS_COPY.subtitle : content.subtitle}
             </p>
           )}
 
-          {quoteOnly ? (
+          {als ? (
+            <div className="mt-6">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+                <span className="tnum font-heading text-[32px] leading-none">
+                  {lengthPending ? `From ${money(alsFrom)}` : money(unitAmount)}
+                </span>
+                {!lengthPending && compareAt > unitAmount && (
+                  <s className="text-[15px] text-muted-foreground">{money(compareAt)}</s>
+                )}
+                <span className="text-[13px] text-muted-foreground">
+                  {lengthPending ? 'per section · 2, 4 or 8 ft' : `per ${alsSize} section`}
+                </span>
+                <a href="#shapes" className="ml-auto text-[13px] font-medium text-primary underline-offset-4 hover:underline">
+                  Build a shape ↓
+                </a>
+              </div>
+              <ul className="mt-4 flex flex-wrap gap-1.5 text-[12.5px]">
+                {[
+                  lengthPending ? '2,600–10,400 lm' : OUTPUT[alsSize]?.lm,
+                  lengthPending ? '20–80 W' : OUTPUT[alsSize]?.w,
+                  '3000–4000K',
+                  '0–10V dimming',
+                  'CRI 94+',
+                ]
+                  .filter(Boolean)
+                  .map((c) => (
+                    <li key={c} className="tnum rounded-sm border border-border px-2 py-1">{c}</li>
+                  ))}
+              </ul>
+              <p className="mt-3 flex items-center gap-2 text-[13.5px] font-medium">
+                <PendantGlyph className="h-4 w-4 shrink-0" /> {ALS_COPY.mounting}
+              </p>
+              <Mock className="mt-3">
+                <p className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+                  <Shield className="h-3.5 w-3.5 text-foreground" /> UL Listed · In use since 2019 · 4th generation
+                </p>
+              </Mock>
+              {(lengthPending || canBuy) && (
+                <p className="mt-3 text-[12.5px] text-muted-foreground">{ALS_COPY.ship}</p>
+              )}
+            </div>
+          ) : quoteOnly ? (
             <div className="mt-6">
               <span className="font-heading text-[24px] leading-none">Priced per project</span>
               <p className="mt-1.5 text-[12.5px] text-muted-foreground">Configured to your space — get a free quote below.</p>
@@ -404,15 +588,38 @@ export default function ProductPage() {
           )}
 
           {/* real Shopify variant options */}
-          <ProductOptions
-            productOptions={productOptions}
-            onSelect={(query) =>
-              void navigate(`?${query}`, {
-                replace: true,
-                preventScrollReset: true,
-              })
-            }
-          />
+          <div id="options" className="scroll-mt-28">
+            <ProductOptions
+              productOptions={productOptions}
+              labels={als ? ALS_COPY.optionLabels : undefined}
+              notes={als ? ALS_COPY.cctNote : undefined}
+              unselected={lengthPending ? 'Size' : undefined}
+              suffix={
+                als
+                  ? (option, value) =>
+                      option === 'Size' && alsPrices[value as Size]
+                        ? money(alsPrices[value as Size]!)
+                        : undefined
+                  : undefined
+              }
+              hints={
+                als
+                  ? {'Color Temperature': 'Use one light color for every section in a shape.'}
+                  : undefined
+              }
+              onSelect={(query) =>
+                void navigate(`?${query}`, {
+                  replace: true,
+                  preventScrollReset: true,
+                })
+              }
+            />
+            {als && (
+              <p className="mt-4 text-[12.5px] text-muted-foreground">
+                <span className="font-medium text-foreground">Mounting:</span> Pendant only
+              </p>
+            )}
+          </div>
 
           {/* qty + add — or a quote CTA for configured-per-project products */}
           {quoteOnly ? (
@@ -471,14 +678,41 @@ export default function ProductPage() {
                       disabled={!canBuy}
                       className="press h-12 w-full gap-2 rounded-sm text-[14px] sm:w-full"
                     >
-                      {canBuy ? <>Add to cart · {money(total)}</> : 'Sold out'}
+                      {lengthPending
+                        ? 'Choose a length'
+                        : canBuy
+                          ? <>Add to cart · {money(buyTotal)}</>
+                          : 'Sold out'}
                     </AddToCartButton>
                   )}
                 </div>
               </div>
+              {als && !lengthPending && !canBuy && (
+                <button type="button" onClick={() => quoteAbout(qty)} className="mt-3 text-[13px] font-medium text-primary underline-offset-4 hover:underline">
+                  Ask about lead time →
+                </button>
+              )}
+              {als && !lengthPending && canBuy && (tier || upcoming) && (
+                <Mock className="mt-4">
+                  <p className="tnum text-[12.5px] text-muted-foreground">
+                    {tier ? (
+                      <>
+                        {qty} × {money(Math.round(unitAmount * (100 - tier.pct)) / 100)} per section · You save {money(total - buyTotal)}
+                        {upcoming && <> · Add {upcoming.min - qty} more for {upcoming.pct}% off each</>}
+                      </>
+                    ) : qty === 1 ? (
+                      <a href="#volume" className="text-primary underline-offset-4 hover:underline">
+                        Buy {upcoming!.min}+ sections, save {upcoming!.pct}% ↓
+                      </a>
+                    ) : (
+                      <>Add {upcoming!.min - qty} more section{upcoming!.min - qty > 1 ? 's' : ''} for {upcoming!.pct}% off each</>
+                    )}
+                  </p>
+                </Mock>
+              )}
             </>
           )}
-          {content.highlights.length > 0 && (
+          {!als && content.highlights.length > 0 && (
             <ul className="mt-5 grid list-none gap-2 rounded-md border border-border bg-parchment px-4 py-3.5 text-[12.5px] leading-snug text-muted-foreground">
               {content.highlights.slice(0, 4).map((h) => (
                 <li key={h} className="flex items-start gap-2">
@@ -488,22 +722,43 @@ export default function ProductPage() {
               ))}
             </ul>
           )}
-          <a href="#design" className="press mt-3 flex h-11 items-center justify-center gap-2 rounded-sm border border-onyx/25 text-[13.5px] hover:border-foreground">
-            Book a free lighting plan <Arrow className="h-4 w-4" />
-          </a>
-          <p className="mt-3 text-center text-[11.5px] text-muted-foreground">
-            {quoteOnly
-              ? 'Free design consultation · Licensed installation in LA County'
-              : wantsInstall
-                ? 'Priced per site · C-10 licensed, to Title 24 · quoted within one business day'
-                : 'Ships in 3–5 days · you install it · or from $9/mo'}
-          </p>
+          {!als && (
+            <>
+              <a href="#design" className="press mt-3 flex h-11 items-center justify-center gap-2 rounded-sm border border-onyx/25 text-[13.5px] hover:border-foreground">
+                Book a free lighting plan <Arrow className="h-4 w-4" />
+              </a>
+              <p className="mt-3 text-center text-[11.5px] text-muted-foreground">
+                {quoteOnly
+                  ? 'Free design consultation · Licensed installation in LA County'
+                  : wantsInstall
+                    ? 'Priced per site · C-10 licensed, to Title 24 · quoted within one business day'
+                    : 'Ships in 3–5 days · you install it · or from $9/mo'}
+              </p>
+            </>
+          )}
         </div>
       </section>
       <div ref={sentinelRef} aria-hidden className="h-px w-full" />
 
+      {als && (
+        <>
+          <BuildAShape
+            parts={als.parts}
+            finish={alsFinish}
+            cct={alsCct}
+            path={`/products/${product.handle}`}
+          />
+          <AlsProof
+            profileImg={(() => {
+              const g = gallery.find((x) => x.frame === 19);
+              return g ? {src: g.src, alt: 'Close-up of the black ALS aluminum profile and diffuser'} : undefined;
+            })()}
+          />
+        </>
+      )}
+
       {/* Overflow of the buy-box list, not a repeat of it. */}
-      {content.highlights.length > 4 && (
+      {!als && content.highlights.length > 4 && (
         <div className="border-y border-border bg-parchment">
           <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5 py-4 text-[12px] tracking-wide text-muted-foreground sm:px-8">
             {content.highlights.slice(4).map((t, i) => <span key={t} className="flex items-center gap-2">{i > 0 && <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />}{t}</span>)}
@@ -511,8 +766,9 @@ export default function ProductPage() {
         </div>
       )}
 
-      {/* feature rows + cards (per-product) */}
-      {(content.features.length > 0 || content.featureCards.length > 0) && (
+      {/* feature rows + cards (per-product). ALS: replaced by Build a shape +
+          proof (creative F7 — its "Configurable geometry" row never showed one). */}
+      {!als && (content.features.length > 0 || content.featureCards.length > 0) && (
         <section className="bg-parchment">
           <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
             {content.features.length > 0 && (
@@ -561,18 +817,18 @@ export default function ProductPage() {
           request (quote drawer) — it drives a quote, not a variant. */}
 
       {/* specifications */}
-      {(content.specs.length > 0 || content.downloads.length > 0) && (
+      {(specs.length > 0 || content.downloads.length > 0) && (
         <section className="bg-parchment">
           <div className="mx-auto max-w-[1000px] px-5 py-16 sm:px-8">
             <button onClick={() => setSpecOpen((o) => !o)} className="press flex w-full items-center justify-between border-b border-border pb-4 text-left">
-              <h2 className="font-heading text-[24px]">Specifications</h2>
+              <h2 className="font-heading text-[24px]">{als ? 'Specs and documents' : 'Specifications'}</h2>
               <Chevron className={`h-5 w-5 transition-transform duration-300 ${specOpen ? 'rotate-180' : ''}`} />
             </button>
             <div className="grid transition-all duration-500" style={{gridTemplateRows: specOpen ? '1fr' : '0fr'}}>
               <div className="overflow-hidden">
-                {content.specs.length > 0 && (
+                {specs.length > 0 && (
                   <dl className="grid grid-cols-1 sm:grid-cols-2">
-                    {content.specs.map((s, i) => (
+                    {specs.map((s, i) => (
                       <div key={s.label + i} className={`flex items-start justify-between gap-6 border-b border-border py-3 ${i % 2 === 0 ? 'sm:pr-8' : 'sm:pl-8'}`}>
                         <dt className="text-[13px] text-muted-foreground">{s.label}</dt>
                         <dd className="text-right text-[13px] font-medium">{s.value}</dd>
@@ -591,7 +847,26 @@ export default function ProductPage() {
         </section>
       )}
 
-      {/* lighting design service (dark) */}
+      {als && (
+        <div id="volume" className="scroll-mt-24">
+          <AlsShipping prices={alsPrices} quote={() => quoteAbout(20)} />
+        </div>
+      )}
+
+      {/* lighting design service (dark) — ALS gets its own one-button help */}
+      {als ? (
+        <AlsHelp
+          layout={() =>
+            open('quote', {
+              productTitle: 'ALS custom layout',
+              variantTitle: `${alsFinish} · ${alsCct}`,
+              quantity: 1,
+              path: `/products/${product.handle}`,
+            })
+          }
+          install={() => quoteAbout(qty)}
+        />
+      ) : (
       <section id="design" className="bg-onyx text-white">
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:gap-16">
           <Reveal>
@@ -614,17 +889,18 @@ export default function ProductPage() {
           </Reveal>
         </div>
       </section>
+      )}
 
       {/* reviews — removed until real Google Business Profile reviews exist
           (no fabricated testimonials). Re-add from GBP/Places API in step E. */}
 
       {/* FAQ */}
-      {content.faqs.length > 0 && (
+      {faqs.length > 0 && (
         <section className="bg-parchment">
           <div className="mx-auto max-w-[840px] px-5 py-16 sm:px-8">
             <Reveal><h2 className="font-heading text-[28px]">Questions, answered</h2></Reveal>
             <div className="mt-8 divide-y divide-border border-y border-border">
-              {content.faqs.map((f, i) => {
+              {faqs.map((f, i) => {
                 const isOpen = faqOpen === i;
                 return (
                   <div key={f.question + i}>
@@ -644,7 +920,7 @@ export default function ProductPage() {
       )}
 
       {/* cross-sell */}
-      {content.crossSell.length > 0 && (
+      {!als && content.crossSell.length > 0 && (
         <section className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8">
           <Reveal><h2 className="font-heading text-[28px]">Complete the system</h2></Reveal>
           <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -667,7 +943,9 @@ export default function ProductPage() {
         </section>
       )}
 
-      {/* final CTA */}
+      {/* final CTA — not on ALS: its photo is another maker's pendant
+          (creative F10) and the help block above already asks once. */}
+      {!als && (
       <section className="relative isolate overflow-hidden">
         <img src={hero} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover" />
         <div className="absolute inset-0 -z-10 bg-black/55" />
@@ -682,16 +960,29 @@ export default function ProductPage() {
           </Reveal>
         </div>
       </section>
+      )}
 
       {/* sticky buy bar */}
       <div className={`fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 backdrop-blur-md transition-transform duration-300 ${showBar ? 'translate-y-0' : 'translate-y-full'}`} style={{transitionTimingFunction: 'var(--ease-out)'}}>
         <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-5 py-3 sm:px-8">
           {heroImg && <img src={heroImg.src} alt="" className="hidden h-11 w-14 rounded-sm object-cover sm:block" />}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13.5px] font-medium">{product.title}</p>
-            <p className="truncate text-[11.5px] text-muted-foreground">{configSummary}</p>
+            <p className="truncate text-[13.5px] font-medium">
+              {als
+                ? lengthPending
+                  ? `ALS sections from ${money(alsFrom)}`
+                  : `ALS ${alsSize} section · ${money(unitAmount)}`
+                : product.title}
+            </p>
+            <p className="truncate text-[11.5px] text-muted-foreground">
+              {als ? (lengthPending ? 'Pendant mount · 2, 4 or 8 ft' : `${alsFinish} · ${alsCct} · Pendant mount`) : configSummary}
+            </p>
           </div>
-          {quoteOnly ? (
+          {lengthPending ? (
+            <button type="button" onClick={scrollToOptions} className="press inline-flex h-10 shrink-0 items-center rounded-sm bg-primary px-5 text-[13.5px] font-medium text-primary-foreground hover:bg-primary/90">
+              Choose a length
+            </button>
+          ) : quoteOnly ? (
             <QuoteButton className="press inline-flex h-10 w-auto items-center gap-2 rounded-sm bg-primary px-5 text-[13.5px] font-medium text-primary-foreground hover:bg-primary/90">
               Request a free quote
             </QuoteButton>
@@ -707,7 +998,7 @@ export default function ProductPage() {
                 </button>
               ) : (
                 <>
-                  <span className="tnum hidden font-heading text-[18px] sm:block">{money(total)}</span>
+                  <span className="tnum hidden font-heading text-[18px] sm:block">{money(buyTotal)}</span>
                   <AddToCartButton
                     onClick={() => open('cart')}
                     lines={lines}
@@ -824,35 +1115,53 @@ function SelChip({active, onClick, children}: {active: boolean; onClick: () => v
 function ProductOptions({
   productOptions,
   onSelect,
+  labels,
+  notes,
+  unselected,
+  suffix,
+  hints,
 }: {
   productOptions: MappedProductOptions[];
   onSelect: (variantUriQuery: string) => void;
+  /** Display names for option names ("Body Color" → "Finish"). */
+  labels?: Record<string, string>;
+  /** Small muted note after a value ("3000K" → "warm"). */
+  notes?: Record<string, string>;
+  /** Option shown with nothing chosen yet (ALS length on landing). */
+  unselected?: string;
+  suffix?: (option: string, value: string) => string | undefined;
+  hints?: Record<string, string>;
 }) {
   return (
     <>
       {productOptions.map((option) => {
         // A single value isn't a choice — don't render it as one.
         if (option.optionValues.length <= 1) return null;
-        const current = option.optionValues.find((v) => v.selected)?.name;
+        const pending = option.name === unselected;
+        const current = pending
+          ? undefined
+          : option.optionValues.find((v) => v.selected)?.name;
         const isColor = /colou?r/i.test(option.name);
         const layout = isColor
           ? 'flex flex-wrap gap-2.5'
           : 'grid grid-cols-3 gap-2';
 
         return (
-          <Field key={option.name} label={option.name} value={current}>
+          <Field key={option.name} label={labels?.[option.name] ?? option.name} value={current}>
             <div className={layout}>
               {option.optionValues.map((value) => {
                 const {
                   name,
                   handle,
                   variantUriQuery,
-                  selected,
                   available,
                   exists,
                   isDifferentProduct,
                   swatch,
                 } = value;
+                const selected = value.selected && !pending;
+                const extra = suffix?.(option.name, name);
+                const note = notes?.[name];
                 const chipClass = cn(
                   'press rounded-sm border px-3 py-2.5 text-center text-[13px]',
                   selected
@@ -862,11 +1171,18 @@ function ProductOptions({
                   !exists && 'cursor-not-allowed',
                 );
                 const inner = (
-                  <OptionValueContent
-                    name={name}
-                    swatch={swatch}
-                    isColor={isColor}
-                  />
+                  <>
+                    <OptionValueContent
+                      name={name}
+                      swatch={swatch}
+                      isColor={isColor}
+                    />
+                    {(extra || note) && (
+                      <span className="tnum block text-[11.5px] text-muted-foreground">
+                        {extra ?? note}
+                      </span>
+                    )}
+                  </>
                 );
 
                 if (isDifferentProduct) {
@@ -889,6 +1205,7 @@ function ProductOptions({
                     key={option.name + name}
                     type="button"
                     disabled={!exists}
+                    aria-pressed={selected}
                     onClick={() => {
                       if (!selected) onSelect(variantUriQuery);
                     }}
@@ -899,6 +1216,9 @@ function ProductOptions({
                 );
               })}
             </div>
+            {hints?.[option.name] && (
+              <p className="mt-2 text-[12px] text-muted-foreground">{hints[option.name]}</p>
+            )}
           </Field>
         );
       })}
@@ -1048,4 +1368,34 @@ const PRODUCT_QUERY = `#graphql
     }
   }
   ${PRODUCT_FRAGMENT}
+` as const;
+
+// Every ALS section variant + the four connectors, so "Build a shape" can
+// price and add a whole layout in one go. Handles mirror CONNECTORS in
+// ~/lib/als.ts.
+const ALS_PARTS_QUERY = `#graphql
+  fragment AlsPartVariant on ProductVariant {
+    id
+    availableForSale
+    price { amount currencyCode }
+    selectedOptions { name value }
+  }
+  query AlsParts($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    als: product(handle: "als-architectural-linear-system") {
+      variants(first: 50) { nodes { ...AlsPartVariant } }
+    }
+    l: product(handle: "l-connector-als-system") {
+      variants(first: 5) { nodes { ...AlsPartVariant } }
+    }
+    t: product(handle: "t-connector-als-system") {
+      variants(first: 5) { nodes { ...AlsPartVariant } }
+    }
+    x: product(handle: "x-connector-als-system") {
+      variants(first: 5) { nodes { ...AlsPartVariant } }
+    }
+    y: product(handle: "y-connector-als-system") {
+      variants(first: 5) { nodes { ...AlsPartVariant } }
+    }
+  }
 ` as const;

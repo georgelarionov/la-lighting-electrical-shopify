@@ -11,6 +11,10 @@ import type {ProductItemFragment} from 'storefrontapi.generated';
 import {buildNav} from '~/lib/nav';
 import {seo, SITE_URL} from '~/lib/seo';
 import {COMPANY_NAME, NAV_CATEGORIES} from '~/lib/site';
+import {LinearLanding} from '~/components/als/LinearLanding';
+
+/** The one category with its own selling layout (ALS sections). */
+const LINEAR = 'linear-lights';
 
 /**
  * Per-category SEO landing page.
@@ -26,11 +30,18 @@ export const meta: Route.MetaFunction = ({data, location}) => {
   if (!c) return seo({url: location.pathname});
   // The merchant authored proper SEO titles in admin; prefer them over the
   // display title, which is tuned for the nav rather than for a SERP.
+  // ponytail: linear-lights SEO from copy.md until it is written to the
+  // collection's SEO fields in Shopify at release.
+  const linear = c.handle === LINEAR;
   const base = seo({
-    title: c.seo?.title
-      ? `${c.seo.title} | ${COMPANY_NAME}`
-      : `${c.title} | ${COMPANY_NAME}`,
-    description: c.seo?.description || c.description || undefined,
+    title: linear
+      ? 'LED Linear Pendant Lights | Suspended, 2, 4 & 8 ft'
+      : c.seo?.title
+        ? `${c.seo.title} | ${COMPANY_NAME}`
+        : `${c.title} | ${COMPANY_NAME}`,
+    description: linear
+      ? 'Pendant-mount LED linear lights. ALS sections in 2, 4 & 8 ft from $149 join into L, T, X & Y shapes. In stock in California.'
+      : c.seo?.description || c.description || undefined,
     url: location.pathname,
     image: c.image?.url,
   });
@@ -98,10 +109,11 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw redirect('/collections');
   }
 
-  const [data] = await Promise.all([
+  const [data, alsData] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {handle, ...paginationVariables},
     }),
+    handle === LINEAR ? storefront.query(ALS_TILES_QUERY) : null,
   ]);
 
   const collection = data?.collection;
@@ -116,6 +128,12 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   return {
     collection,
     siblings: buildNav(data).filter((c) => c.handle !== handle),
+    als: alsData?.product
+      ? {
+          images: alsData.product.images.nodes,
+          variants: alsData.product.variants.nodes,
+        }
+      : null,
   };
 }
 
@@ -129,9 +147,24 @@ function blurbFor(handle: string) {
 }
 
 export default function Collection() {
-  const {collection, siblings} = useLoaderData<typeof loader>();
+  const {collection, siblings, als} = useLoaderData<typeof loader>();
   const products = collection.products.nodes;
   const blurb = blurbFor(collection.handle);
+
+  if (als) {
+    return (
+      <>
+        <LinearLanding
+          products={products}
+          alsImages={als.images}
+          alsVariants={als.variants}
+        />
+        <Analytics.CollectionView
+          data={{collection: {id: collection.id, handle: collection.handle}}}
+        />
+      </>
+    );
+  }
 
   // Derived from the variants on sale, never hand-written: a spec that appears
   // here is a spec a shopper can actually buy today.
@@ -354,6 +387,19 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
       }
       maxVariantPrice {
         ...MoneyProductItem
+      }
+    }
+  }
+` as const;
+
+// ALS frames + one price per length for the linear-lights section tiles.
+const ALS_TILES_QUERY = `#graphql
+  query AlsTiles($country: CountryCode, $language: LanguageCode)
+  @inContext(country: $country, language: $language) {
+    product(handle: "als-architectural-linear-system") {
+      images(first: 20) { nodes { url altText } }
+      variants(first: 50) {
+        nodes { price { amount } selectedOptions { name value } }
       }
     }
   }
