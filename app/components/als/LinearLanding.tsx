@@ -141,7 +141,7 @@ export function LinearLanding({
               </li>
             ))}
           </ul>
-          <Mock className="mt-3 inline-block">
+          <Mock className="mt-4">
             <p className="type-fine text-ink-subtle">Connector photos pending (PH-1) — diagrams stand in.</p>
           </Mock>
         </section>

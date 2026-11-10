@@ -534,7 +534,7 @@ export function AlsProof({profileImg}: {profileImg?: {src: string; alt: string}}
               </Modal>
             </li>
             {[1, 2].map((i) => (
-              <li key={i}>
+              <li key={i} className="hidden sm:block">
                 <div className="grid place-items-center rounded-md border border-dashed border-border bg-background text-[13px] text-muted-foreground" style={{aspectRatio: '4 / 3'}}>
                   Project photo pending
                 </div>
